@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}
+<title>AI HTML Generator - Interesting things</title>
+{% endblock %}
+{% block main %}
+<div class="container">
+    <h2>You can generate HTML code with AI agent in all languages</h2>
+    <form method="post" class="form-container">
+        <textarea name="msg" placeholder="Message to agent: " rows="5" required></textarea>
+        <button type="submit">Ask AI</button>
+    </form>
+    
+    {% if ai_answer %}
+    <div class="result-section">
+        <h3>Answer:</h3>
+        <div class="ai_answer">
+            {{ ai_answer | safe }}
+        </div>
+        {% if ai_token_usage %}
+        <p class="token-info">Tokens used: {{ ai_token_usage }}</p>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% block title %}
+    <title>Interesting things</title>
+    {% endblock %}
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+  </head>
+  <body>
+    <header>
+      <a href="/" class="logo">Interesting things...</a>
+      <a href="/">Main</a>
+      <a href="/ai_html">AI Agent HTML</a>
+      <a href="/qr_generator">Qr Code Generator</a>
+    </header>
+    <main>{% block main %} {% endblock %}</main>
+    <footer>&copy; 2026 Interesting things</footer>
+  </body>
+</html>

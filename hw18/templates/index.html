@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}
+<title>Головна сторінка - Interesting things</title>
+{% endblock %}
+{% block main %}
+<div class="container">
+    <h1>Very good interesting site</h1>
+    <h2>You can try a few things</h2>
+    <div class="links-container">
+        <a href="/ai_html" class="card-link">
+            <div class="card">
+                <h3>🤖 AI HTML Generator</h3>
+                <p>Generate HTML code with AI agent in all languages</p>
+            </div>
+        </a>
+        <a href="/qr_generator" class="card-link">
+            <div class="card">
+                <h3>📱 QR Code Generator</h3>
+                <p>Create QR codes with your custom text</p>
+            </div>
+        </a>
+    </div>
+</div>
+{% endblock %}
