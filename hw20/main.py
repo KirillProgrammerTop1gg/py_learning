@@ -3,11 +3,15 @@ from databases import Session, Parfume, Order
 import os, magic, uuid, random, itertools, string
 from werkzeug.utils import secure_filename
 
-
 app = Flask(__name__)
-app.secret_key = 'hw20'
+app.secret_key = "hw20"
 
-ADMIN_PASSWORD = ''.join(random.choice(list(itertools.chain(string.ascii_letters, string.digits, string.punctuation))) for _ in range(10))
+ADMIN_PASSWORD = "".join(
+    random.choice(
+        list(itertools.chain(string.ascii_letters, string.digits, string.punctuation))
+    )
+    for _ in range(10)
+)
 HOST = "127.0.0.1"
 PORT = 4001
 
@@ -15,12 +19,14 @@ FILES_PATH = "static/parfumes"
 ADMIN_PATH = f"/admin_{uuid.uuid4()}"
 ADMIN_LINK = f"http://{HOST}:{PORT}{ADMIN_PATH}\nADMIN_PASSWORD= '{ADMIN_PASSWORD}'"
 
-with open('admin_link.txt', 'w') as f:
+with open("admin_link.txt", "w") as f:
     f.write(ADMIN_LINK)
+
 
 @app.route("/")
 def index():
     return render_template("index.html")
+
 
 @app.route("/parfumes")
 def parfumes():
@@ -51,14 +57,15 @@ def order(parfume_id):
 
         return render_template("order.html", parfume=parfume)
 
+
 @app.route(ADMIN_PATH, methods=["GET", "POST"])
 def admin():
     if request.method == "POST":
-        product_id = request.form.get('product-id')
-        password = request.form.get('password')
+        product_id = request.form.get("product-id")
+        password = request.form.get("password")
         if product_id:
-            user_file = request.files.get('product-photo')
-            
+            user_file = request.files.get("product-photo")
+
             if not user_file:
                 return "Недостатньо даних"
 
@@ -66,7 +73,7 @@ def admin():
             file_type = mime.from_buffer(user_file.read(1024))
             user_file.seek(0)
 
-            if file_type not in ['image/png', 'image/jpeg', 'image/jpg'] :
+            if file_type not in ["image/png", "image/jpeg", "image/jpg"]:
                 return "Обрано файл неправильного типу"
 
             if user_file.content_length > 5 * 1024 * 1024:
@@ -83,29 +90,31 @@ def admin():
 
             with Session() as db_session:
                 parfume = db_session.get(Parfume, product_id)
-                
+
                 if parfume:
                     parfume.picture = file_path
                     db_session.commit()
-                
+
                 else:
                     return "Такий парфюм не знайдено"
-                
+
         if password == ADMIN_PASSWORD:
-            session['isadmin'] = True
-            
-    if session.get('isadmin'):
+            session["isadmin"] = True
+
+    if session.get("isadmin"):
         with Session() as db_session:
             all_parfumes = db_session.query(Parfume).all()
-            
+
         all_parfumes.sort(key=lambda x: x.id)
-        return render_template('admin.html', parfumes=all_parfumes)
+        return render_template("admin.html", parfumes=all_parfumes)
     else:
-        return render_template('admin_login.html')
+        return render_template("admin_login.html")
+
 
 @app.errorhandler(404)
 def page_not_found(error):
-    return render_template('404.html'), 404
+    return render_template("404.html"), 404
+
 
 if __name__ == "__main__":
     app.run(debug=True, host=HOST, port=PORT)

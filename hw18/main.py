@@ -31,9 +31,11 @@ def run_inference(msg):
         "inference_tokens": inference.usage_metadata.total_token_count,
     }
 
-@app.route('/')
+
+@app.route("/")
 def index():
     return render_template("index.html")
+
 
 @app.route("/ai_html", methods=["GET", "POST"])
 def ai_html():
@@ -49,17 +51,22 @@ def ai_html():
 
     return render_template("ai_html.html")
 
+
 @app.route("/qr_generator", methods=["GET", "POST"])
 def qr_generator():
     if request.method == "POST":
         qr_data = request.form["info"]
 
-        return render_template("qr_generator.html", qr_url=f'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data={qr_data}')
+        return render_template(
+            "qr_generator.html",
+            qr_url=f"https://api.qrserver.com/v1/create-qr-code/?size=300x300&data={qr_data}",
+        )
 
     return render_template("qr_generator.html")
 
 
 # API
+
 
 @app.route("/api/ai/inference", methods=["POST"])
 def ai_inference():
