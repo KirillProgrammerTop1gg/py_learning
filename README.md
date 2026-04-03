@@ -82,6 +82,22 @@ Small Flask microservices demonstrating **logging** and **unit testing**.
 
 ---
 
+### 🔹 hw_32 — FastAPI User Manager
+
+REST API built with **FastAPI** for managing a list of users.
+
+**Features**
+
+* Add users with duplicate validation
+* Delete users with existence check
+* Retrieve all users
+* Error handling with proper HTTP status codes
+
+**Libraries**
+`fastapi`, `uvicorn`
+
+---
+
 ## 🎯 Goal
 
-The goal of this repository is to improve **Python backend development skills** by building practical applications using **Flask and SQLAlchemy**.
+The goal of this repository is to improve **Python backend development skills** by building practical applications using **Flask**, **SQLAlchemy**, and **FastAPI**.
