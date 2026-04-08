@@ -14,6 +14,7 @@ def add_user(name: str = Query(..., min_length=1, max_length=30, description="Us
 
 @app.delete('/user/', description="Endpoint to delete user from list")
 def del_user(name: str = Query(..., min_length=1, max_length=30, description="Username")):
+    name = name.strip().lower()
     if name not in users:
         raise HTTPException(status_code=404, detail="User not found")
     users.remove(name)
