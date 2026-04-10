@@ -98,6 +98,26 @@ REST API built with **FastAPI** for managing a list of users.
 
 ---
 
+### 🔹 hw_34 — FastAPI Task Manager
+
+REST API built with **FastAPI** for managing a list of tasks with full CRUD support.
+
+**Features**
+
+* Create tasks with duplicate name validation
+* Update tasks by UUID
+* Delete tasks by UUID
+* Retrieve a single task by UUID
+* Retrieve all tasks
+* Error handling with proper HTTP status codes (404, 409)
+* Request & response validation via **Pydantic** models
+* Automated generated tests runnable via `uv run pytest test_app.py -v`
+
+**Libraries**
+`fastapi`, `uvicorn`, `pydantic`, `pytest`
+
+---
+
 ## 🎯 Goal
 
 The goal of this repository is to improve **Python backend development skills** by building practical applications using **Flask**, **SQLAlchemy**, and **FastAPI**.
