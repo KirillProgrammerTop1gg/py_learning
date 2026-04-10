@@ -1,123 +1,172 @@
 # 🐍 Python Learning Repository
 
-This repository contains my Python homework projects built while learning backend development with **Flask**, including web scraping, database integration, and web applications.
+This repository contains my Python backend learning projects built with **Flask** and **FastAPI**.
 
-Each project focuses on practical tasks such as building web apps, parsing data from websites, working with databases, and generating dynamic content.
+It covers real-world tasks such as:
+
+- 🌐 Web development
+- 🕷 Web scraping
+- 🗄 Database integration
+- 🔐 Authentication systems
+- ⚡ REST APIs
 
 ---
 
 ## 📂 Projects
 
-### 🔹 hw_16 — Brocard Scraper & Shop Clone
+<details>
+<summary>🔹 <b>hw_16 — Brocard Scraper & Shop Clone</b></summary>
 
 Flask application that scrapes perfume data from the **Brocard** website and displays it as an online shop.
 
-**Features**
+### 🚀 Features
 
-* Website scraping
-* Product catalog
-* Order page
-* Database integration
+- Website scraping
+- Product catalog
+- Order page
+- Database integration
 
-**Libraries**
+### 🛠 Libraries
+
 `flask`, `sqlalchemy`, `requests`, `parser`
+
+</details>
 
 ---
 
-### 🔹 hw_18 — QR & AI HTML Generator
+<details>
+<summary>🔹 <b>hw_18 — QR & AI HTML Generator</b></summary>
 
-Web app for generating **QR codes** and creating **AI-generated HTML pages**.
+Web app for generating **QR codes** and AI-generated HTML pages.
 
-**Libraries**
+### 🚀 Features
+
+- QR code generation
+- AI-based HTML generation
+
+### 🛠 Libraries
+
 `flask`, `google-genai`
 
+</details>
+
 ---
 
-### 🔹 hw_20 — Shop Clone with Admin Panel
+<details>
+<summary>🔹 <b>hw_20 — Shop Clone with Admin Panel</b></summary>
 
-Extended version of **hw_16** with an admin panel.
+Extended version of the shop with admin functionality.
 
-**Features**
+### 🚀 Features
 
-* Admin authentication
-* Product and image management
-* Custom 404 page
-* Database support
+- Admin authentication
+- Product & image management
+- Custom 404 page
+- Database integration
 
-**Libraries**
+### 🛠 Libraries
+
 `flask`, `sqlalchemy`, `requests`, `parser`
 
+</details>
+
 ---
 
-### 🔹 hw_22 — Сфера: Social Messenger
+<details>
+<summary>🔹 <b>hw_22 — Сфера: Social Messenger</b></summary>
 
-Flask-based social network with messaging and friend system.
+Flask-based social network with messaging system.
 
-**Features**
+### 🚀 Features
 
-* User authentication (Flask-Login)
-* Friend requests system
-* Private messaging
-* CSRF protection (Flask-WTF)
-* Dark responsive UI
+- Authentication (Flask-Login)
+- Friend system
+- Private messaging
+- CSRF protection
+- Responsive UI
 
-**Libraries**
+### 🛠 Libraries
+
 `flask`, `flask-login`, `flask-wtf`, `wtforms`, `sqlalchemy`
 
+</details>
+
 ---
 
-### 🔹 hw_24 — Flask Logging & Testing
+<details>
+<summary>🔹 <b>hw_24 — Flask Logging & Testing</b></summary>
 
-Small Flask microservices demonstrating **logging** and **unit testing**.
+Microservices demonstrating logging and testing.
 
-**Features**
+### 🚀 Features
 
-* Application logging
-* JSON API endpoints
-* Request validation
-* Unit tests with `unittest`
+- Logging system
+- JSON API
+- Request validation
+- Unit testing
 
-**Libraries**
+### 🛠 Libraries
+
 `flask`, `logging`, `unittest`
 
+</details>
+
 ---
 
-### 🔹 hw_32 — FastAPI User Manager
+<details>
+<summary>🔹 <b>hw_32 — FastAPI User Manager</b></summary>
 
-REST API built with **FastAPI** for managing a list of users.
+REST API for managing users.
 
-**Features**
+### 🚀 Features
 
-* Add users with duplicate validation
-* Delete users with existence check
-* Retrieve all users
-* Error handling with proper HTTP status codes
+- Add / delete users
+- Duplicate validation
+- Error handling
+- HTTP status codes
 
-**Libraries**
+### 🛠 Libraries
+
 `fastapi`, `uvicorn`
 
+</details>
+
 ---
 
-### 🔹 hw_34 — FastAPI Task Manager
+<details>
+<summary>🔹 <b>hw_34 — FastAPI Task Manager</b></summary>
 
-REST API built with **FastAPI** for managing a list of tasks with full CRUD support.
+Full CRUD API with validation and testing.
 
-**Features**
+### 🚀 Features
 
-* Create tasks with duplicate name validation
-* Update tasks by UUID
-* Delete tasks by UUID
-* Retrieve a single task by UUID
-* Retrieve all tasks
-* Error handling with proper HTTP status codes (404, 409)
-* Request & response validation via **Pydantic** models
-* Automated generated tests runnable via `uv run pytest test_app.py -v`
+- Create / update / delete tasks
+- UUID-based operations
+- Validation via Pydantic
+- Automated tests
 
-**Libraries**
+### 🛠 Libraries
+
 `fastapi`, `uvicorn`, `pydantic`, `pytest`
+
+</details>
 
 ---
 
 ## 🎯 Goal
 
-The goal of this repository is to improve **Python backend development skills** by building practical applications using **Flask**, **SQLAlchemy**, and **FastAPI**.
+The goal of this repository is to improve backend development skills through building real-world applications using:
+
+- ⚙️ Flask ecosystem  
+- ⚡ FastAPI  
+- 🗄 SQLAlchemy  
+- 🧪 Testing practices  
+
+---
+
+## ⭐ Future Improvements
+
+- Add Docker support
+- Deploy projects (Render / VPS)
+- Add API documentation (Swagger / Redoc)
+- Improve frontend UI
