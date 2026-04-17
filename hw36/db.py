@@ -4,41 +4,31 @@ from sqlalchemy import String, Text
 import asyncio
 from typing import AsyncGenerator
 
+# simpler but not full async
+# DATABASE_URL = "sqlite+aiosqlite:///./eventParticipants.db"
+# engine = create_async_engine(DATABASE_URL, echo=True)
 
-# 1. URL бази даних. Зверніть увагу на "+aiosqlite" — це вказівка на асинхронний драйвер.
-DATABASE_URL = "sqlite+aiosqlite:///./restaurant.db"
+# harder but full async
+DATABASE_URL = "postgresql+asyncpg://myuser:qwerty@localhost:5432/event_db"
+engine = create_async_engine(DATABASE_URL, echo=True, pool_size=10, max_overflow=20)
 
-# 2. Створюємо Двигун. echo=True виводить згенерований SQL у консоль (корисно для навчання)
-engine = create_async_engine(DATABASE_URL, echo=True)
-
-# 3. Фабрика сесій (Sessionmaker).
-# Ми вчимо її створювати саме асинхронні сесії (class_=AsyncSession)
 async_session_factory = async_sessionmaker(
-    bind=engine, class_=AsyncSession, expire_on_commit=False  # КРИТИЧНО ДЛЯ ASYNC!
+    bind=engine, class_=AsyncSession, expire_on_commit=False
 )
 
 
-# 4. Базовий клас. Це "матриця", з якої будуть зліплені всі наші таблиці
 class Base(DeclarativeBase):
     pass
 
 
-class Dish(Base):
-    # Явно вказуємо назву таблиці в SQL
-    __tablename__ = "dishes"
+class Participant(Base):
+    __tablename__ = "participants"
 
-    # Mapped[int] — це підказка для Python (це число)
-    # mapped_column(...) — це інструкція для бази даних (це первинний ключ)
     id: Mapped[int] = mapped_column(primary_key=True)
-
-    # String(100) обмежує довжину в базі даних (VARCHAR 100)
-    name: Mapped[str] = mapped_column(String(100), unique=True)
-
-    price: Mapped[float] = mapped_column()
-
-    # Mapped[str | None] каже Python, що тут може бути рядок або Нічого.
-    # mapped_column автоматично робить це поле NULLABLE у базі даних.
-    description: Mapped[str | None] = mapped_column(Text)
+    name: Mapped[str] = mapped_column(String(100))
+    email: Mapped[str] = mapped_column(String(100), unique=True)
+    event: Mapped[str] = mapped_column(String(100))
+    age: Mapped[int] = mapped_column()
 
 
 async def create_db():
@@ -47,13 +37,8 @@ async def create_db():
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
-    # async with автоматично викликає .close() при виході з блоку
     async with async_session_factory() as session:
-        # yield призупиняє функцію і віддає сесію у ваш маршрут (роздає окуляри)
         yield session
-        # ... маршрут обробляє запит користувача ...
-        # Коли маршрут закінчив роботу, код продовжується звідси,
-        # і async with безпечно закриває підключення (забирає окуляри).
 
 
 if __name__ == "__main__":

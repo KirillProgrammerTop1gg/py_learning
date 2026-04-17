@@ -153,6 +153,39 @@ Full CRUD API with validation and testing.
 
 ---
 
+<details>
+<summary>🔹 <b>hw_36 — FastAPI Event Participants</b></summary>
+
+Async REST API for managing event participants with PostgreSQL.
+
+### 🚀 Features
+
+- Add participants with full validation
+- Fetch participants by event name
+- Unique email enforcement
+- Async SQLAlchemy + asyncpg
+- Load testing (sync vs async comparison)
+
+### 📡 Endpoints
+
+- `POST /participants/` — Register a new participant
+- `GET /participants/event/{event_name}` — List participants of a specific event
+
+### ✅ Validation
+
+- `email` — must be a valid email address
+- `name` — must not contain digits
+- `age` — must be between 12 and 120
+- `email` — must be unique in the database (409 on conflict)
+
+### 🛠 Libraries
+
+`fastapi`, `uvicorn`, `pydantic`, `sqlalchemy`, `asyncpg`, `aiohttp`
+
+</details>
+
+---
+
 ## 🎯 Goal
 
 The goal of this repository is to improve backend development skills through building real-world applications using:
