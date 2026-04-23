@@ -54,9 +54,9 @@ class ParticipantResponse(ParticipantCreate):
 
 @app.post("/participants/", response_model=ParticipantResponse, status_code=201)
 async def create_participant(
-    dish_in: ParticipantCreate, db: AsyncSession = Depends(get_db)
+    participant_data: ParticipantCreate, db: AsyncSession = Depends(get_db)
 ):
-    new_participant = Participant(**dish_in.model_dump())
+    new_participant = Participant(**participant_data.model_dump())
     db.add(new_participant)
     try:
         await db.commit()
@@ -72,7 +72,7 @@ async def create_participant(
 
 @app.get("/participants/event/{event_name}", response_model=list[ParticipantResponse])
 async def get_participants_by_event(
-    event_name: str = Path(..., description="Event id"),
+    event_name: str = Path(..., description="The name of the event"),
     db: AsyncSession = Depends(get_db),
 ):
     stmt = select(Participant).where(Participant.event == event_name)

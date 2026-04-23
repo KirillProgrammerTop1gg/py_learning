@@ -4,7 +4,7 @@ from sqlalchemy import String, Text
 import asyncio
 from typing import AsyncGenerator
 
-# simpler but not full async
+# simpler but not async
 # DATABASE_URL = "sqlite+aiosqlite:///./eventParticipants.db"
 # engine = create_async_engine(DATABASE_URL, echo=True)
 
