@@ -1,0 +1,41 @@
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy import String, Text
+import asyncio
+from typing import AsyncGenerator
+
+# harder but full async
+DATABASE_URL = "postgresql+asyncpg://myuser:qwerty@localhost:5432/animals_db"
+engine = create_async_engine(DATABASE_URL, echo=True, pool_size=10, max_overflow=20)
+
+async_session_factory = async_sessionmaker(
+    bind=engine, class_=AsyncSession, expire_on_commit=False
+)
+
+
+class Base(DeclarativeBase):
+    pass
+
+
+class Animal(Base):
+    __tablename__ = "animals"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(100))
+    health_status: Mapped[str] = mapped_column(String(15), server_default="healthy")
+    age: Mapped[float] = mapped_column()
+    adopted: Mapped[bool] = mapped_column()
+
+
+async def create_db():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
+    async with async_session_factory() as session:
+        yield session
+
+
+if __name__ == "__main__":
+    asyncio.run(create_db())
