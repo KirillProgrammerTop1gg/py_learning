@@ -1,46 +1,61 @@
 from typing import List, Optional
-from sqlalchemy.orm import Session
-from sqlalchemy import or_
-
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, or_
+from sqlalchemy.orm import selectinload
 
 from src.database.models import Exchange, User, Skill
 from src.schemas import ExchangeCreate, ExchangeUpdate, ExchangeStatus
 
 
+def _exchange_load_options():
+    """selectinload для всіх вкладених relations у ExchangeResponse."""
+    return [
+        selectinload(Exchange.sender),
+        selectinload(Exchange.receiver),
+        selectinload(Exchange.skill).selectinload(Skill.users),
+    ]
+
+
 async def get_exchanges(
-    db: Session,
-    skip: int = 0,
-    limit: int = 100,
-    status_filter: Optional[ExchangeStatus] = None,
-    user_id: Optional[int] = None,
+    skip: int,
+    limit: int,
+    status_filter: Optional[ExchangeStatus],
+    user_id: Optional[int],
+    db: AsyncSession,
 ) -> List[Exchange]:
     """Отримати список обмінів з фільтрацією."""
-    query = db.query(Exchange)
+    stmt = select(Exchange).options(*_exchange_load_options())
 
     if status_filter:
-        query = query.filter(Exchange.status == status_filter.value)
-
+        stmt = stmt.where(Exchange.status == status_filter.value)
     if user_id:
-        query = query.filter(
+        stmt = stmt.where(
             or_(Exchange.sender_id == user_id, Exchange.receiver_id == user_id)
         )
 
-    return query.offset(skip).limit(limit).all()
+    stmt = stmt.offset(skip).limit(limit)
+    result = await db.execute(stmt)
+    return result.scalars().all()
 
 
-async def get_exchange(db: Session, exchange_id: int) -> Optional[Exchange]:
+async def get_exchange(exchange_id: int, db: AsyncSession) -> Optional[Exchange]:
     """Отримати обмін за ID."""
-    return db.query(Exchange).filter(Exchange.id == exchange_id).first()
+    stmt = (
+        select(Exchange)
+        .options(*_exchange_load_options())
+        .where(Exchange.id == exchange_id)
+    )
+    result = await db.execute(stmt)
+    return result.scalar_one_or_none()
 
 
 async def create_exchange(
-    db: Session, exchange: ExchangeCreate, sender_id: int
+    exchange: ExchangeCreate, sender_id: int, db: AsyncSession
 ) -> Optional[Exchange]:
     """Створити новий запит на обмін."""
-    # Перевіряємо, чи існують користувачі та навичка
-    sender = db.query(User).filter(User.id == sender_id).first()
-    receiver = db.query(User).filter(User.id == exchange.receiver_id).first()
-    skill = db.query(Skill).filter(Skill.id == exchange.skill_id).first()
+    sender = await db.get(User, sender_id)
+    receiver = await db.get(User, exchange.receiver_id)
+    skill = await db.get(Skill, exchange.skill_id)
 
     if not all([sender, receiver, skill]):
         return None
@@ -55,45 +70,60 @@ async def create_exchange(
     )
 
     db.add(db_exchange)
-    db.commit()
-    db.refresh(db_exchange)
-    return db_exchange
+    await db.commit()
+    await db.refresh(db_exchange)
+
+    # Перезавантажуємо з усіма relations для серіалізації
+    return await get_exchange(db_exchange.id, db)
 
 
 async def update_exchange(
-    db: Session, exchange_id: int, exchange_update: ExchangeUpdate, current_user_id: int
+    exchange_id: int,
+    exchange_update: ExchangeUpdate,
+    current_user_id: int,
+    db: AsyncSession,
 ) -> Optional[Exchange]:
     """Оновити статус обміну."""
-    db_exchange = db.query(Exchange).filter(Exchange.id == exchange_id).first()
+    stmt = select(Exchange).where(Exchange.id == exchange_id)
+    result = await db.execute(stmt)
+    db_exchange = result.scalar_one_or_none()
 
     if not db_exchange:
         return None
 
-    # Перевіряємо, чи користувач має право оновлювати цей обмін
     if exchange_update.status in [ExchangeStatus.accepted, ExchangeStatus.rejected]:
-        # Тільки отримувач може прийняти або відхилити
         if db_exchange.receiver_id != current_user_id:
             return None
     elif exchange_update.status == ExchangeStatus.cancelled:
-        # Скасувати може будь-хто з учасників
         if current_user_id not in [db_exchange.sender_id, db_exchange.receiver_id]:
             return None
 
-    # Оновлюємо статус
     db_exchange.status = exchange_update.status.value
     if exchange_update.message:
         db_exchange.message = exchange_update.message
 
-    db.commit()
-    db.refresh(db_exchange)
-    return db_exchange
+    await db.commit()
+
+    return await get_exchange(exchange_id, db)
 
 
-async def get_user_sent_exchanges(db: Session, user_id: int) -> List[Exchange]:
+async def get_user_sent_exchanges(user_id: int, db: AsyncSession) -> List[Exchange]:
     """Отримати надіслані користувачем запити."""
-    return db.query(Exchange).filter(Exchange.sender_id == user_id).all()
+    stmt = (
+        select(Exchange)
+        .options(*_exchange_load_options())
+        .where(Exchange.sender_id == user_id)
+    )
+    result = await db.execute(stmt)
+    return result.scalars().all()
 
 
-async def get_user_received_exchanges(db: Session, user_id: int) -> List[Exchange]:
+async def get_user_received_exchanges(user_id: int, db: AsyncSession) -> List[Exchange]:
     """Отримати отримані користувачем запити."""
-    return db.query(Exchange).filter(Exchange.receiver_id == user_id).all()
+    stmt = (
+        select(Exchange)
+        .options(*_exchange_load_options())
+        .where(Exchange.receiver_id == user_id)
+    )
+    result = await db.execute(stmt)
+    return result.scalars().all()

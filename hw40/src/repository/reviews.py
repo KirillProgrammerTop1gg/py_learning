@@ -1,60 +1,73 @@
 from typing import List, Optional
-from sqlalchemy.orm import Session
-from sqlalchemy import func
-
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from src.database.models import Review, Exchange, ExchangeStatus
 from src.schemas import ReviewCreate
 
 
+def _review_load_options():
+    return [
+        selectinload(Review.reviewer),
+        selectinload(Review.reviewed),
+    ]
+
+
 async def get_reviews(
-    db: Session, skip: int = 0, limit: int = 100, user_id: Optional[int] = None
+    skip: int,
+    limit: int,
+    user_id: Optional[int],
+    db: AsyncSession,
 ) -> List[Review]:
     """Отримати список відгуків."""
-    query = db.query(Review)
+    stmt = select(Review).options(*_review_load_options())
 
     if user_id:
-        query = query.filter(Review.reviewed_id == user_id)
+        stmt = stmt.where(Review.reviewed_id == user_id)
 
-    return query.offset(skip).limit(limit).all()
+    stmt = stmt.offset(skip).limit(limit)
+    result = await db.execute(stmt)
+    return result.scalars().all()
 
 
-async def get_review(db: Session, review_id: int) -> Optional[Review]:
+async def get_review(review_id: int, db: AsyncSession) -> Optional[Review]:
     """Отримати відгук за ID."""
-    return db.query(Review).filter(Review.id == review_id).first()
+    stmt = (
+        select(Review)
+        .options(*_review_load_options())
+        .where(Review.id == review_id)
+    )
+    result = await db.execute(stmt)
+    return result.scalar_one_or_none()
 
 
 async def create_review(
-    db: Session, review: ReviewCreate, reviewer_id: int
+    review: ReviewCreate, reviewer_id: int, db: AsyncSession
 ) -> Optional[Review]:
     """Створити новий відгук."""
-    # Перевіряємо, чи існує обмін і чи він завершений
-    exchange = db.query(Exchange).filter(Exchange.id == review.exchange_id).first()
+    stmt = select(Exchange).where(Exchange.id == review.exchange_id)
+    result = await db.execute(stmt)
+    exchange = result.scalar_one_or_none()
 
     if not exchange or exchange.status != ExchangeStatus.completed.value:
         return None
 
-    # Перевіряємо, чи користувач був учасником обміну
     if reviewer_id not in [exchange.sender_id, exchange.receiver_id]:
         return None
 
-    # Визначаємо, кого оцінюємо
     reviewed_id = (
         exchange.receiver_id
         if reviewer_id == exchange.sender_id
         else exchange.sender_id
     )
 
-    # Перевіряємо, чи вже є відгук від цього користувача для цього обміну
-    existing_review = (
-        db.query(Review)
-        .filter(
-            Review.exchange_id == review.exchange_id, Review.reviewer_id == reviewer_id
-        )
-        .first()
+    stmt = select(Review).where(
+        Review.exchange_id == review.exchange_id,
+        Review.reviewer_id == reviewer_id,
     )
-
-    if existing_review:
+    result = await db.execute(stmt)
+    if result.scalar_one_or_none():
         return None
 
     db_review = Review(
@@ -66,32 +79,37 @@ async def create_review(
     )
 
     db.add(db_review)
-    db.commit()
-    db.refresh(db_review)
-    return db_review
+    await db.commit()
+    await db.refresh(db_review)
+
+    return await get_review(db_review.id, db)
 
 
-async def get_user_reviews(db: Session, user_id: int) -> List[Review]:
+async def get_user_reviews(user_id: int, db: AsyncSession) -> List[Review]:
     """Отримати всі відгуки про користувача."""
-    return db.query(Review).filter(Review.reviewed_id == user_id).all()
-
-
-async def get_user_rating(db: Session, user_id: int) -> Optional[dict]:
-    """Розрахувати середній рейтинг користувача."""
-    result = (
-        db.query(
-            func.avg(Review.rating).label("average_rating"),
-            func.count(Review.id).label("total_reviews"),
-        )
-        .filter(Review.reviewed_id == user_id)
-        .first()
+    stmt = (
+        select(Review)
+        .options(*_review_load_options())
+        .where(Review.reviewed_id == user_id)
     )
+    result = await db.execute(stmt)
+    return result.scalars().all()
 
-    if result and result.total_reviews > 0:
+
+async def get_user_rating(user_id: int, db: AsyncSession) -> Optional[dict]:
+    """Розрахувати середній рейтинг користувача."""
+    stmt = select(
+        func.avg(Review.rating).label("average_rating"),
+        func.count(Review.id).label("total_reviews"),
+    ).where(Review.reviewed_id == user_id)
+    result = await db.execute(stmt)
+    row = result.first()
+
+    if row and row.total_reviews > 0:
         return {
             "user_id": user_id,
-            "average_rating": round(float(result.average_rating), 2),
-            "total_reviews": result.total_reviews,
+            "average_rating": round(float(row.average_rating), 2),
+            "total_reviews": row.total_reviews,
         }
 
     return {"user_id": user_id, "average_rating": 0, "total_reviews": 0}

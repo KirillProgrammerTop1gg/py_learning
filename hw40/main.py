@@ -8,9 +8,6 @@ from src.database.db import engine, get_db
 from src.database.models import Base
 from src.routes import users, skills, exchanges, reviews
 
-# Створюємо таблиці (якщо вони не існують)
-Base.metadata.create_all(bind=engine)
-
 # Створюємо застосунок
 app = FastAPI(
     title="SkillSwap API",

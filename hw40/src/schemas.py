@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import List, Optional
-from pydantic import BaseModel, EmailStr, Field, root_validator
+from pydantic import BaseModel, EmailStr, Field, model_validator, ConfigDict
 from enum import Enum
 
 
@@ -51,13 +51,13 @@ class UserUpdate(BaseModel):
     # email: Optional[EmailStr] = None
 
 
-class UserResponse(UserBase):
+class UserResponse(BaseModel):
     id: int
-    created_at: datetime
-    is_active: bool
+    username: str
+    email: str
+    full_name: str | None = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Skill schemas
@@ -72,13 +72,11 @@ class SkillCreate(SkillBase):
     can_teach: bool
     want_learn: bool
 
-    @root_validator
-    def check_teach_and_learn(cls, values):
-        can_teach = values.get("can_teach")
-        want_learn = values.get("want_learn")
-        if can_teach and want_learn:
+    @model_validator(mode="after")
+    def check_teach_and_learn(self):
+        if self.can_teach and self.want_learn:
             raise ValueError("Не можна одночасно вміти і хотіти вчитися одній навичці")
-        return values
+        return self
 
 
 class SkillUpdate(BaseModel):
@@ -98,8 +96,7 @@ class SkillResponse(SkillBase):
     updated_at: Optional[datetime]
     users: List["UserResponse"] = Field(default_factory=list)
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Exchange schemas

@@ -1,6 +1,6 @@
 from typing import List, Optional
 from fastapi import APIRouter, HTTPException, Depends, status
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 from src.database.db import get_db
@@ -16,25 +16,30 @@ async def read_exchanges(
     limit: int = 100,
     status_filter: Optional[ExchangeStatus] = None,
     user_id: Optional[int] = None,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ):
-    """
-    Отримати список обмінів з фільтрацією.
-
-
-    - **status_filter**: фільтр за статусом (pending, accepted, etc.)
-    - **user_id**: показати обміни конкретного користувача
-    """
-    exchanges = await repository_exchanges.get_exchanges(
-        db, skip, limit, status_filter, user_id
+    return await repository_exchanges.get_exchanges(
+        skip, limit, status_filter, user_id, db
     )
-    return exchanges
+
+
+@router.get("/my/sent", response_model=List[ExchangeResponse])
+async def read_my_sent_exchanges(
+    user_id: int = 1, db: AsyncSession = Depends(get_db)
+):
+    return await repository_exchanges.get_user_sent_exchanges(user_id, db)
+
+
+@router.get("/my/received", response_model=List[ExchangeResponse])
+async def read_my_received_exchanges(
+    user_id: int = 1, db: AsyncSession = Depends(get_db)
+):
+    return await repository_exchanges.get_user_received_exchanges(user_id, db)
 
 
 @router.get("/{exchange_id}", response_model=ExchangeResponse)
-async def read_exchange(exchange_id: int, db: Session = Depends(get_db)):
-    """Отримати деталі обміну."""
-    exchange = await repository_exchanges.get_exchange(db, exchange_id)
+async def read_exchange(exchange_id: int, db: AsyncSession = Depends(get_db)):
+    exchange = await repository_exchanges.get_exchange(exchange_id, db)
     if exchange is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -46,50 +51,37 @@ async def read_exchange(exchange_id: int, db: Session = Depends(get_db)):
 @router.post("/", response_model=ExchangeResponse, status_code=status.HTTP_201_CREATED)
 async def create_exchange(
     exchange: ExchangeCreate,
-    sender_id: int = 1,  # Тимчасово, поки немає автентифікації
-    db: Session = Depends(get_db),
+    sender_id: int = 1,
+    db: AsyncSession = Depends(get_db),
 ):
-    """Створити запит на обмін навичками."""
-    # Перевіряємо, чи не намагається користувач створити обмін сам з собою
     if sender_id == exchange.receiver_id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Не можна створити обмін з самим собою",
         )
 
-    return await repository_exchanges.create_exchange(db, exchange, sender_id)
+    result = await repository_exchanges.create_exchange(exchange, sender_id, db)
+    if result is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Відправника, отримувача або навичку не знайдено",
+        )
+    return result
 
 
 @router.put("/{exchange_id}", response_model=ExchangeResponse)
 async def update_exchange_status(
     exchange_id: int,
     exchange_update: ExchangeUpdate,
-    current_user_id: int = 1,  # Тимчасово
-    db: Session = Depends(get_db),
+    current_user_id: int = 1,
+    db: AsyncSession = Depends(get_db),
 ):
-    """Оновити статус обміну (прийняти/відхилити)."""
     exchange = await repository_exchanges.update_exchange(
-        db, exchange_id, exchange_update, current_user_id
+        exchange_id, exchange_update, current_user_id, db
     )
     if exchange is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Обмін з ID {exchange_id} не знайдено",
+            detail=f"Обмін з ID {exchange_id} не знайдено або недостатньо прав",
         )
     return exchange
-
-
-@router.get("/my/sent", response_model=List[ExchangeResponse])
-async def read_my_sent_exchanges(
-    user_id: int = 1, db: Session = Depends(get_db)  # Тимчасово
-):
-    """Отримати надіслані запити на обмін."""
-    return await repository_exchanges.get_user_sent_exchanges(db, user_id)
-
-
-@router.get("/my/received", response_model=List[ExchangeResponse])
-async def read_my_received_exchanges(
-    user_id: int = 1, db: Session = Depends(get_db)  # Тимчасово
-):
-    """Отримати отримані запити на обмін."""
-    return await repository_exchanges.get_user_received_exchanges(db, user_id)

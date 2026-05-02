@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 DATABASE_URL = os.getenv(
-    "DATABASE_URL", "postgresql://postgres:password@localhost:5432/skillswap"
+    "DATABASE_URL", "postgresql://postgres:password@localhost:5432/skills_db"
 )
 engine = create_async_engine(DATABASE_URL, echo=True, pool_size=10, max_overflow=20)
 

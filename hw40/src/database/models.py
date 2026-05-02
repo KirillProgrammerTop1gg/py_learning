@@ -58,7 +58,7 @@ class User(Base):
         DateTime(timezone=True), server_default=func.now()
     )
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), onupdate=func.now()
+        DateTime(timezone=True), nullable=True, onupdate=func.now()
     )
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
@@ -99,7 +99,7 @@ class Skill(Base):
         DateTime(timezone=True), server_default=func.now()
     )
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+        DateTime(timezone=True), nullable=True, server_default=func.now(), onupdate=func.now()
     )
 
     # Relationships
