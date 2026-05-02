@@ -6,13 +6,13 @@ import uvicorn
 
 from src.database.db import engine, get_db
 from src.database.models import Base
-from src.routes import users, skills, exchanges, reviews
+from src.routes import users, skills, exchanges, reviews, stats, categories
 
 # Створюємо застосунок
 app = FastAPI(
     title="SkillSwap API",
     description="REST API для платформи обміну навичками",
-    version="2.0.0",
+    version="2.1.0",
     docs_url="/docs",
     redoc_url="/redoc",
 )
@@ -31,20 +31,25 @@ app.include_router(users.router, prefix="/api")
 app.include_router(skills.router, prefix="/api")
 app.include_router(exchanges.router, prefix="/api")
 app.include_router(reviews.router, prefix="/api")
+app.include_router(stats.router, prefix="/api")
+app.include_router(categories.router, prefix="/api")
 
 
 @app.get("/")
 def read_root():
     return {
-        "message": "Ласкаво просимо до SkillSwap API v2.0",
+        "message": "Ласкаво просимо до SkillSwap API v2.1",
         "documentation": "/docs",
         "endpoints": {
+            "categories": "/api/categories",
             "users": "/api/users",
             "skills": "/api/skills",
             "exchanges": "/api/exchanges",
             "reviews": "/api/reviews",
+            "stats": "/api/stats",
         },
     }
+
 
 
 @app.get("/health")
@@ -57,7 +62,7 @@ def health_check(db: Session = Depends(get_db)):
     except Exception as e:
         db_status = f"error: {str(e)}"
 
-    return {"status": "healthy", "database": db_status, "version": "2.0.0"}
+    return {"status": "healthy", "database": db_status, "version": "2.1.0"}
 
 
 @app.on_event("startup")

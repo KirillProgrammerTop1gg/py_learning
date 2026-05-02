@@ -64,11 +64,7 @@ async def update_user(
 
 async def get_user_skills(user_id: int, db: AsyncSession) -> Optional[List]:
     """Отримати всі навички користувача за ID."""
-    stmt = (
-        select(User)
-        .options(selectinload(User.skills))
-        .where(User.id == user_id)
-    )
+    stmt = select(User).options(selectinload(User.skills)).where(User.id == user_id)
     result = await db.execute(stmt)
     user = result.scalar_one_or_none()
     return user.skills if user else None

@@ -12,17 +12,6 @@ class SkillLevel(str, Enum):
     expert = "expert"
 
 
-class SkillCategory(str, Enum):
-    programming = "programming"
-    music = "music"
-    sports = "sports"
-    languages = "languages"
-    art = "art"
-    science = "science"
-    cooking = "cooking"
-    other = "other"
-
-
 class ExchangeStatus(str, Enum):
     pending = "pending"
     accepted = "accepted"
@@ -31,12 +20,64 @@ class ExchangeStatus(str, Enum):
     cancelled = "cancelled"
 
 
-# User schemas
+# ───────────────────────────── Category schemas ──────────────────────────────
+
+class CategoryBase(BaseModel):
+    name: str = Field(..., min_length=2, max_length=100, description="Назва категорії")
+    slug: str = Field(
+        ...,
+        min_length=2,
+        max_length=100,
+        pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$",
+        description="URL-slug категорії (лише малі літери, цифри та дефіс)",
+    )
+    description: Optional[str] = Field(None, max_length=500, description="Опис категорії")
+    icon: Optional[str] = Field(None, max_length=50, description="Назва іконки (напр. 'code', 'music')")
+
+
+class CategoryCreate(CategoryBase):
+    pass
+
+
+class CategoryUpdate(BaseModel):
+    name: Optional[str] = Field(None, min_length=2, max_length=100)
+    slug: Optional[str] = Field(
+        None,
+        min_length=2,
+        max_length=100,
+        pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$",
+    )
+    description: Optional[str] = Field(None, max_length=500)
+    icon: Optional[str] = Field(None, max_length=50)
+    is_active: Optional[bool] = None
+
+
+class CategoryResponse(CategoryBase):
+    id: int
+    is_active: bool
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+    skills_count: Optional[int] = None  # заповнюється окремо у repository
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class CategoryWithSkillsResponse(CategoryResponse):
+    skills: List["SkillResponse"] = Field(default_factory=list)
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+# ───────────────────────────── User schemas ───────────────────────────────────
+
 class UserBase(BaseModel):
     username: str = Field(..., min_length=3, max_length=50)
     email: EmailStr
     full_name: Optional[str] = Field(None, max_length=100)
     bio: Optional[str] = None
+    avatar_url: Optional[str] = Field(None, max_length=255)
+    phone: Optional[str] = Field(None, max_length=20)
+    location: Optional[str] = Field(None, max_length=100)
 
 
 class UserCreate(UserBase):
@@ -46,9 +87,9 @@ class UserCreate(UserBase):
 class UserUpdate(BaseModel):
     full_name: Optional[str] = None
     bio: Optional[str] = None
-    # Якщо потрібно, можна додати оновлення username/email:
-    # username: Optional[str] = Field(None, min_length=3, max_length=50)
-    # email: Optional[EmailStr] = None
+    avatar_url: Optional[str] = Field(None, max_length=255)
+    phone: Optional[str] = Field(None, max_length=20)
+    location: Optional[str] = Field(None, max_length=100)
 
 
 class UserResponse(BaseModel):
@@ -56,15 +97,20 @@ class UserResponse(BaseModel):
     username: str
     email: str
     full_name: str | None = None
+    bio: str | None = None
+    avatar_url: str | None = None
+    phone: str | None = None
+    location: str | None = None
 
     model_config = ConfigDict(from_attributes=True)
 
 
-# Skill schemas
+# ───────────────────────────── Skill schemas ──────────────────────────────────
+
 class SkillBase(BaseModel):
     title: str = Field(..., min_length=3, max_length=100)
     description: str = Field(..., min_length=10, max_length=500)
-    category: SkillCategory
+    category_id: int = Field(..., ge=1, description="ID категорії навички")
     level: SkillLevel
 
 
@@ -82,7 +128,7 @@ class SkillCreate(SkillBase):
 class SkillUpdate(BaseModel):
     title: Optional[str] = Field(None, min_length=3, max_length=100)
     description: Optional[str] = Field(None, min_length=10, max_length=500)
-    category: Optional[SkillCategory] = None
+    category_id: Optional[int] = Field(None, ge=1)
     level: Optional[SkillLevel] = None
     can_teach: Optional[bool] = None
     want_learn: Optional[bool] = None
@@ -93,13 +139,15 @@ class SkillResponse(SkillBase):
     can_teach: bool
     want_learn: bool
     created_at: datetime
-    updated_at: Optional[datetime]
+    updated_at: Optional[datetime] = None
+    category_rel: Optional["CategoryResponse"] = None
     users: List["UserResponse"] = Field(default_factory=list)
 
     model_config = ConfigDict(from_attributes=True)
 
 
-# Exchange schemas
+# ───────────────────────────── Exchange schemas ───────────────────────────────
+
 class ExchangeBase(BaseModel):
     skill_id: int
     message: Optional[str] = Field(None, max_length=500)
@@ -111,9 +159,7 @@ class ExchangeCreate(ExchangeBase):
 
 
 class ExchangeUpdate(BaseModel):
-    status: Optional[ExchangeStatus] = (
-        None  # зробив необов’язковим, якщо треба — можна зробити обов’язковим
-    )
+    status: Optional[ExchangeStatus] = None
     message: Optional[str] = None
 
 
@@ -123,16 +169,16 @@ class ExchangeResponse(ExchangeBase):
     receiver_id: int
     status: ExchangeStatus
     created_at: datetime
-    updated_at: Optional[datetime]
+    updated_at: Optional[datetime] = None
     sender: "UserResponse"
     receiver: "UserResponse"
     skill: "SkillResponse"
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
-# Review schemas
+# ───────────────────────────── Review schemas ─────────────────────────────────
+
 class ReviewBase(BaseModel):
     rating: int = Field(..., ge=1, le=5)
     comment: Optional[str] = Field(None, max_length=1000)
@@ -151,11 +197,12 @@ class ReviewResponse(ReviewBase):
     reviewer: "UserResponse"
     reviewed: "UserResponse"
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # Update forward references
+CategoryResponse.model_rebuild()
+CategoryWithSkillsResponse.model_rebuild()
 UserResponse.model_rebuild()
 SkillResponse.model_rebuild()
 ExchangeResponse.model_rebuild()

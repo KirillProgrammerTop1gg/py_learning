@@ -33,11 +33,7 @@ async def get_reviews(
 
 async def get_review(review_id: int, db: AsyncSession) -> Optional[Review]:
     """Отримати відгук за ID."""
-    stmt = (
-        select(Review)
-        .options(*_review_load_options())
-        .where(Review.id == review_id)
-    )
+    stmt = select(Review).options(*_review_load_options()).where(Review.id == review_id)
     result = await db.execute(stmt)
     return result.scalar_one_or_none()
 
