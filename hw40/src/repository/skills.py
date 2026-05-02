@@ -14,13 +14,12 @@ async def get_skills(
     category: Optional[str] = None,
     can_teach: Optional[bool] = None,
     want_learn: Optional[bool] = None,
-    search: Optional[str] = None
+    search: Optional[str] = None,
 ) -> List[Skill]:
     """
     Отримати список навичок з фільтрацією та пагінацією.
     """
     query = db.query(Skill)
-
 
     if category:
         query = query.filter(Skill.category == category)
@@ -32,22 +31,16 @@ async def get_skills(
         search_filter = f"%{search}%"
         query = query.filter(
             or_(
-                Skill.title.ilike(search_filter),
-                Skill.description.ilike(search_filter)
+                Skill.title.ilike(search_filter), Skill.description.ilike(search_filter)
             )
         )
 
-
     return query.offset(skip).limit(limit).all()
-
-
 
 
 async def get_skill(db: Session, skill_id: int) -> Optional[Skill]:
     """Отримати навичку за ID."""
     return db.query(Skill).filter(Skill.id == skill_id).first()
-
-
 
 
 async def create_skill(db: Session, skill: SkillCreate, user_id: int) -> Skill:
@@ -57,22 +50,16 @@ async def create_skill(db: Session, skill: SkillCreate, user_id: int) -> Skill:
     db.commit()
     db.refresh(db_skill)
 
-
     user = db.query(User).filter(User.id == user_id).first()
     if user:
         user.skills.append(db_skill)
         db.commit()
 
-
     return db_skill
 
 
-
-
 async def update_skill(
-    db: Session,
-    skill_id: int,
-    skill_update: SkillUpdate
+    db: Session, skill_id: int, skill_update: SkillUpdate
 ) -> Optional[Skill]:
     """Оновити існуючу навичку."""
     db_skill = db.query(Skill).filter(Skill.id == skill_id).first()
@@ -85,8 +72,6 @@ async def update_skill(
     return db_skill
 
 
-
-
 async def delete_skill(db: Session, skill_id: int) -> Optional[Skill]:
     """Видалити навичку."""
     db_skill = db.query(Skill).filter(Skill.id == skill_id).first()
@@ -96,43 +81,32 @@ async def delete_skill(db: Session, skill_id: int) -> Optional[Skill]:
     return db_skill
 
 
-
-
 async def find_skill_matches(db: Session, skill_id: int) -> dict:
     """Знайти відповідності для обміну навичками."""
     skill = db.query(Skill).filter(Skill.id == skill_id).first()
     if not skill:
         return {"matches": []}
 
-
     matches = []
 
-
-    similar_skills = db.query(Skill).filter(
-        Skill.id != skill_id,
-        Skill.title.ilike(f"%{skill.title}%"),
-        Skill.category == skill.category
-    ).all()
-
+    similar_skills = (
+        db.query(Skill)
+        .filter(
+            Skill.id != skill_id,
+            Skill.title.ilike(f"%{skill.title}%"),
+            Skill.category == skill.category,
+        )
+        .all()
+    )
 
     for other_skill in similar_skills:
         if skill.want_learn and other_skill.can_teach:
-            matches.append({
-                "type": "teacher",
-                "skill": other_skill,
-                "users": other_skill.users
-            })
+            matches.append(
+                {"type": "teacher", "skill": other_skill, "users": other_skill.users}
+            )
         elif skill.can_teach and other_skill.want_learn:
-            matches.append({
-                "type": "student",
-                "skill": other_skill,
-                "users": other_skill.users
-            })
+            matches.append(
+                {"type": "student", "skill": other_skill, "users": other_skill.users}
+            )
 
-
-    return {
-        "skill": skill,
-        "matches_count": len(matches),
-        "matches": matches
-    }
-
+    return {"skill": skill, "matches_count": len(matches), "matches": matches}

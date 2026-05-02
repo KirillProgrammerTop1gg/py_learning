@@ -56,7 +56,6 @@ class UserResponse(UserBase):
     created_at: datetime
     is_active: bool
 
-
     class Config:
         from_attributes = True
 
@@ -73,11 +72,10 @@ class SkillCreate(SkillBase):
     can_teach: bool
     want_learn: bool
 
-
     @root_validator
     def check_teach_and_learn(cls, values):
-        can_teach = values.get('can_teach')
-        want_learn = values.get('want_learn')
+        can_teach = values.get("can_teach")
+        want_learn = values.get("want_learn")
         if can_teach and want_learn:
             raise ValueError("Не можна одночасно вміти і хотіти вчитися одній навичці")
         return values
@@ -98,8 +96,8 @@ class SkillResponse(SkillBase):
     want_learn: bool
     created_at: datetime
     updated_at: Optional[datetime]
-    users: List['UserResponse'] = Field(default_factory=list)
-    
+    users: List["UserResponse"] = Field(default_factory=list)
+
     class Config:
         from_attributes = True
 
@@ -116,7 +114,9 @@ class ExchangeCreate(ExchangeBase):
 
 
 class ExchangeUpdate(BaseModel):
-    status: Optional[ExchangeStatus] = None  # зробив необов’язковим, якщо треба — можна зробити обов’язковим
+    status: Optional[ExchangeStatus] = (
+        None  # зробив необов’язковим, якщо треба — можна зробити обов’язковим
+    )
     message: Optional[str] = None
 
 
@@ -127,10 +127,10 @@ class ExchangeResponse(ExchangeBase):
     status: ExchangeStatus
     created_at: datetime
     updated_at: Optional[datetime]
-    sender: 'UserResponse'
-    receiver: 'UserResponse'
-    skill: 'SkillResponse'
-    
+    sender: "UserResponse"
+    receiver: "UserResponse"
+    skill: "SkillResponse"
+
     class Config:
         from_attributes = True
 
@@ -151,9 +151,9 @@ class ReviewResponse(ReviewBase):
     reviewer_id: int
     reviewed_id: int
     created_at: datetime
-    reviewer: 'UserResponse'
-    reviewed: 'UserResponse'
-    
+    reviewer: "UserResponse"
+    reviewed: "UserResponse"
+
     class Config:
         from_attributes = True
 

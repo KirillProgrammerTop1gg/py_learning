@@ -6,13 +6,9 @@ from src.database.models import User
 from src.schemas import UserCreate, UserUpdate
 
 
-
-
 async def get_users(db: Session, skip: int = 0, limit: int = 100) -> List[User]:
     """Отримати список користувачів з пагінацією."""
     return db.query(User).offset(skip).limit(limit).all()
-
-
 
 
 async def get_user(db: Session, user_id: int) -> Optional[User]:
@@ -20,20 +16,14 @@ async def get_user(db: Session, user_id: int) -> Optional[User]:
     return db.query(User).filter(User.id == user_id).first()
 
 
-
-
 async def get_user_by_email(db: Session, email: str) -> Optional[User]:
     """Отримати користувача за email."""
     return db.query(User).filter(User.email == email).first()
 
 
-
-
 async def get_user_by_username(db: Session, username: str) -> Optional[User]:
     """Отримати користувача за username."""
     return db.query(User).filter(User.username == username).first()
-
-
 
 
 async def create_user(db: Session, user: UserCreate) -> User:
@@ -45,12 +35,8 @@ async def create_user(db: Session, user: UserCreate) -> User:
     return db_user
 
 
-
-
 async def update_user(
-    db: Session,
-    user_id: int,
-    user_update: UserUpdate
+    db: Session, user_id: int, user_update: UserUpdate
 ) -> Optional[User]:
     """Оновити дані користувача."""
     db_user = db.query(User).filter(User.id == user_id).first()
@@ -61,8 +47,6 @@ async def update_user(
         db.commit()
         db.refresh(db_user)
     return db_user
-
-
 
 
 async def get_user_skills(db: Session, user_id: int) -> Optional[List]:

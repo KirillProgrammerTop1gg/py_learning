@@ -7,10 +7,7 @@ from src.database.db import get_db
 from src.schemas import SkillCreate, SkillUpdate, SkillResponse
 from src.repository import skills as repository_skills
 
-
 router = APIRouter(prefix="/skills", tags=["skills"])
-
-
 
 
 @router.get("/", response_model=List[SkillResponse])
@@ -21,7 +18,7 @@ async def read_skills(
     can_teach: Optional[bool] = None,
     want_learn: Optional[bool] = None,
     search: Optional[str] = None,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     """
     Отримати список навичок з можливістю фільтрації.
@@ -39,8 +36,6 @@ async def read_skills(
     )
 
 
-
-
 @router.get("/{skill_id}", response_model=SkillResponse)
 async def read_skill(skill_id: int, db: Session = Depends(get_db)):
     """Отримати детальну інформацію про навичку."""
@@ -48,41 +43,33 @@ async def read_skill(skill_id: int, db: Session = Depends(get_db)):
     if not skill:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Навичка з ID {skill_id} не знайдена"
+            detail=f"Навичка з ID {skill_id} не знайдена",
         )
     return skill
-
-
 
 
 @router.post("/", response_model=SkillResponse, status_code=status.HTTP_201_CREATED)
 async def create_skill(
     skill: SkillCreate,
     user_id: int = 1,  # Тимчасово, поки немає автентифікації
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     """Створити нову навичку."""
     return await repository_skills.create_skill(db, skill, user_id)
 
 
-
-
 @router.put("/{skill_id}", response_model=SkillResponse)
 async def update_skill(
-    skill_id: int,
-    skill_update: SkillUpdate,
-    db: Session = Depends(get_db)
+    skill_id: int, skill_update: SkillUpdate, db: Session = Depends(get_db)
 ):
     """Оновити існуючу навичку."""
     skill = await repository_skills.update_skill(db, skill_id, skill_update)
     if not skill:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Навичка з ID {skill_id} не знайдена"
+            detail=f"Навичка з ID {skill_id} не знайдена",
         )
     return skill
-
-
 
 
 @router.delete("/{skill_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -92,11 +79,9 @@ async def delete_skill(skill_id: int, db: Session = Depends(get_db)):
     if not skill:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Навичка з ID {skill_id} не знайдена"
+            detail=f"Навичка з ID {skill_id} не знайдена",
         )
     return None
-
-
 
 
 @router.get("/{skill_id}/matches")
@@ -106,6 +91,6 @@ async def find_matches(skill_id: int, db: Session = Depends(get_db)):
     if not matches["skill"]:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Навичка з ID {skill_id} не знайдена"
+            detail=f"Навичка з ID {skill_id} не знайдена",
         )
     return matches
