@@ -11,9 +11,17 @@ router = APIRouter(prefix="/reviews", tags=["reviews"])
 
 @router.get("/", response_model=List[ReviewResponse])
 async def read_reviews(
-    skip: int = Query(0, ge=0, description="Кількість записів, які потрібно пропустити (пагінація)"),
-    limit: int = Query(100, ge=1, le=500, description="Максимальна кількість записів у відповіді"),
-    user_id: Optional[int] = Query(None, ge=1, description="Якщо вказано - повертає лише відгуки про конкретного користувача"),
+    skip: int = Query(
+        0, ge=0, description="Кількість записів, які потрібно пропустити (пагінація)"
+    ),
+    limit: int = Query(
+        100, ge=1, le=500, description="Максимальна кількість записів у відповіді"
+    ),
+    user_id: Optional[int] = Query(
+        None,
+        ge=1,
+        description="Якщо вказано - повертає лише відгуки про конкретного користувача",
+    ),
     db: AsyncSession = Depends(get_db),
 ):
     """Отримати список відгуків."""
@@ -38,7 +46,11 @@ async def read_review(
 @router.post("/", response_model=ReviewResponse, status_code=status.HTTP_201_CREATED)
 async def create_review(
     review: ReviewCreate,
-    reviewer_id: int = Query(1, ge=1, description="ID користувача, який залишає відгук (тимчасово, поки немає автентифікації)"),
+    reviewer_id: int = Query(
+        1,
+        ge=1,
+        description="ID користувача, який залишає відгук (тимчасово, поки немає автентифікації)",
+    ),
     db: AsyncSession = Depends(get_db),
 ):
     """Створити відгук після завершеного обміну."""
@@ -53,7 +65,11 @@ async def create_review(
 
 @router.get("/user/{user_id}", response_model=List[ReviewResponse])
 async def read_user_reviews(
-    user_id: int = Path(..., ge=1, description="Унікальний ідентифікатор користувача, чиї отримані відгуки потрібно отримати"),
+    user_id: int = Path(
+        ...,
+        ge=1,
+        description="Унікальний ідентифікатор користувача, чиї отримані відгуки потрібно отримати",
+    ),
     db: AsyncSession = Depends(get_db),
 ):
     """Отримати всі відгуки про користувача."""
@@ -62,7 +78,11 @@ async def read_user_reviews(
 
 @router.get("/user/{user_id}/rating")
 async def get_user_rating(
-    user_id: int = Path(..., ge=1, description="Унікальний ідентифікатор користувача, чий середній рейтинг потрібно розрахувати"),
+    user_id: int = Path(
+        ...,
+        ge=1,
+        description="Унікальний ідентифікатор користувача, чий середній рейтинг потрібно розрахувати",
+    ),
     db: AsyncSession = Depends(get_db),
 ):
     """Отримати середній рейтинг користувача."""

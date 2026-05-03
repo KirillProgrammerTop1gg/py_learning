@@ -1,7 +1,12 @@
 import asyncio
 from src.database.models import (
-    User, Skill, Exchange, Review,
-    Category, SkillLevel, ExchangeStatus,
+    User,
+    Skill,
+    Exchange,
+    Review,
+    Category,
+    SkillLevel,
+    ExchangeStatus,
 )
 from src.database.db import async_session_factory
 
@@ -97,9 +102,9 @@ async def seed_database():
 
             # --- Skills (з category_id замість category string) ---
             programming_id = categories[0].id  # programming
-            music_id       = categories[1].id  # music
-            sports_id      = categories[2].id  # sports
-            languages_id   = categories[3].id  # languages
+            music_id = categories[1].id  # music
+            sports_id = categories[2].id  # sports
+            languages_id = categories[3].id  # languages
 
             skills = [
                 Skill(

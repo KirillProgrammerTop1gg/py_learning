@@ -103,14 +103,13 @@ async def get_category_with_skills(
         select(Category)
         .options(selectinload(Category.skills).selectinload(Skill.users))
         .where(Category.id == category_id)
+        .execution_options(populate_existing=True)
     )
     result = await db.execute(stmt)
     return result.scalar_one_or_none()
 
 
-async def get_skills_count_per_category(
-    category_id: int, db: AsyncSession
-) -> int:
+async def get_skills_count_per_category(category_id: int, db: AsyncSession) -> int:
     """Порахувати кількість навичок у категорії."""
     stmt = select(func.count(Skill.id)).where(Skill.category_id == category_id)
     result = await db.execute(stmt)

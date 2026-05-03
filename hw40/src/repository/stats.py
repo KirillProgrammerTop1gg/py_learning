@@ -2,7 +2,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, case
 from sqlalchemy.orm import selectinload
 
-from src.database.models import Skill, User, Exchange, Review, skill_user_association, ExchangeStatus
+from src.database.models import (
+    Skill,
+    User,
+    Exchange,
+    Review,
+    skill_user_association,
+    ExchangeStatus,
+)
 
 
 async def get_top_skills(db: AsyncSession, limit: int = 10) -> list[dict]:
@@ -17,7 +24,9 @@ async def get_top_skills(db: AsyncSession, limit: int = 10) -> list[dict]:
             Skill.want_learn,
             func.count(skill_user_association.c.user_id).label("users_count"),
         )
-        .outerjoin(skill_user_association, Skill.id == skill_user_association.c.skill_id)
+        .outerjoin(
+            skill_user_association, Skill.id == skill_user_association.c.skill_id
+        )
         .group_by(Skill.id)
         .order_by(func.count(skill_user_association.c.user_id).desc())
         .limit(limit)
@@ -47,9 +56,7 @@ async def get_active_users(db: AsyncSession, limit: int = 10) -> list[dict]:
             func.coalesce(Exchange.sender_id, Exchange.receiver_id).label("user_id"),
             func.count(Exchange.id).label("exchange_count"),
         )
-        .where(
-            (Exchange.sender_id != None) | (Exchange.receiver_id != None)
-        )
+        .where((Exchange.sender_id != None) | (Exchange.receiver_id != None))
         .group_by(Exchange.sender_id, Exchange.receiver_id)
     ).subquery()
 
@@ -58,32 +65,28 @@ async def get_active_users(db: AsyncSession, limit: int = 10) -> list[dict]:
         select(
             Exchange.sender_id.label("user_id"),
             func.count(Exchange.id).label("cnt"),
-        )
-        .group_by(Exchange.sender_id)
+        ).group_by(Exchange.sender_id)
     ).subquery()
 
     received_stmt = (
         select(
             Exchange.receiver_id.label("user_id"),
             func.count(Exchange.id).label("cnt"),
-        )
-        .group_by(Exchange.receiver_id)
+        ).group_by(Exchange.receiver_id)
     ).subquery()
 
     reviews_subq = (
         select(
             Review.reviewer_id.label("user_id"),
             func.count(Review.id).label("review_count"),
-        )
-        .group_by(Review.reviewer_id)
+        ).group_by(Review.reviewer_id)
     ).subquery()
 
     skills_subq = (
         select(
             skill_user_association.c.user_id,
             func.count(skill_user_association.c.skill_id).label("skills_count"),
-        )
-        .group_by(skill_user_association.c.user_id)
+        ).group_by(skill_user_association.c.user_id)
     ).subquery()
 
     stmt = (
@@ -167,7 +170,9 @@ async def get_exchange_success_rate(db: AsyncSession) -> dict:
     cancelled = int(row.cancelled or 0)
 
     success_rate = round((completed / total * 100), 2) if total > 0 else 0.0
-    failure_rate = round(((rejected + cancelled) / total * 100), 2) if total > 0 else 0.0
+    failure_rate = (
+        round(((rejected + cancelled) / total * 100), 2) if total > 0 else 0.0
+    )
 
     return {
         "total_exchanges": total,

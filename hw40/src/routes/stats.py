@@ -18,7 +18,9 @@ async def top_skills(
 
 @router.get("/active-users")
 async def active_users(
-    limit: int = Query(10, ge=1, le=100, description="Кількість користувачів у відповіді"),
+    limit: int = Query(
+        10, ge=1, le=100, description="Кількість користувачів у відповіді"
+    ),
     db: AsyncSession = Depends(get_db),
 ):
     """Найактивніші користувачі за сумарною активністю (надіслані + отримані обміни + залишені відгуки)."""

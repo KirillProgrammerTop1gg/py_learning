@@ -10,7 +10,7 @@ from src.schemas import SkillCreate, SkillUpdate
 def _skill_load_options():
     return [
         selectinload(Skill.users),
-        selectinload(Skill.category_rel),
+        selectinload(Skill.category),
     ]
 
 
@@ -48,11 +48,7 @@ async def get_skills(
 
 async def get_skill(skill_id: int, db: AsyncSession) -> Optional[Skill]:
     """Отримати навичку за ID."""
-    stmt = (
-        select(Skill)
-        .options(*_skill_load_options())
-        .where(Skill.id == skill_id)
-    )
+    stmt = select(Skill).options(*_skill_load_options()).where(Skill.id == skill_id)
     result = await db.execute(stmt)
     return result.scalar_one_or_none()
 
@@ -76,11 +72,7 @@ async def create_skill(skill: SkillCreate, user_id: int, db: AsyncSession) -> Sk
         user.skills.append(db_skill)
         await db.commit()
 
-    stmt = (
-        select(Skill)
-        .options(*_skill_load_options())
-        .where(Skill.id == db_skill.id)
-    )
+    stmt = select(Skill).options(*_skill_load_options()).where(Skill.id == db_skill.id)
     result = await db.execute(stmt)
     return result.scalar_one()
 
@@ -126,11 +118,7 @@ async def delete_skill(skill_id: int, db: AsyncSession) -> Optional[Skill]:
 
 async def find_skill_matches(skill_id: int, db: AsyncSession) -> dict:
     """Знайти відповідності для обміну навичками в межах тієї ж категорії."""
-    stmt = (
-        select(Skill)
-        .options(*_skill_load_options())
-        .where(Skill.id == skill_id)
-    )
+    stmt = select(Skill).options(*_skill_load_options()).where(Skill.id == skill_id)
     result = await db.execute(stmt)
     skill = result.scalar_one_or_none()
     if not skill:

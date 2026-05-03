@@ -29,26 +29,32 @@ async def get_exchanges(
     """Отримати список обмінів з фільтрацією та сортуванням."""
     stmt = select(Exchange).options(*_exchange_load_options())
 
-    if status_filter:
-        stmt = stmt.where(Exchange.status == status_filter.value)
+    if status_filter is not None:
+        stmt = stmt.where(Exchange.status == status_filter)
 
-    if user_id:
+    if user_id is not None:
         stmt = stmt.where(
-            or_(Exchange.sender_id == user_id, Exchange.receiver_id == user_id)
+            or_(
+                Exchange.sender_id == user_id,
+                Exchange.receiver_id == user_id,
+            )
         )
 
-    if from_date:
+    if from_date is not None:
         stmt = stmt.where(Exchange.created_at >= from_date)
 
-    if to_date:
+    if to_date is not None:
         stmt = stmt.where(Exchange.created_at <= to_date)
 
-    order_fn = asc if sort_order == "asc" else desc
-    stmt = stmt.order_by(order_fn(Exchange.created_at))
+    if sort_order == "asc":
+        stmt = stmt.order_by(asc(Exchange.created_at), asc(Exchange.id))
+    else:
+        stmt = stmt.order_by(desc(Exchange.created_at), desc(Exchange.id))
 
     stmt = stmt.offset(skip).limit(limit)
+
     result = await db.execute(stmt)
-    return result.scalars().all()
+    return list(result.scalars().unique().all())
 
 
 async def get_exchange(exchange_id: int, db: AsyncSession) -> Optional[Exchange]:

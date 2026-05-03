@@ -12,13 +12,32 @@ router = APIRouter(prefix="/exchanges", tags=["exchanges"])
 
 @router.get("/", response_model=List[ExchangeResponse])
 async def read_exchanges(
-    skip: int = Query(0, ge=0, description="Кількість записів, які потрібно пропустити (пагінація)"),
-    limit: int = Query(100, ge=1, le=500, description="Максимальна кількість записів у відповіді"),
-    status_filter: Optional[ExchangeStatus] = Query(None, description="Фільтр за статусом обміну: pending / accepted / rejected / completed / cancelled"),
-    user_id: Optional[int] = Query(None, ge=1, description="Повертає лише обміни, де вказаний користувач є відправником або отримувачем"),
-    from_date: Optional[datetime] = Query(None, description="Фільтр від дати (ISO 8601, напр. 2024-01-01T00:00:00)"),
-    to_date: Optional[datetime] = Query(None, description="Фільтр до дати (ISO 8601, напр. 2024-12-31T23:59:59)"),
-    sort_order: str = Query("desc", pattern="^(asc|desc)$", description="Сортування за датою створення: asc (від старих) або desc (від нових)"),
+    skip: int = Query(
+        0, ge=0, description="Кількість записів, які потрібно пропустити (пагінація)"
+    ),
+    limit: int = Query(
+        100, ge=1, le=500, description="Максимальна кількість записів у відповіді"
+    ),
+    status_filter: Optional[ExchangeStatus] = Query(
+        None,
+        description="Фільтр за статусом обміну: pending / accepted / rejected / completed / cancelled",
+    ),
+    user_id: Optional[int] = Query(
+        None,
+        ge=1,
+        description="Повертає лише обміни, де вказаний користувач є відправником або отримувачем",
+    ),
+    from_date: Optional[datetime] = Query(
+        None, description="Фільтр від дати (ISO 8601, напр. 2024-01-01T00:00:00)"
+    ),
+    to_date: Optional[datetime] = Query(
+        None, description="Фільтр до дати (ISO 8601, напр. 2024-12-31T23:59:59)"
+    ),
+    sort_order: str = Query(
+        "desc",
+        pattern="^(asc|desc)$",
+        description="Сортування за датою створення: asc (від старих) або desc (від нових)",
+    ),
     db: AsyncSession = Depends(get_db),
 ):
     """Отримати список обмінів з фільтрацією та сортуванням."""
@@ -34,7 +53,9 @@ async def read_exchanges(
 
 @router.get("/my/sent", response_model=List[ExchangeResponse])
 async def read_my_sent_exchanges(
-    user_id: int = Query(1, ge=1, description="ID користувача, чиї надіслані запити потрібно отримати"),
+    user_id: int = Query(
+        1, ge=1, description="ID користувача, чиї надіслані запити потрібно отримати"
+    ),
     db: AsyncSession = Depends(get_db),
 ):
     """Отримати надіслані запити на обмін (відсортовані від новіших)."""
@@ -43,7 +64,9 @@ async def read_my_sent_exchanges(
 
 @router.get("/my/received", response_model=List[ExchangeResponse])
 async def read_my_received_exchanges(
-    user_id: int = Query(1, ge=1, description="ID користувача, чиї отримані запити потрібно отримати"),
+    user_id: int = Query(
+        1, ge=1, description="ID користувача, чиї отримані запити потрібно отримати"
+    ),
     db: AsyncSession = Depends(get_db),
 ):
     """Отримати отримані запити на обмін (відсортовані від новіших)."""
@@ -68,7 +91,11 @@ async def read_exchange(
 @router.post("/", response_model=ExchangeResponse, status_code=status.HTTP_201_CREATED)
 async def create_exchange(
     exchange: ExchangeCreate,
-    sender_id: int = Query(1, ge=1, description="ID користувача, який надсилає запит на обмін (тимчасово, поки немає автентифікації)"),
+    sender_id: int = Query(
+        1,
+        ge=1,
+        description="ID користувача, який надсилає запит на обмін (тимчасово, поки немає автентифікації)",
+    ),
     db: AsyncSession = Depends(get_db),
 ):
     """Створити запит на обмін навичками."""
@@ -88,9 +115,17 @@ async def create_exchange(
 
 @router.put("/{exchange_id}", response_model=ExchangeResponse)
 async def update_exchange_status(
-    exchange_id: int = Path(..., ge=1, description="Унікальний ідентифікатор обміну, статус якого потрібно оновити"),
+    exchange_id: int = Path(
+        ...,
+        ge=1,
+        description="Унікальний ідентифікатор обміну, статус якого потрібно оновити",
+    ),
     exchange_update: ExchangeUpdate = ...,
-    current_user_id: int = Query(1, ge=1, description="ID поточного користувача - використовується для перевірки прав на зміну статусу"),
+    current_user_id: int = Query(
+        1,
+        ge=1,
+        description="ID поточного користувача - використовується для перевірки прав на зміну статусу",
+    ),
     db: AsyncSession = Depends(get_db),
 ):
     """Оновити статус обміну (прийняти, відхилити, скасувати)."""

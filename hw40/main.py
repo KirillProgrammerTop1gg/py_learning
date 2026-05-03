@@ -1,7 +1,8 @@
 # main.py (оновлений)
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import text
 import uvicorn
 
 from src.database.db import engine, get_db
@@ -51,13 +52,12 @@ def read_root():
     }
 
 
-
 @app.get("/health")
-def health_check(db: Session = Depends(get_db)):
+async def health_check(db: AsyncSession = Depends(get_db)):
     """Перевірка стану застосунку та БД."""
     try:
         # Простий запит для перевірки з'єднання з БД
-        db.execute("SELECT 1")
+        await db.execute(text("SELECT 1"))
         db_status = "connected"
     except Exception as e:
         db_status = f"error: {str(e)}"

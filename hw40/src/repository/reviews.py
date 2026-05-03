@@ -3,7 +3,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from src.database.models import Review, Exchange, ExchangeStatus
+from src.database.models import Review, Exchange, ExchangeStatus as DBExchangeStatus
 from src.schemas import ReviewCreate
 
 
@@ -38,32 +38,40 @@ async def get_review(review_id: int, db: AsyncSession) -> Optional[Review]:
     return result.scalar_one_or_none()
 
 
-async def create_review(
-    review: ReviewCreate, reviewer_id: int, db: AsyncSession
-) -> Optional[Review]:
-    """Створити новий відгук."""
-    stmt = select(Exchange).where(Exchange.id == review.exchange_id)
+async def create_review(review, reviewer_id: int, db):
+    stmt = (
+        select(Exchange)
+        .where(Exchange.id == review.exchange_id)
+        .options(
+            selectinload(Exchange.sender),
+            selectinload(Exchange.receiver),
+            selectinload(Exchange.reviews),
+        )
+    )
     result = await db.execute(stmt)
     exchange = result.scalar_one_or_none()
 
-    if not exchange or exchange.status != ExchangeStatus.completed.value:
+    if exchange is None:
         return None
 
-    if reviewer_id not in [exchange.sender_id, exchange.receiver_id]:
+    if exchange.status != DBExchangeStatus.completed:
         return None
 
-    reviewed_id = (
-        exchange.receiver_id
-        if reviewer_id == exchange.sender_id
-        else exchange.sender_id
-    )
+    if reviewer_id == exchange.sender_id:
+        reviewed_id = exchange.receiver_id
+    elif reviewer_id == exchange.receiver_id:
+        reviewed_id = exchange.sender_id
+    else:
+        return None
 
-    stmt = select(Review).where(
+    duplicate_stmt = select(Review).where(
         Review.exchange_id == review.exchange_id,
         Review.reviewer_id == reviewer_id,
     )
-    result = await db.execute(stmt)
-    if result.scalar_one_or_none():
+    duplicate_result = await db.execute(duplicate_stmt)
+    duplicate = duplicate_result.scalar_one_or_none()
+
+    if duplicate is not None:
         return None
 
     db_review = Review(
@@ -76,9 +84,17 @@ async def create_review(
 
     db.add(db_review)
     await db.commit()
-    await db.refresh(db_review)
 
-    return await get_review(db_review.id, db)
+    stmt = (
+        select(Review)
+        .where(Review.id == db_review.id)
+        .options(
+            selectinload(Review.reviewer),
+            selectinload(Review.reviewed),
+        )
+    )
+    result = await db.execute(stmt)
+    return result.scalar_one()
 
 
 async def get_user_reviews(user_id: int, db: AsyncSession) -> List[Review]:

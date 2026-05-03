@@ -22,6 +22,7 @@ async_session_factory = async_sessionmaker(
 class Base(DeclarativeBase):
     pass
 
+
 async def create_db():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)

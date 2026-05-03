@@ -45,8 +45,12 @@ class Category(Base):
     __tablename__ = "categories"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    name: Mapped[str] = mapped_column(String(100), unique=True, nullable=False, index=True)
-    slug: Mapped[str] = mapped_column(String(100), unique=True, nullable=False, index=True)
+    name: Mapped[str] = mapped_column(
+        String(100), unique=True, nullable=False, index=True
+    )
+    slug: Mapped[str] = mapped_column(
+        String(100), unique=True, nullable=False, index=True
+    )
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     icon: Mapped[str | None] = mapped_column(String(50), nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
@@ -59,7 +63,7 @@ class Category(Base):
 
     # Relationships
     skills: Mapped[list["Skill"]] = relationship(
-        back_populates="category_rel",
+        back_populates="category", lazy="selectin"
     )
 
 
@@ -73,8 +77,8 @@ class User(Base):
     email: Mapped[str] = mapped_column(
         String(100), unique=True, nullable=False, index=True
     )
-    full_name: Mapped[str] = mapped_column(String(100))
-    bio: Mapped[str] = mapped_column(Text)
+    full_name: Mapped[str] = mapped_column(String(100), nullable=True)
+    bio: Mapped[str] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
@@ -88,24 +92,19 @@ class User(Base):
 
     # Relationships
     skills: Mapped[list["Skill"]] = relationship(
-        secondary=skill_user_association,
-        back_populates="users",
+        secondary=skill_user_association, back_populates="users", lazy="selectin"
     )
     sent_exchanges: Mapped[list["Exchange"]] = relationship(
-        foreign_keys="Exchange.sender_id",
-        back_populates="sender",
+        foreign_keys="Exchange.sender_id", back_populates="sender", lazy="selectin"
     )
     received_exchanges: Mapped[list["Exchange"]] = relationship(
-        foreign_keys="Exchange.receiver_id",
-        back_populates="receiver",
+        foreign_keys="Exchange.receiver_id", back_populates="receiver", lazy="selectin"
     )
     given_reviews: Mapped[list["Review"]] = relationship(
-        foreign_keys="Review.reviewer_id",
-        back_populates="reviewer",
+        foreign_keys="Review.reviewer_id", back_populates="reviewer", lazy="selectin"
     )
     received_reviews: Mapped[list["Review"]] = relationship(
-        foreign_keys="Review.reviewed_id",
-        back_populates="reviewed",
+        foreign_keys="Review.reviewed_id", back_populates="reviewed", lazy="selectin"
     )
 
 
@@ -132,13 +131,12 @@ class Skill(Base):
     )
 
     # Relationships
-    category_rel: Mapped["Category"] = relationship(back_populates="skills")
+    category: Mapped["Category"] = relationship(back_populates="skills")
     users: Mapped[list["User"]] = relationship(
-        secondary=skill_user_association,
-        back_populates="skills",
+        secondary=skill_user_association, back_populates="skills", lazy="selectin"
     )
     exchanges: Mapped[list["Exchange"]] = relationship(
-        back_populates="skill",
+        back_populates="skill", lazy="selectin"
     )
 
 
@@ -167,15 +165,15 @@ class Exchange(Base):
 
     # Relationships
     sender: Mapped["User"] = relationship(
-        foreign_keys=[sender_id],
-        back_populates="sent_exchanges",
+        foreign_keys=[sender_id], back_populates="sent_exchanges", lazy="selectin"
     )
     receiver: Mapped["User"] = relationship(
-        foreign_keys=[receiver_id],
-        back_populates="received_exchanges",
+        foreign_keys=[receiver_id], back_populates="received_exchanges", lazy="selectin"
     )
-    skill: Mapped["Skill"] = relationship(back_populates="exchanges")
-    reviews: Mapped[list["Review"]] = relationship(back_populates="exchange")
+    skill: Mapped["Skill"] = relationship(back_populates="exchanges", lazy="selectin")
+    reviews: Mapped[list["Review"]] = relationship(
+        back_populates="exchange", lazy="selectin"
+    )
 
 
 class Review(Base):
@@ -194,10 +192,8 @@ class Review(Base):
     # Relationships
     exchange: Mapped["Exchange"] = relationship(back_populates="reviews")
     reviewer: Mapped["User"] = relationship(
-        foreign_keys=[reviewer_id],
-        back_populates="given_reviews",
+        foreign_keys=[reviewer_id], back_populates="given_reviews", lazy="selectin"
     )
     reviewed: Mapped["User"] = relationship(
-        foreign_keys=[reviewed_id],
-        back_populates="received_reviews",
+        foreign_keys=[reviewed_id], back_populates="received_reviews", lazy="selectin"
     )

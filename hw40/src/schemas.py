@@ -22,6 +22,7 @@ class ExchangeStatus(str, Enum):
 
 # ───────────────────────────── Category schemas ──────────────────────────────
 
+
 class CategoryBase(BaseModel):
     name: str = Field(..., min_length=2, max_length=100, description="Назва категорії")
     slug: str = Field(
@@ -31,8 +32,12 @@ class CategoryBase(BaseModel):
         pattern=r"^[a-z0-9]+(?:-[a-z0-9]+)*$",
         description="URL-slug категорії (лише малі літери, цифри та дефіс)",
     )
-    description: Optional[str] = Field(None, max_length=500, description="Опис категорії")
-    icon: Optional[str] = Field(None, max_length=50, description="Назва іконки (напр. 'code', 'music')")
+    description: Optional[str] = Field(
+        None, max_length=500, description="Опис категорії"
+    )
+    icon: Optional[str] = Field(
+        None, max_length=50, description="Назва іконки (напр. 'code', 'music')"
+    )
 
 
 class CategoryCreate(CategoryBase):
@@ -63,12 +68,13 @@ class CategoryResponse(CategoryBase):
 
 
 class CategoryWithSkillsResponse(CategoryResponse):
-    skills: List["SkillResponse"] = Field(default_factory=list)
+    skills: List["SkillShortResponse"] = Field(default_factory=list)
 
     model_config = ConfigDict(from_attributes=True)
 
 
 # ───────────────────────────── User schemas ───────────────────────────────────
+
 
 class UserBase(BaseModel):
     username: str = Field(..., min_length=3, max_length=50)
@@ -107,11 +113,22 @@ class UserResponse(BaseModel):
 
 # ───────────────────────────── Skill schemas ──────────────────────────────────
 
+
 class SkillBase(BaseModel):
     title: str = Field(..., min_length=3, max_length=100)
     description: str = Field(..., min_length=10, max_length=500)
     category_id: int = Field(..., ge=1, description="ID категорії навички")
     level: SkillLevel
+
+
+class SkillShortResponse(SkillBase):
+    id: int
+    can_teach: bool
+    want_learn: bool
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class SkillCreate(SkillBase):
@@ -140,13 +157,14 @@ class SkillResponse(SkillBase):
     want_learn: bool
     created_at: datetime
     updated_at: Optional[datetime] = None
-    category_rel: Optional["CategoryResponse"] = None
+    category: Optional["CategoryResponse"] = None
     users: List["UserResponse"] = Field(default_factory=list)
 
     model_config = ConfigDict(from_attributes=True)
 
 
 # ───────────────────────────── Exchange schemas ───────────────────────────────
+
 
 class ExchangeBase(BaseModel):
     skill_id: int
@@ -179,6 +197,7 @@ class ExchangeResponse(ExchangeBase):
 
 # ───────────────────────────── Review schemas ─────────────────────────────────
 
+
 class ReviewBase(BaseModel):
     rating: int = Field(..., ge=1, le=5)
     comment: Optional[str] = Field(None, max_length=1000)
@@ -202,6 +221,7 @@ class ReviewResponse(ReviewBase):
 
 # Update forward references
 CategoryResponse.model_rebuild()
+SkillShortResponse.model_rebuild()
 CategoryWithSkillsResponse.model_rebuild()
 UserResponse.model_rebuild()
 SkillResponse.model_rebuild()
