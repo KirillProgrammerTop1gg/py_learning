@@ -161,6 +161,141 @@ Two Alembic migrations in sequence:
 `fastapi`, `uvicorn`, `pydantic`, `sqlalchemy`, `asyncpg`, `alembic`
 </details>
 ---
+<details>
+<summary>🔹 <b>hw_40 — SkillSwap API</b></summary>
+
+Async REST API платформи для обміну навичками між користувачами з JWT-автентифікацією та розширеною статистикою.
+
+### 🚀 Features
+
+- Повний CRUD для користувачів, навичок, категорій, обмінів і відгуків
+- JWT-автентифікація через Bearer-токен (`PyJWT`)
+- Перевірка прав доступу на рівні роутів (власник / адмін)
+- Система обміну навичками зі статусами: `pending → accepted → completed`
+- Відгуки тільки після завершеного обміну, без дублікатів
+- Пошук навичок за назвою/описом, фільтрація за категорією
+- Статистика: топ навичок, найактивніші юзери, success rate обмінів
+- Async SQLAlchemy + asyncpg, `selectinload` для eager loading зв'язків
+
+### 📡 Endpoints
+
+**auth**
+
+- `POST /token` — Отримати JWT-токен за username
+
+**users**
+
+- `POST /api/users/` — Реєстрація користувача
+- `GET /api/users/` — Список користувачів
+- `GET /api/users/me` — Власний профіль (🔒)
+- `GET /api/users/{user_id}` — Профіль користувача
+- `PUT /api/users/me` — Оновити власний профіль (🔒)
+- `PUT /api/users/{user_id}` — Оновити профіль (🔒 власник або адмін)
+- `GET /api/users/{user_id}/skills` — Навички користувача
+
+**categories**
+
+- `GET /api/categories/` — Список категорій (з кількістю навичок)
+- `GET /api/categories/{id}` — Категорія за ID
+- `GET /api/categories/slug/{slug}` — Категорія за slug
+- `GET /api/categories/{id}/skills` — Категорія з усіма навичками
+- `POST /api/categories/` — Створити категорію (🔒)
+- `PUT /api/categories/{id}` — Оновити категорію (🔒)
+- `DELETE /api/categories/{id}` — Видалити категорію (🔒, неможливо якщо є навички)
+
+**skills**
+
+- `GET /api/skills/` — Список навичок (фільтри: `category_id`, `can_teach`, `want_learn`, `search`)
+- `GET /api/skills/{id}` — Навичка за ID
+- `POST /api/skills/` — Створити навичку (🔒)
+- `PUT /api/skills/{id}` — Оновити навичку (🔒)
+- `DELETE /api/skills/{id}` — Видалити навичку (🔒)
+- `GET /api/skills/{id}/matches` — Знайти збіги для обміну
+
+**exchanges**
+
+- `GET /api/exchanges/` — Список обмінів (фільтри: `status`, `user_id`, `from_date`, `to_date`, `sort_order`)
+- `GET /api/exchanges/my/sent` — Надіслані запити (🔒)
+- `GET /api/exchanges/my/received` — Отримані запити (🔒)
+- `GET /api/exchanges/{id}` — Деталі обміну (🔒)
+- `POST /api/exchanges/` — Створити запит на обмін (🔒)
+- `PUT /api/exchanges/{id}` — Змінити статус обміну (🔒)
+
+**reviews**
+
+- `GET /api/reviews/` — Список відгуків
+- `GET /api/reviews/{id}` — Відгук за ID
+- `GET /api/reviews/user/{user_id}` — Відгуки про користувача
+- `GET /api/reviews/user/{user_id}/rating` — Середній рейтинг користувача
+- `POST /api/reviews/` — Залишити відгук (🔒, тільки після completed обміну)
+
+**stats**
+
+- `GET /api/stats/top-skills` — Топ навичок за кількістю користувачів
+- `GET /api/stats/active-users` — Найактивніші користувачі
+- `GET /api/stats/exchange-success-rate` — Статистика успішності обмінів
+
+### ✅ Validation & Business Logic
+
+- `can_teach` та `want_learn` не можуть бути `true` одночасно для однієї навички
+- Обмін з самим собою заборонено (HTTP **400**)
+- Прийняти/відхилити обмін може лише отримувач, скасувати — будь-який учасник
+- Відгук можна залишити лише якщо обмін має статус `completed` (HTTP **400** інакше)
+- Повторний відгук на один обмін від одного юзера заборонено
+- Видалення категорії з прив'язаними навичками → HTTP **409 Conflict**
+- Slug категорії валідується регулярним виразом: `^[a-z0-9]+(?:-[a-z0-9]+)*$`
+
+### 🔐 Authentication
+
+JWT-токен у заголовку `Authorization: Bearer <token>`. Токен містить `user_id` та `role`.  
+Для тестування: `POST /token` з `{"user_id": 1, "role": "user"}`.
+
+### 🗄 Models
+
+`User` ↔ `Skill` (many-to-many через `skill_user_association`)  
+`Skill` → `Category` (many-to-one)  
+`Exchange` → `User` (sender + receiver), `Skill`  
+`Review` → `Exchange`, `User` (reviewer + reviewed)
+
+### 🛠 Libraries
+
+`fastapi`, `uvicorn`, `pydantic`, `sqlalchemy`, `asyncpg`, `PyJWT`, `python-dotenv`
+
+</details>
+---
+<details>
+<summary>🔹 <b>hw_42 — FastAPI Photo Storage</b></summary>
+
+Async REST API for uploading and serving images with file validation.
+
+### 🚀 Features
+
+- Secure file upload with MIME-type validation
+- Streaming upload (chunk-by-chunk, no memory overload)
+- PIL-based image integrity verification
+- Path traversal protection
+- Unique filename generation with sanitization
+- Sorted photo listing by upload date
+
+### 📡 Endpoints
+
+- `POST /photos/upload/` — Upload a JPEG or PNG image (max 5MB)
+- `GET /photos/list/` — List all uploaded photos sorted by date (newest first)
+- `GET /photos/{filename}` — Retrieve a specific photo by filename
+
+### ✅ Validation & Security
+
+- Only `image/jpeg` and `image/png` allowed (HTTP **400** on invalid type)
+- File size limit: **5MB** enforced during streaming (HTTP **413** on exceed)
+- PIL `image.verify()` to reject corrupted or fake images (HTTP **400**)
+- Filenames sanitized via regex + UUID suffix to prevent conflicts
+- `Path(filename).name` to block path traversal attacks
+
+### 🛠 Libraries
+
+`fastapi`, `uvicorn`, `pillow`
+</details>
+---
 ## 🎯 Goal
 The goal of this repository is to improve backend development skills through building real-world applications using:
 - ⚙️ Flask ecosystem  

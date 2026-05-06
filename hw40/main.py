@@ -1,19 +1,20 @@
-# main.py (оновлений)
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
+from pydantic import BaseModel
+from fastapi.security import OAuth2PasswordRequestForm
 import uvicorn
-
-from src.database.db import engine, get_db
-from src.database.models import Base
+from src.token_utils import create_token
+from src.database.db import get_db
+from src.repository import users as repository_users
 from src.routes import users, skills, exchanges, reviews, stats, categories
 
 # Створюємо застосунок
 app = FastAPI(
     title="SkillSwap API",
     description="REST API для платформи обміну навичками",
-    version="2.1.0",
+    version="2.2.0",
     docs_url="/docs",
     redoc_url="/redoc",
 )
@@ -62,8 +63,22 @@ async def health_check(db: AsyncSession = Depends(get_db)):
     except Exception as e:
         db_status = f"error: {str(e)}"
 
-    return {"status": "healthy", "database": db_status, "version": "2.1.0"}
+    return {"status": "healthy", "database": db_status, "version": "2.2.0"}
+class TokenRequest(BaseModel):
+    user_id: int
+    role: str = "user"
 
+@app.post("/token")
+async def login(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: AsyncSession = Depends(get_db),
+):
+    user = await repository_users.get_user_by_username(form_data.username, db)
+    if not user:
+        raise HTTPException(status_code=400, detail="Невірний username або пароль")
+    
+    token = create_token(user.id, role="user")
+    return {"access_token": token, "token_type": "bearer"}
 
 @app.on_event("startup")
 async def startup_event():
