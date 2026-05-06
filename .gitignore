@@ -6,6 +6,7 @@ dist/
 wheels/
 *.egg-info
 .venv
+photos
 
 config.py
 admin_link.txt
