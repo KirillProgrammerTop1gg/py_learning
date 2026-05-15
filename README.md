@@ -296,6 +296,50 @@ Async REST API for uploading and serving images with file validation.
 `fastapi`, `uvicorn`, `pillow`
 </details>
 ---
+<details>
+<summary>🔹 <b>hw_44 — Real-time WebSocket Chat with Moderation</b></summary>
+
+Асинхронний чат у реальному часі на базі WebSockets з інтегрованою системою модерації, цензурою та JWT-автентифікацією.
+
+### 🚀 Features
+
+- **Real-time WebSockets**: Миттєвий обмін повідомленнями без перезавантаження сторінки.
+- **Advanced Moderation**: Система команд для адміністраторів та модераторів (`/mute`, `/ban`, `/set_moder`).
+- **Censorship Engine**: Автоматична фільтрація нецензурної лексики (EN/RU) з нормалізацією тексту (заміна схожих символів: `0` → `o`, `@` → `a`).
+- **JWT Auth**: Повноцінна реєстрація та вхід з використанням Bearer-токенів.
+- **Connection Management**: Відстеження активних користувачів, обробка відключень та системні сповіщення (приєднання/вихід).
+- **Modern UI**: Адаптивний інтерфейс у стилі "JetBrains Mono" з підтримкою автодоповнення команд через Tab.
+
+### 📡 Endpoints & Commands
+
+**HTTP / Auth**
+
+- `POST /signup` — Реєстрація нового користувача (перший користувач `admin` отримує права адміна).
+- `POST /token` — Отримання JWT-токену для підключення.
+- `GET /` — Головна сторінка чату (Jinja2).
+
+**WebSocket**
+
+- `WS /ws?token={token}` — Основний шлюз для обміну повідомленнями.
+
+**Chat Commands (🔒 Moder/Admin only)**
+
+- `/mute <username> <min>` — Тимчасове обмеження права писати в чат.
+- `/ban <username>` — Повне блокування користувача з розірванням активного з'єднання.
+- `/set_moder <username> True/False` — (Тільки адмін) Призначення або зняття прав модератора.
+- `/help` — Список доступних команд.
+
+### ✅ Logic & Validation
+
+- **Normalization**: Цензор ігнорує регістр, спецсимволи та обходить спроби замаскувати слова цифрами.
+- **Persistence**: Збереження стану мутів та банів у пам'яті сервера (In-memory).
+- **Security**: Хешування паролів через `pwdlib` та перевірка терміну дії токена при кожному WS-підключенні.
+
+### 🛠 Libraries
+
+`fastapi`, `uvicorn`, `PyJWT`, `pwdlib`, `jinja2`, `requests`, `unicodedata`
+</details>
+---
 ## 🎯 Goal
 The goal of this repository is to improve backend development skills through building real-world applications using:
 - ⚙️ Flask ecosystem  

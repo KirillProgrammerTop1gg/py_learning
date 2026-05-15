@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WS Chat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Unbounded:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:       #0d0f14;
+            --surface:  #161922;
+            --border:   #252a36;
+            --accent:   #4ade80;
+            --accent2:  #22d3ee;
+            --danger:   #f87171;
+            --warn:     #fbbf24;
+            --text:     #e2e8f0;
+            --muted:    #64748b;
+            --mono:     'JetBrains Mono', monospace;
+            --display:  'Unbounded', sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--mono);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* ── AUTH ─────────────────────────────────────────────── */
+        #auth-screen { width: 100%; max-width: 400px; }
+
+        .logo { font-family: var(--display); font-size: 1.4rem; color: var(--accent); margin-bottom: 8px; letter-spacing: -0.03em; }
+        .logo span { color: var(--accent2); }
+        .tagline { color: var(--muted); font-size: 0.75rem; margin-bottom: 32px; }
+
+        .tabs {
+            display: flex; gap: 4px; margin-bottom: 24px;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 8px; padding: 4px;
+        }
+        .tab-btn {
+            flex: 1; padding: 8px; background: none; border: none;
+            color: var(--muted); font-family: var(--mono); font-size: 0.8rem;
+            cursor: pointer; border-radius: 5px; transition: all 0.15s;
+        }
+        .tab-btn.active { background: var(--border); color: var(--text); }
+
+        .auth-form { display: flex; flex-direction: column; gap: 12px; }
+        .field-label { display: block; font-size: 0.7rem; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.08em; }
+
+        input[type="text"], input[type="password"] {
+            width: 100%; padding: 10px 14px; background: var(--surface);
+            border: 1px solid var(--border); border-radius: 6px;
+            color: var(--text); font-family: var(--mono); font-size: 0.85rem;
+            outline: none; transition: border-color 0.15s;
+        }
+        input:focus { border-color: var(--accent); }
+
+        .btn-primary {
+            padding: 11px; background: var(--accent); color: #0d0f14;
+            border: none; border-radius: 6px; font-family: var(--mono);
+            font-weight: 700; font-size: 0.85rem; cursor: pointer;
+            transition: opacity 0.15s; margin-top: 4px;
+        }
+        .btn-primary:hover { opacity: 0.85; }
+        .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .auth-error { font-size: 0.78rem; color: var(--danger); min-height: 18px; }
+
+        /* ── CHAT LAYOUT ──────────────────────────────────────── */
+        #chat-screen {
+            display: none;
+            width: 100%;
+            max-width: 960px;
+            height: 90vh;
+            gap: 12px;
+        }
+
+        /* main column */
+        .chat-main {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 14px 20px; border-bottom: 1px solid var(--border); background: var(--bg);
+            flex-shrink: 0;
+        }
+        .chat-title { font-family: var(--display); font-size: 0.9rem; color: var(--accent); }
+
+        .status-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--muted); display: inline-block; margin-right: 6px; transition: background 0.3s;
+        }
+        .status-dot.connected { background: var(--accent); box-shadow: 0 0 6px var(--accent); }
+        .status-dot.error     { background: var(--danger); }
+        .status-text { font-size: 0.72rem; color: var(--muted); }
+
+        .user-badge { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; }
+        .user-name  { color: var(--accent2); }
+
+        .btn-logout {
+            background: none; border: 1px solid var(--border); color: var(--muted);
+            font-family: var(--mono); font-size: 0.7rem; padding: 4px 10px;
+            border-radius: 4px; cursor: pointer; transition: all 0.15s;
+        }
+        .btn-logout:hover { border-color: var(--danger); color: var(--danger); }
+
+        #messages {
+            flex: 1; overflow-y: auto; padding: 16px 20px;
+            display: flex; flex-direction: column; gap: 6px;
+        }
+        #messages::-webkit-scrollbar { width: 4px; }
+        #messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+        .msg {
+            font-size: 0.82rem; line-height: 1.5; padding: 6px 10px;
+            border-radius: 4px; border-left: 2px solid transparent;
+            animation: fadeIn 0.15s ease; white-space: pre-wrap;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; } }
+        .msg.system { color: var(--muted); border-left-color: var(--border); font-style: italic; }
+        .msg.own    { color: var(--accent); border-left-color: var(--accent); }
+        .msg.other  { color: var(--text);   border-left-color: var(--accent2); }
+        .msg.server { color: var(--warn);   border-left-color: var(--warn); }
+
+        .chat-input-area {
+            display: flex; gap: 8px; padding: 14px 20px;
+            border-top: 1px solid var(--border); background: var(--bg); flex-shrink: 0;
+        }
+        .chat-input-area input {
+            flex: 1; padding: 9px 14px; background: var(--surface);
+            border: 1px solid var(--border); border-radius: 6px;
+            color: var(--text); font-family: var(--mono); font-size: 0.85rem;
+            outline: none; transition: border-color 0.15s;
+        }
+        .chat-input-area input:focus { border-color: var(--accent); }
+
+        .btn-send {
+            padding: 9px 18px; background: var(--accent); color: #0d0f14;
+            border: none; border-radius: 6px; font-family: var(--mono);
+            font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: opacity 0.15s;
+        }
+        .btn-send:hover   { opacity: 0.85; }
+        .btn-send:disabled { opacity: 0.35; cursor: not-allowed; }
+
+        /* ── COMMANDS SIDEBAR ─────────────────────────────────── */
+        .chat-sidebar {
+            width: 240px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .sidebar-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .sidebar-title {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+            padding: 10px 14px 8px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg);
+        }
+
+        .cmd-list { padding: 10px 0; }
+
+        .cmd-item {
+            padding: 8px 14px;
+            cursor: pointer;
+            transition: background 0.12s;
+            border-bottom: 1px solid transparent;
+        }
+        .cmd-item:hover { background: rgba(255,255,255,0.04); }
+
+        .cmd-name {
+            font-size: 0.78rem;
+            color: var(--accent2);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .cmd-name .cmd-badge {
+            font-size: 0.6rem;
+            background: rgba(251,191,36,0.15);
+            color: var(--warn);
+            border: 1px solid rgba(251,191,36,0.25);
+            border-radius: 3px;
+            padding: 1px 5px;
+            font-weight: 400;
+        }
+        .cmd-badge.admin { background: rgba(248,113,113,0.12); color: var(--danger); border-color: rgba(248,113,113,0.25); }
+
+        .cmd-desc { font-size: 0.7rem; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+        .cmd-syntax { font-size: 0.68rem; color: var(--border); margin-top: 4px; font-style: italic; }
+
+        /* users online */
+        .online-list { padding: 8px 0; }
+        .online-item {
+            padding: 6px 14px;
+            font-size: 0.75rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .online-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+
+        /* autocomplete hint */
+        .input-hint {
+            font-size: 0.68rem;
+            color: var(--muted);
+            padding: 0 20px 10px;
+            background: var(--bg);
+        }
+
+        @media (max-width: 640px) {
+            .chat-sidebar { display: none; }
+            #chat-screen  { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ══ AUTH ══════════════════════════════════════════════════ -->
+<div id="auth-screen">
+    <div class="logo">ws<span>/</span>chat</div>
+    <div class="tagline">// real-time · JWT secured · WebSocket</div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('login')">Вхід</button>
+        <button class="tab-btn" onclick="switchTab('signup')">Реєстрація</button>
+    </div>
+
+    <div class="auth-form">
+        <div>
+            <label class="field-label">Username</label>
+            <input type="text" id="auth-username" placeholder="your_username" autocomplete="username" />
+        </div>
+        <div>
+            <label class="field-label">Password</label>
+            <input type="password" id="auth-password" placeholder="••••••••" autocomplete="current-password" />
+        </div>
+        <div class="auth-error" id="auth-error"></div>
+        <button class="btn-primary" id="auth-btn" onclick="handleAuth()">Увійти</button>
+    </div>
+</div>
+
+<!-- ══ CHAT ══════════════════════════════════════════════════ -->
+<div id="chat-screen">
+
+    <!-- main -->
+    <div class="chat-main">
+        <div class="chat-header">
+            <div class="chat-title">ws/chat</div>
+            <div style="display:flex;align-items:center;gap:6px;">
+                <span class="status-dot" id="status-dot"></span>
+                <span class="status-text" id="status-text">відключено</span>
+            </div>
+            <div class="user-badge">
+                <span class="user-name" id="current-username"></span>
+                <button class="btn-logout" onclick="logout()">вийти</button>
+            </div>
+        </div>
+
+        <ul id="messages"></ul>
+
+        <div class="input-hint" id="input-hint" style="display:none">
+            Натисніть Tab для автодоповнення команди
+        </div>
+
+        <div class="chat-input-area">
+            <input type="text" id="messageText" placeholder="Введіть повідомлення або /команду..." autocomplete="off" />
+            <button class="btn-send" id="send-btn" onclick="sendMessage()" disabled>→</button>
+        </div>
+    </div>
+
+    <!-- sidebar -->
+    <div class="chat-sidebar">
+
+        <div class="sidebar-box">
+            <div class="sidebar-title">// команди</div>
+            <div class="cmd-list">
+
+                <div class="cmd-item" onclick="insertCommand('/help')">
+                    <div class="cmd-name">/help</div>
+                    <div class="cmd-desc">Показати список команд у чаті</div>
+                </div>
+
+                <div class="cmd-item" onclick="insertCommand('/mute ')">
+                    <div class="cmd-name">
+                        /mute
+                        <span class="cmd-badge">moder</span>
+                    </div>
+                    <div class="cmd-desc">Заглушити користувача на N хвилин</div>
+                    <div class="cmd-syntax">/mute &lt;username&gt; &lt;minutes&gt;</div>
+                </div>
+
+                <div class="cmd-item" onclick="insertCommand('/unmute ')">
+                    <div class="cmd-name">
+                        /unmute
+                        <span class="cmd-badge">moder</span>
+                    </div>
+                    <div class="cmd-desc">Зняти заглушення</div>
+                    <div class="cmd-syntax">/unmute &lt;username&gt;</div>
+                </div>
+
+                <div class="cmd-item" onclick="insertCommand('/ban ')">
+                    <div class="cmd-name">
+                        /ban
+                        <span class="cmd-badge">moder</span>
+                    </div>
+                    <div class="cmd-desc">Заблокувати і відключити користувача</div>
+                    <div class="cmd-syntax">/ban &lt;username&gt;</div>
+                </div>
+
+                <div class="cmd-item" onclick="insertCommand('/unban ')">
+                    <div class="cmd-name">
+                        /unban
+                        <span class="cmd-badge">moder</span>
+                    </div>
+                    <div class="cmd-desc">Розблокувати користувача</div>
+                    <div class="cmd-syntax">/unban &lt;username&gt;</div>
+                </div>
+
+                <div class="cmd-item" onclick="insertCommand('/set_moder ')">
+                    <div class="cmd-name">
+                        /set_moder
+                        <span class="cmd-badge admin">admin</span>
+                    </div>
+                    <div class="cmd-desc">Видати або забрати права модератора</div>
+                    <div class="cmd-syntax">/set_moder &lt;username&gt; True/False</div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    let currentTab = 'login';
+    let ws = null;
+    let token = null;
+    let username = null;
+    let reconnectTimer = null;
+    let reconnectDelay = 1000;
+
+    const COMMANDS = ['/help', '/mute ', '/unmute ', '/ban ', '/unban ', '/set_moder '];
+
+    /* ── таби ── */
+    function switchTab(tab) {
+        currentTab = tab;
+        document.querySelectorAll('.tab-btn').forEach((b, i) => {
+            b.classList.toggle('active', (i === 0 && tab === 'login') || (i === 1 && tab === 'signup'));
+        });
+        document.getElementById('auth-btn').textContent = tab === 'login' ? 'Увійти' : 'Зареєструватись';
+        document.getElementById('auth-error').textContent = '';
+    }
+
+    /* ── автентифікація ── */
+    async function handleAuth() {
+        const uname = document.getElementById('auth-username').value.trim();
+        const pass  = document.getElementById('auth-password').value;
+        const errEl = document.getElementById('auth-error');
+        const btn   = document.getElementById('auth-btn');
+
+        if (!uname || !pass) { errEl.textContent = 'Заповніть всі поля'; return; }
+
+        btn.disabled = true;
+        errEl.textContent = '';
+
+        const endpoint = currentTab === 'login' ? '/token' : '/signup';
+        const body = new URLSearchParams({ username: uname, password: pass });
+
+        try {
+            const res  = await fetch(endpoint, { method: 'POST', body });
+            const data = await res.json();
+
+            if (!res.ok) { errEl.textContent = data.detail || 'Помилка сервера'; return; }
+
+            if (currentTab === 'signup') {
+                switchTab('login');
+                errEl.style.color = 'var(--accent)';
+                errEl.textContent = '✓ Акаунт створено. Входимо...';
+                setTimeout(() => {
+                    errEl.style.color = '';
+                    // FIX: after signup auto-login fetches a token properly
+                    handleAuth();
+                }, 800);
+                return;
+            }
+
+            token    = data.access_token;
+            username = uname;
+            showChat();
+
+        } catch {
+            errEl.textContent = 'Не вдалося підключитись до сервера';
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    document.getElementById('auth-password').addEventListener('keydown', e => { if (e.key === 'Enter') handleAuth(); });
+    document.getElementById('auth-username').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('auth-password').focus(); });
+
+    /* ── чат ── */
+    function showChat() {
+        document.getElementById('auth-screen').style.display = 'none';
+        const chatEl = document.getElementById('chat-screen');
+        chatEl.style.display = 'flex';
+        document.getElementById('current-username').textContent = username;
+        connectWS();
+    }
+
+    /* ── WebSocket ── */
+    function connectWS() {
+        clearTimeout(reconnectTimer);
+        setStatus('connecting');
+
+        const proto = location.protocol === 'https:' ? 'wss' : 'ws';
+        ws = new WebSocket(`${proto}://${location.host}/ws?token=${encodeURIComponent(token)}`);
+
+        ws.onopen = () => {
+            setStatus('connected');
+            reconnectDelay = 1000;
+            document.getElementById('send-btn').disabled = false;
+            document.getElementById('messageText').focus();
+        };
+
+        ws.onmessage = ({ data }) => addMessage(data);
+
+        ws.onclose = (event) => {
+            document.getElementById('send-btn').disabled = true;
+            setStatus('disconnected');
+            if (event.code === 1008) {
+                addMessage('⚠️ Токен недійсний або закінчився. Увійдіть знову.', 'system');
+                logout();
+                return;
+            }
+            if (!event.wasClean) {
+                addMessage(`⚠️ З'єднання втрачено. Перепідключення через ${reconnectDelay / 1000}с...`, 'system');
+                reconnectTimer = setTimeout(() => {
+                    reconnectDelay = Math.min(reconnectDelay * 2, 30000);
+                    connectWS();
+                }, reconnectDelay);
+            }
+        };
+
+        ws.onerror = (err) => { console.error('WS error:', err); setStatus('error'); };
+    }
+
+    /* ── надсилання ── */
+    function sendMessage() {
+        const input = document.getElementById('messageText');
+        const msg   = input.value.trim();
+        if (!msg || !ws || ws.readyState !== WebSocket.OPEN) return;
+        ws.send(msg);
+        input.value = '';
+        input.focus();
+        document.getElementById('input-hint').style.display = 'none';
+    }
+
+    /* ── Tab-autocomplete + hint ── */
+    document.getElementById('messageText').addEventListener('keydown', e => {
+        if (e.key === 'Enter') { sendMessage(); return; }
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            const val = e.target.value;
+            const match = COMMANDS.find(c => c.startsWith(val) && c !== val);
+            if (match) e.target.value = match;
+        }
+    });
+
+    document.getElementById('messageText').addEventListener('input', e => {
+        const val = e.target.value;
+        const hint = document.getElementById('input-hint');
+        hint.style.display = val.startsWith('/') && COMMANDS.some(c => c.startsWith(val) && c !== val)
+            ? 'block' : 'none';
+    });
+
+    /* ── вставити команду з сайдбару ── */
+    function insertCommand(cmd) {
+        const input = document.getElementById('messageText');
+        input.value = cmd;
+        input.focus();
+        // place cursor at end
+        input.setSelectionRange(cmd.length, cmd.length);
+    }
+
+    /* ── повідомлення ── */
+    function addMessage(text, type = null) {
+        const messages = document.getElementById('messages');
+        const li = document.createElement('li');
+        li.className = 'msg';
+
+        if (type) {
+            li.classList.add(type);
+        } else if (text.startsWith('Ви:')) {
+            li.classList.add('own');
+        } else if (
+            text.includes('приєднався') || text.includes('покинув') ||
+            text.startsWith('⚠') || text.startsWith('🟢') || text.startsWith('🔴')
+        ) {
+            li.classList.add('system');
+        } else if (
+            text.startsWith('🔇') || text.startsWith('🔊') || text.startsWith('⛔') ||
+            text.startsWith('✅') || text.startsWith('🛡️') || text.startsWith('📋') ||
+            text.startsWith('Недостатньо') || text.startsWith('Формат') || text.startsWith('Тільки')
+        ) {
+            li.classList.add('server');
+        } else {
+            li.classList.add('other');
+        }
+
+        li.textContent = text;
+        messages.appendChild(li);
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    /* ── статус ── */
+    function setStatus(state) {
+        const dot  = document.getElementById('status-dot');
+        const text = document.getElementById('status-text');
+        dot.className = 'status-dot';
+        const map = {
+            connected:    ['connected', 'підключено'],
+            disconnected: ['',          'відключено'],
+            connecting:   ['',          'підключення...'],
+            error:        ['error',     'помилка'],
+        };
+        const [cls, label] = map[state] || ['', state];
+        if (cls) dot.classList.add(cls);
+        text.textContent = label;
+    }
+
+    /* ── вихід ── */
+    function logout() {
+        clearTimeout(reconnectTimer);
+        if (ws) { ws.onclose = null; ws.close(); ws = null; }
+        token = username = null;
+        document.getElementById('messages').innerHTML = '';
+        document.getElementById('chat-screen').style.display = 'none';
+        document.getElementById('auth-screen').style.display = '';
+        document.getElementById('auth-password').value = '';
+        document.getElementById('auth-error').textContent = '';
+        setStatus('disconnected');
+    }
+</script>
+</body>
+</html>
