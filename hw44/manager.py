@@ -6,6 +6,9 @@ from enum import Enum
 
 logging.basicConfig(level=logging.INFO)
 
+WARN_MUTE_THRESHOLD = 3
+WARN_AUTO_MUTE_MINUTES = 10
+
 
 class ConnectionManager:
     def __init__(self):
@@ -57,6 +60,8 @@ class ModerationManager:
         self.users: dict = {}
         self.muted_users: dict[str, datetime] = {}
         self.banned_users: set[str] = set()
+        self.warned_users: dict[str, int] = {}
+        self.kicked_users: set[str] = set()
         self.audit_logger = logging.getLogger("moderation_audit")
         self.audit_logger.setLevel(logging.INFO)
 
@@ -132,6 +137,25 @@ class ModerationManager:
         user_data["role"] = UserRole.MODERATOR if value else UserRole.USER
         self.users[user_id] = user_data
         return True
+
+    def warn_user(self, username: str) -> int:
+        self.warned_users[username] = self.warned_users.get(username, 0) + 1
+        return self.warned_users[username]
+
+    def get_warns(self, username: str) -> int:
+        return self.warned_users.get(username, 0)
+
+    def clear_warns(self, username: str):
+        self.warned_users.pop(username, None)
+
+    def mark_kicked(self, username: str):
+        self.kicked_users.add(username)
+
+    def consume_kick(self, username: str) -> bool:
+        if username in self.kicked_users:
+            self.kicked_users.discard(username)
+            return True
+        return False
 
     async def handle_command(self, sender_username: str, message: str, manager):
         parts = message.split()
@@ -215,6 +239,81 @@ class ModerationManager:
             except IndexError:
                 return "Формат: /set_moder username True/False"
 
+        elif command == "/warn":
+            if not self.has_moder_permissions(sender_username):
+                return "Недостатньо прав"
+            try:
+                target_username = parts[1]
+                warn_count = self.warn_user(target_username)
+                self.audit_log(
+                    "WARN", sender_username, target_username, f"warns={warn_count}"
+                )
+
+                if warn_count >= WARN_MUTE_THRESHOLD:
+                    self.mute_user(target_username, WARN_AUTO_MUTE_MINUTES)
+                    self.clear_warns(target_username)
+                    self.audit_log(
+                        "AUTO_MUTE",
+                        "system",
+                        target_username,
+                        f"triggered after {WARN_MUTE_THRESHOLD} warns",
+                    )
+                    await manager.broadcast(
+                        f"⚠️ {target_username} отримав {WARN_MUTE_THRESHOLD}-е попередження "
+                        f"і автоматично замучений на {WARN_AUTO_MUTE_MINUTES} хв"
+                    )
+                else:
+                    remaining = WARN_MUTE_THRESHOLD - warn_count
+                    await manager.broadcast(
+                        f"⚠️ {target_username} отримав попередження "
+                        f"({warn_count}/{WARN_MUTE_THRESHOLD}). "
+                        f"Ще {remaining} — і мут!"
+                    )
+                    for conn in list(manager.active_connections):
+                        if manager.get_username(conn) == target_username:
+                            await manager.send_personal_message(
+                                f"🚨 Вам видано попередження від {sender_username} "
+                                f"({warn_count}/{WARN_MUTE_THRESHOLD}). "
+                                f"При {WARN_MUTE_THRESHOLD} варнах — автомут.",
+                                conn,
+                            )
+            except IndexError:
+                return "Формат: /warn username"
+
+        elif command == "/kick":
+            if not self.has_moder_permissions(sender_username):
+                return "Недостатньо прав"
+            try:
+                target_username = parts[1]
+                reason = " ".join(parts[2:]) if len(parts) > 2 else "без причини"
+
+                kicked = False
+                for conn in list(manager.active_connections):
+                    if manager.get_username(conn) == target_username:
+                        try:
+                            await manager.send_personal_message(
+                                f"👢 Вас кікнули ({sender_username}): {reason}. "
+                                f"Ви можете зайти знову.",
+                                conn,
+                            )
+                        except Exception:
+                            pass
+                        await conn.close(code=1000)
+                        kicked = True
+
+                self.audit_log(
+                    "KICK", sender_username, target_username, f"reason={reason}"
+                )
+
+                if kicked:
+                    await manager.broadcast(
+                        f"👢 {target_username} кікнутий з чату ({reason})"
+                    )
+                else:
+                    return f"Користувач {target_username} не онлайн"
+            except IndexError:
+                return "Формат: /kick username [reason]"
+
         elif command == "/help":
             return (
                 "📋 Команди:\n"
@@ -222,6 +321,8 @@ class ModerationManager:
                 "/unmute <username> — розмутити\n"
                 "/ban <username> — забанити\n"
                 "/unban <username> — розбанити\n"
+                "/warn <username> — попередження (3 варни = автомут 10 хв)\n"
+                "/kick <username> [reason] — кікнути з сесії (може зайти знову)\n"
                 "/set_moder <username> True/False — (admin) видати/забрати moder"
             )
 

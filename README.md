@@ -304,7 +304,7 @@ Async REST API for uploading and serving images with file validation.
 ### 🚀 Features
 
 - **Real-time WebSockets**: Миттєвий обмін повідомленнями без перезавантаження сторінки.
-- **Advanced Moderation**: Система команд для адміністраторів та модераторів (`/mute`, `/ban`, `/set_moder`).
+- **Advanced Moderation**: Система команд для адміністраторів та модераторів (`/mute`, `/ban`, `/set_moder`, `/warn`, `/kick`).
 - **Censorship Engine**: Автоматична фільтрація нецензурної лексики (EN/RU) з нормалізацією тексту (заміна схожих символів: `0` → `o`, `@` → `a`).
 - **JWT Auth**: Повноцінна реєстрація та вхід з використанням Bearer-токенів.
 - **Connection Management**: Відстеження активних користувачів, обробка відключень та системні сповіщення (приєднання/вихід).
@@ -325,6 +325,8 @@ Async REST API for uploading and serving images with file validation.
 **Chat Commands (🔒 Moder/Admin only)**
 
 - `/mute <username> <min>` — Тимчасове обмеження права писати в чат.
+- `/kick <username> <purpose>` — Розірвання активного з'єднання користувача з чатом з причиною.
+- `/warn <username>` — Надання зауваження користувачу, після 3 заувжень мут на 10 хвилин.
 - `/ban <username>` — Повне блокування користувача з розірванням активного з'єднання.
 - `/set_moder <username> True/False` — (Тільки адмін) Призначення або зняття прав модератора.
 - `/help` — Список доступних команд.

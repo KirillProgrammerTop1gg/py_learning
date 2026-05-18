@@ -346,6 +346,24 @@
                     <div class="cmd-syntax">/unban &lt;username&gt;</div>
                 </div>
 
+                <div class="cmd-item" onclick="insertCommand('/warn ')">
+                    <div class="cmd-name">
+                        /warn
+                        <span class="cmd-badge">moder</span>
+                    </div>
+                    <div class="cmd-desc">Видати попередження. 3 варни — автомут на 10 хв</div>
+                    <div class="cmd-syntax">/warn &lt;username&gt;</div>
+                </div>
+
+                <div class="cmd-item" onclick="insertCommand('/kick ')">
+                    <div class="cmd-name">
+                        /kick
+                        <span class="cmd-badge">moder</span>
+                    </div>
+                    <div class="cmd-desc">Кікнути з сесії (не бан — може зайти знову)</div>
+                    <div class="cmd-syntax">/kick &lt;username&gt; [причина]</div>
+                </div>
+
                 <div class="cmd-item" onclick="insertCommand('/set_moder ')">
                     <div class="cmd-name">
                         /set_moder
@@ -369,7 +387,7 @@
     let reconnectTimer = null;
     let reconnectDelay = 1000;
 
-    const COMMANDS = ['/help', '/mute ', '/unmute ', '/ban ', '/unban ', '/set_moder '];
+    const COMMANDS = ['/help', '/mute ', '/unmute ', '/ban ', '/unban ', '/warn ', '/kick ', '/set_moder '];
 
     /* ── таби ── */
     function switchTab(tab) {
@@ -530,6 +548,7 @@
         } else if (
             text.startsWith('🔇') || text.startsWith('🔊') || text.startsWith('⛔') ||
             text.startsWith('✅') || text.startsWith('🛡️') || text.startsWith('📋') ||
+            text.startsWith('⚠️') || text.startsWith('👢') || text.startsWith('🚨') ||
             text.startsWith('Недостатньо') || text.startsWith('Формат') || text.startsWith('Тільки')
         ) {
             li.classList.add('server');
