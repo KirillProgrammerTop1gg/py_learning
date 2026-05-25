@@ -108,22 +108,21 @@ def matrix_worker(size: int):
     b = np.random.rand(size, size)
     result = np.dot(a, b)
 
-    return {"shape": [size, size], "first_row": result[0].tolist(), "checksum": float(result.sum())}
-
-
-def stats_chunk_worker(arr: list[float]):
-    n = len(arr)
-    total = sum(arr)
-    sum_sq = sum(x * x for x in arr)
-    sorted_part = sorted(arr)
-
     return {
-        "n": n,
-        "sum": total,
-        "sum_sq": sum_sq,
-        "sorted": sorted_part
+        "shape": [size, size],
+        "first_row": result[0].tolist(),
+        "checksum": float(result.sum()),
     }
-    
+
+
+def stats_worker(arr: list[float]):
+    a = np.array(arr, dtype=np.float64)
+    return {
+        "mean": float(np.mean(a)),
+        "median": float(np.median(a)),
+        "std": float(np.std(a)),  # population std, як і зараз
+    }
+
 
 async def run_process(func, *args):
     global executor
@@ -171,43 +170,9 @@ async def calculate(data: CalculateRequest):
             )
 
         elif data.operation == "stats":
-            arr = data.array
-            workers = os.cpu_count() or 4
-            chunk_size = max(1, total // workers)
-            chunks = [
-                arr[i:i + chunk_size]
-                for i in range(0, len(arr), chunk_size)
-            ]
-            tasks = [
-                asyncio.wait_for(
-                    run_process(stats_chunk_worker, chunk),
-                    timeout=30
-                )
-                for chunk in chunks
-            ]
-            chunk_results = await asyncio.gather(*tasks)
-
-            total_n = sum(x["n"] for x in chunk_results)
-            total_sum = sum(x["sum"] for x in chunk_results)
-            total_sum_sq = sum(x["sum_sq"] for x in chunk_results)
-
-            mean = total_sum / total_n
-            variance = (total_sum_sq / total_n) - (mean ** 2)
-            std = math.sqrt(max(variance, 0))
-
-            merged = list(heapq.merge(*[x["sorted"] for x in chunk_results]))
-            
-            mid = total_n // 2
-            if total_n % 2 == 0:
-                median = (merged[mid - 1] + merged[mid]) / 2
-            else:
-                median = merged[mid]
-
-            result = {
-                "mean": mean,
-                "median": median,
-                "std": std
-            }
+            result = await asyncio.wait_for(
+                run_process(stats_worker, data.array), timeout=30
+            )
 
         else:
             raise HTTPException(status_code=400, detail="Invalid operation")

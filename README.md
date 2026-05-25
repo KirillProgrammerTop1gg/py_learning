@@ -342,6 +342,70 @@ Async REST API for uploading and serving images with file validation.
 `fastapi`, `uvicorn`, `PyJWT`, `pwdlib`, `jinja2`, `requests`, `unicodedata`
 </details>
 ---
+<details>
+<summary>🔹 <b>hw_?? — FastAPI User Dashboard</b></summary>
+
+REST API для агрегації даних користувача з зовнішнього джерела (JSONPlaceholder).
+
+### 🚀 Features
+
+- Паралельні HTTP-запити через `ThreadPoolExecutor`
+- Агрегація постів, альбомів та фото користувача
+- Обробка помилок із логуванням (timeout / HTTP-помилки)
+- Вимірювання часу виконання запиту
+
+### 📡 Endpoints
+
+- `GET /user-dashboard/{user_id}` — Повертає профіль користувача, кількість постів, альбомів і фото
+
+### ✅ Validation & Error Handling
+
+- `404` якщо користувача не знайдено в зовнішньому API
+- Логування помилок окремо для timeout та HTTP-помилок сервера
+
+### 🛠 Libraries
+
+`fastapi`, `uvicorn`, `requests`
+
+</details>
+
+---
+
+<details>
+<summary>🔹 <b>hw_46 — FastAPI CPU-Bound Calculator</b></summary>
+
+Async REST API для важких обчислень із використанням `ProcessPoolExecutor` та паралельної обробки.
+
+### 🚀 Features
+
+- Паралельне виконання CPU-bound задач у окремих процесах
+- Чанкова обробка великих даних (простих чисел, статистики)
+- Валідація вхідних даних через Pydantic v2 (`field_validator`, `model_validator`)
+- Таймаут на виконання кожної операції
+
+### 📡 Endpoints
+
+- `POST /calculate` — Виконати обчислення (factorial / primes / matrix / stats)
+
+### ✅ Operations
+
+- `factorial` — Факторіал числа до 1000, повертає результат і кількість цифр
+- `primes` — Усі прості числа в діапазоні до 10 000 000 (паралельно по чанках)
+- `matrix` — Множення двох випадкових матриць розміром до 200×200 (numpy)
+- `stats` — Mean / median / std для масиву до 1 000 000 елементів (numpy)
+
+### ✅ Validation & Error Handling
+
+- `408` при перевищенні таймауту обчислення
+- Заборона `NaN` / `Inf` у масиві
+- Перевірка обов'язкових полів залежно від операції
+
+### 🛠 Libraries
+
+`fastapi`, `uvicorn`, `pydantic`, `numpy`
+
+</details>
+---
 ## 🎯 Goal
 The goal of this repository is to improve backend development skills through building real-world applications using:
 - ⚙️ Flask ecosystem  
