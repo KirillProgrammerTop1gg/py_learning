@@ -1,0 +1,67 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Перевірка досвіду - TechBlog{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Перевірка досвіду</h1>
+    <p>🎓 Визнач свій рівень у програмуванні на основі практичного стажу</p>
+</div>
+
+<div class="experience-wrapper">
+    <div class="premium-card">
+        <!-- Заголовок форми -->
+        <div class="card-header">
+            <h2>Скільки років ти програмуєш?</h2>
+        </div>
+
+        <!-- Тіло форми -->
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="years" class="form-label">Введи кількість повних років:</label>
+                    <input type="number" class="form-control" id="years" name="years" 
+                           min="0" max="50" placeholder="Наприклад: 3" required>
+                </div>
+                <button type="submit" class="btn-premium" style="width: 100%;">Аналізувати досвід</button>
+            </form>
+
+            <!-- Відображення результату після відправки форми -->
+            {% if years is not None %}
+                <div class="result-box">
+                    {% if years == 0 %}
+                        <div class="custom-alert custom-alert-info">
+                            <div class="result-heading">
+                                <span>🎉</span> Новачок (Beginner)
+                            </div>
+                            <p class="result-text">Твій досвід: <strong>{{ years }} років/років</strong>. Вітаємо з початком дивовижної програмістської подорожі! Попереду багато цікавого!</p>
+                        </div>
+                    {% elif years <= 2 %}
+                        <div class="custom-alert custom-alert-success">
+                            <div class="result-heading" style="color: var(--accent);">
+                                <span>💪</span> Junior Developer
+                            </div>
+                            <p class="result-text">Твій досвід: <strong>{{ years }} {% if years == 1 %}рік{% else %}роки{% endif %}</strong>. Ти вже заклав міцний фундамент! Продовжуй практикуватися і заглиблюватися в деталі.</p>
+                        </div>
+                    {% elif years <= 5 %}
+                        <div class="custom-alert custom-alert-warning">
+                            <div class="result-heading" style="color: #ffaa00;">
+                                <span>🚀</span> Middle Developer
+                            </div>
+                            <p class="result-text">Твій досвід: <strong>{{ years }} {% if years < 5 %}роки{% else %}років{% endif %}</strong>. Чудовий результат! У тебе солідний досвід вирішення реальних завдань. Час масштабувати знання!</p>
+                        </div>
+                    {% else %}
+                        <div class="custom-alert custom-alert-danger">
+                            <div class="result-heading" style="color: #ff5500;">
+                                <span>👑</span> Senior Developer
+                            </div>
+                            <p class="result-text">Твій досвід: <strong>{{ years }} років</strong>. Ти справжній професіонал своєї справи! Твої поради цінуються на вагу золота. Надихай та ментори інших!</p>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

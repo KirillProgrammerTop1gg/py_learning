@@ -1,0 +1,88 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}{{ blog_title }} - TechBlog{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>{{ blog_title }}</h1>
+    <p>📬 {{ description }}</p>
+</div>
+
+<div class="contact-grid">
+    <!-- Ліва колонка: Інформація -->
+    <div class="contact-info-block">
+        <!-- Емейл -->
+        <div class="contact-method">
+            <div class="contact-icon">📧</div>
+            <div class="contact-details">
+                <h3>Електронна пошта</h3>
+                <p><a href="mailto:{{ blog_email }}" style="color: var(--accent);">{{ blog_email }}</a></p>
+            </div>
+        </div>
+
+        <!-- Телефон -->
+        <div class="contact-method">
+            <div class="contact-icon">📞</div>
+            <div class="contact-details">
+                <h3>Телефон</h3>
+                <p>{{ blog_phone }}</p>
+            </div>
+        </div>
+
+        <!-- Адреса -->
+        <div class="contact-method">
+            <div class="contact-icon">📍</div>
+            <div class="contact-details">
+                <h3>Офіс</h3>
+                <p>{{ address }}</p>
+            </div>
+        </div>
+
+        <!-- Години роботи -->
+        <div class="contact-method">
+            <div class="contact-icon">🕒</div>
+            <div class="contact-details">
+                <h3>Робочі години</h3>
+                <p>{{ working_hours }}</p>
+            </div>
+        </div>
+
+        <!-- Соцмережі -->
+        <div class="socials-wrapper">
+            <h3>Ми в мережі</h3>
+            <ul class="social-links-list">
+                {% for social in socials %}
+                <li>
+                    <a href="{{ social.url }}" target="_blank" class="social-link-item">
+                        &mdash; {{ social.name }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Права колонка: Форма зворотного зв'язку -->
+    <div class="contact-form-block">
+        <h2>Надіслати повідомлення</h2>
+        <form action="#" onsubmit="alert('Повідомлення надіслано! Дякуємо.'); return false;">
+            <div class="form-group">
+                <label for="contact-name" class="form-label">Ваше ім'я</label>
+                <input type="text" id="contact-name" class="form-control" placeholder="Олексій" required>
+            </div>
+
+            <div class="form-group">
+                <label for="contact-email" class="form-label">Email адреса</label>
+                <input type="email" id="contact-email" class="form-control" placeholder="alex@example.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="contact-message" class="form-label">Повідомлення</label>
+                <textarea id="contact-message" class="form-control" placeholder="Привіт! Я хотів би обговорити..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn-premium" style="width: 100%; border-radius: var(--radius-sm);">Надіслати повідомлення</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

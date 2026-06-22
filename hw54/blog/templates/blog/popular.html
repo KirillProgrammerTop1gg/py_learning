@@ -1,0 +1,55 @@
+{% extends 'blog/base.html' %}
+{% load static %}
+
+{% block title %}Популярні статті - TechBlog{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>{{ blog_title }}</h1>
+    <p>📚 Найпопулярніші статті серед нашої спільноти розробників</p>
+</div>
+
+<!-- Сітка статей -->
+<div class="articles-grid">
+    {% for post in posts %}
+    <div class="article-card">
+        <div>
+            <span class="article-views">👀 {{ post.views }} переглядів</span>
+            <h3 class="article-title">{{ post.title }}</h3>
+            <div class="article-info">
+                <p style="font-weight: 300; margin-bottom: 5px;"><strong>Категорія:</strong> Веб-розробка</p>
+                <p style="font-weight: 300; color: var(--text-muted);">Короткий огляд сучасних трендів та інструментарію розробника для створення ефективного коду.</p>
+            </div>
+        </div>
+        
+        <div class="article-actions">
+            <a href="#" class="btn-premium" style="font-size: 0.8rem; padding: 8px 16px; width: 100%;" onclick="readArticle('{{ post.title }}'); return false;">
+                📖 Читати статтю
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <p class="no-articles" style="grid-column: 1/-1; text-align: center; color: var(--text-secondary);">Статей поки немає. Поверніться згодом!</p>
+    {% endfor %}
+</div>
+
+<!-- Рейтинговий список статей за популярністю -->
+<div style="margin-top: 80px; margin-bottom: 40px;">
+    <h2 style="font-size: 1.8rem; text-transform: uppercase; margin-bottom: 25px;">Всі статті за популярністю</h2>
+    <ul class="list-group">
+        {% for post in posts %}
+        <li class="list-group-item">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <span style="font-family: var(--font-heading); font-size: 1.1rem; color: var(--accent); font-weight: 700;">#{{ forloop.counter }}</span>
+                <span style="font-weight: 500; font-size: 1.05rem;">{{ post.title }}</span>
+            </div>
+            <span class="badge">{{ post.views }} переглядів</span>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'blog/js/articles.js' %}"></script>
+{% endblock %}

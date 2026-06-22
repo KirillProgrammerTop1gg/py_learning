@@ -1,0 +1,38 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}
+    {{ blog_name }} - Головна
+{% endblock %}
+
+{% block content %}
+<!-- Герой-секція -->
+<div class="hero-section">
+    <h1 class="hero-title">⚡ {{ blog_name }}</h1>
+    <p class="hero-description">{{ description }}</p>
+    <a href="{% url 'blog:popular' %}" class="btn-premium">Переглянути статті</a>
+</div>
+
+<!-- Основні категорії -->
+<div class="features-grid">
+    <!-- Програмування -->
+    <div class="feature-card">
+        <span class="feature-icon">💻</span>
+        <h3 class="feature-title">Програмування</h3>
+        <p class="feature-desc">Вивчай найсучасніші мови програмування, шаблони проектування та пиши чистий код.</p>
+    </div>
+
+    <!-- Штучний інтелект та ML -->
+    <div class="feature-card">
+        <span class="feature-icon">🤖</span>
+        <h3 class="feature-title">ШІ та ML</h3>
+        <p class="feature-desc">Дізнавайся про нейронні мережі, генеративні моделі, LLM та машинне навчання.</p>
+    </div>
+
+    <!-- Веб-розробка -->
+    <div class="feature-card">
+        <span class="feature-icon">🌐</span>
+        <h3 class="feature-title">Веб-розробка</h3>
+        <p class="feature-desc">Створюй надшвидкі сучасні веб-додатки за допомогою передових інструментів та фреймворків.</p>
+    </div>
+</div>
+{% endblock %}

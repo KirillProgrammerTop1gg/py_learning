@@ -1,0 +1,44 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}{{ blog_title }} - TechBlog{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>{{ blog_title }}</h1>
+    <p>⚡ Хто ми такі, наша місія та люди, які створюють контент для вас</p>
+</div>
+
+<!-- Блок Інтро та Статистики -->
+<div class="about-intro">
+    <div class="about-text">
+        <h2>Наша історія</h2>
+        <p>{{ story }}</p>
+        <p>Кожен рядок нашого коду та кожне речення в статтях пишуться з однією метою — зробити складні речі зрозумілими. Ми фокусуємося на глибоких практичних туторіалах, аналізі архітектурних рішень та чесних думках про розвиток індустрії.</p>
+    </div>
+    
+    <!-- Сітка зі статистикою -->
+    <div class="stats-grid">
+        {% for stat in stats %}
+        <div class="stat-item">
+            <div class="stat-value">{{ stat.value }}</div>
+            <div class="stat-label">{{ stat.label }}</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Розділ Команда -->
+<div class="team-section">
+    <h2>Наша Команда</h2>
+    <div class="team-grid">
+        {% for member in our_team %}
+        <div class="team-card">
+            <h3 class="team-name">{{ member.name }}</h3>
+            <div class="team-role">{{ member.role }}</div>
+            <p class="team-bio">{{ member.bio }}</p>
+            <a href="mailto:{{ member.email }}" class="team-email">{{ member.email }}</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

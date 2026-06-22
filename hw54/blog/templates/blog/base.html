@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TechBlog{% endblock %}</title>
+    
+    <!-- Глобальні стилі -->
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    
+    <!-- Стилі додатку blog -->
+    <link rel="stylesheet" href="{% static 'blog/css/blog.css' %}">
+    
+    {% block extra_css %}{% endblock %}
+    
+    <!-- Фавікон -->
+    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{% url 'root_landing' %}" class="nav-logo">
+                ⚡ Tech<span>Blog</span>
+            </a>
+            <ul>
+                <li>
+                    <a href="{% url 'root_landing' %}" class="nav-link" style="color: var(--accent); font-weight: 600;">
+                        ← На Портал
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'blog:home' %}" class="nav-link{% if request.resolver_match.url_name == 'home' %} active{% endif %}">
+                        Головна
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'blog:popular' %}" class="nav-link{% if request.resolver_match.url_name == 'popular' %} active{% endif %}">
+                        Популярне
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'blog:experience' %}" class="nav-link{% if request.resolver_match.url_name == 'experience' %} active{% endif %}">
+                        Досвід
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'blog:about' %}" class="nav-link{% if request.resolver_match.url_name == 'about' %} active{% endif %}">
+                        Про нас
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'blog:contact' %}" class="nav-link{% if request.resolver_match.url_name == 'contact' %} active{% endif %}">
+                        Контакти
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">⚡ Tech<span>Blog</span></div>
+            <p>&copy; 2026 TechBlog. Всі права захищено. Створено з пристрастю до технологій.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript файли -->
+    <script src="{% static 'js/common.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
