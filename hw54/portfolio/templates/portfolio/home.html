@@ -1,14 +1,9 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="uk">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Кірілл - Портфоліо</title>
-    
-    <!-- Глобальні стилі -->
-    <link rel="stylesheet" href="{% static 'css/global.css' %}">
-    
+
+{% block title %}Кірілл - Портфоліо{% endblock %}
+
+{% block extra_css %}
     <style>
         /* Локальні стилі для портфоліо */
         .portfolio-hero {
@@ -286,8 +281,9 @@
             }
         }
     </style>
-</head>
-<body>
+{% endblock %}
+
+{% block header %}
     <!-- Шапка портфоліо -->
     <nav class="navbar">
         <div class="nav-container">
@@ -302,13 +298,14 @@
             </ul>
         </div>
     </nav>
+{% endblock %}
 
-    <main class="container">
+{% block content %}
         <!-- Блок Героя / Біографія -->
         <section id="about" class="portfolio-hero">
             <div class="hero-info">
-                <span class="hero-tag">Портфоліо Розробника</span>
-                <h1>Привіт, я {{ bio.name }}</h1>
+                <span class="hero-tag">{% filter upper %}Портфоліо Розробника{% endfilter %}</span>
+                <h1>Привіт, я {{ bio.name|upper }}</h1>
                 <p style="font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 30px; font-weight: 300; line-height: 1.6;">
                     {{ bio.experience }}
                 </p>
@@ -330,11 +327,11 @@
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">Локація</span>
-                    <span class="detail-val">{{ bio.location }}</span>
+                    <span class="detail-val">{{ bio.location|lower|capfirst }}</span>
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">Спеціалізація</span>
-                    <span class="detail-val" style="color: var(--accent);">{{ bio.role }}</span>
+                    <span class="detail-val" style="color: var(--accent);">{{ bio.role|upper }}</span>
                 </div>
             </div>
         </section>
@@ -346,7 +343,7 @@
                 {% for skill in skills %}
                 <div class="skill-card">
                     <div class="skill-header">
-                        <h3 class="skill-category">{{ skill.category }}</h3>
+                        <h3 class="skill-category">{{ skill.category|upper }}</h3>
                         <span class="skill-badge">{{ skill.overall_progress }}%</span>
                     </div>
                     <p class="skill-desc">{{ skill.description }}</p>
@@ -379,12 +376,21 @@
                     <div>
                         <div class="project-header">
                             <div class="project-meta">
-                                <span class="project-type">{{ project.category }}</span>
-                                <h3 class="project-title">{{ project.title }}</h3>
+                                <span class="project-type">{{ project.category|upper }}</span>
+                                <h3 class="project-title">{{ project.title|capfirst }}</h3>
                             </div>
                             <span class="project-emoji">{{ project.emoji }}</span>
                         </div>
-                        <div class="project-stack">Стек: {{ project.tech_stack }}</div>
+                        
+                        <!-- Форматування дати приєднання до проєкту за допомогою фільтра |date -->
+                        <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px; font-family: var(--font-heading); display: flex; align-items: center; gap: 6px;">
+                            <span>📅 Створено:</span>
+                            <span style="color: var(--text-secondary);">{{ project.created_at|date:"d.m.Y" }}</span>
+                            <span style="color: var(--text-muted); margin: 0 4px;">|</span>
+                            <span style="color: var(--accent);">{{ project.created_at|date:"F Y"|capfirst }}</span>
+                        </div>
+
+                        <div class="project-stack">Стек: {{ project.tech_stack|upper }}</div>
                         <p class="project-desc">{{ project.description }}</p>
                     </div>
 
@@ -393,8 +399,9 @@
                 {% endfor %}
             </div>
         </section>
-    </main>
+{% endblock %}
 
+{% block footer %}
     <!-- Підвал портфоліо -->
     <footer class="footer">
         <div class="footer-content">
@@ -402,5 +409,4 @@
             <p>&copy; 2026 Кірілл. Портфоліо створено на Django з використанням кастомного мінімалістичного дизайну.</p>
         </div>
     </footer>
-</body>
-</html>
+{% endblock %}

@@ -1,23 +1,14 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="uk">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}TechBlog{% endblock %}</title>
-    
-    <!-- Глобальні стилі -->
-    <link rel="stylesheet" href="{% static 'css/global.css' %}">
-    
+
+{% block title %}{% block blog_title %}TechBlog{% endblock %}{% endblock %}
+
+{% block extra_css %}
     <!-- Стилі додатку blog -->
     <link rel="stylesheet" href="{% static 'blog/css/blog.css' %}">
-    
-    {% block extra_css %}{% endblock %}
-    
-    <!-- Фавікон -->
-    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
-</head>
-<body>
+{% endblock %}
+
+{% block header %}
     <nav class="navbar">
         <div class="nav-container">
             <a href="{% url 'root_landing' %}" class="nav-logo">
@@ -57,21 +48,16 @@
             </ul>
         </div>
     </nav>
+{% endblock %}
 
-    <main class="container">
-        {% block content %}
-        {% endblock %}
-    </main>
+{% block content %}
+{% endblock %}
 
+{% block footer %}
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-logo">⚡ Tech<span>Blog</span></div>
             <p>&copy; 2026 TechBlog. Всі права захищено. Створено з пристрастю до технологій.</p>
         </div>
     </footer>
-
-    <!-- JavaScript файли -->
-    <script src="{% static 'js/common.js' %}"></script>
-    {% block extra_js %}{% endblock %}
-</body>
-</html>
+{% endblock %}

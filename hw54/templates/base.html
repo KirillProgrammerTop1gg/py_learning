@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TechHub{% endblock %}</title>
+    
+    <!-- Глобальні стилі -->
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    
+    {% block extra_css %}{% endblock %}
+    
+    <!-- Фавікон -->
+    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
+</head>
+<body>
+    {% block header %}{% endblock %}
+
+    {% block main_content %}
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+    {% endblock %}
+
+    {% block footer %}{% endblock %}
+
+    <!-- JavaScript файли -->
+    <script src="{% static 'js/common.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

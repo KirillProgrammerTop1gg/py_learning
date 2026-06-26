@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from datetime import date
 
 def home_view(request):
     # Короткі відомості про розробника
@@ -42,28 +43,32 @@ def home_view(request):
             "tech_stack": "Python, Flask, Jinja2, CSS Grid",
             "description": "Сучасна веб-платформа для замовлення страв у ресторані з інтерактивним меню, кошиком покупця та адмін-панеллю для перегляду нових замовлень.",
             "category": "Web App",
-            "emoji": "🍔"
+            "emoji": "🍔",
+            "created_at": date(2024, 5, 12)
         },
         {
             "title": "Сервіс для ремонту",
             "tech_stack": "Python, Django, PostgreSQL, JavaScript",
             "description": "Повноцінний веб-сервіс для автоматизації сервісних центрів. Дозволяє вести облік заявок, контролювати етапи ремонту та вести клієнтську базу.",
             "category": "Web App",
-            "emoji": "🔧"
+            "emoji": "🔧",
+            "created_at": date(2024, 11, 20)
         },
         {
             "title": "Telegram-бот для сервісу ремонту",
             "tech_stack": "FastAPI, aiogram, REST API, Webhooks",
             "description": "Чат-бот, інтегрований із сервісом ремонту через FastAPI. Надає користувачам можливість миттєво перевіряти статус замовлення за його номером.",
             "category": "Telegram Bot",
-            "emoji": "🤖"
+            "emoji": "🤖",
+            "created_at": date(2025, 1, 15)
         },
         {
             "title": "Бот для синхронного відкриття угод",
             "tech_stack": "Python, aiogram, Asyncio, API Біржі",
             "description": "Спеціалізований асинхронний бот для копіювання торгових операцій. Дозволяє синхронно відкривати та управляти угодами на кількох акаунтах у Telegram.",
             "category": "FinTech Bot",
-            "emoji": "📈"
+            "emoji": "📈",
+            "created_at": date(2025, 4, 10)
         }
     ]
     

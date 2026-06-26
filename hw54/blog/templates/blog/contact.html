@@ -85,4 +85,33 @@
         </form>
     </div>
 </div>
+
+<!-- Блок Інтерактивної Карти -->
+<div class="map-section">
+    <h2>Ми на карті</h2>
+    <p class="map-subtitle">Завітайте до нашого сучасного офісу або скористайтеся картою для навігації</p>
+    <div class="map-container-premium">
+        <!-- Координати офісу -->
+        <div class="map-coordinates-badge">
+            🌐 50.4451° N, 30.5206° E
+        </div>
+        
+        <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2540.697495036987!2d30.5181741!3d50.4450918!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40d4ce56657a3ab7%3A0x4def1e77f63fc61d!2z0KbQo9Cc!5e0!3m2!1suk!2sua!4v1719400000000!5m2!1suk!2sua" 
+            class="map-iframe"
+            allowfullscreen="" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+        <div class="map-overlay-badge">
+            <span class="pulse-dot"></span>
+            Головний офіс: ЦУМ, вул. Хрещатик, 38, Київ
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% load static %}
+<script src="{% static 'blog/js/contact-map.js' %}"></script>
 {% endblock %}

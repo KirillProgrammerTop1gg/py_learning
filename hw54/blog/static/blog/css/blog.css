@@ -542,3 +542,169 @@ textarea.form-control {
         padding: 30px 20px;
     }
 }
+
+/* ==========================================================================
+   Premium Interactive Map Styles (Enhanced & Card-Styled)
+   ========================================================================== */
+.map-section {
+    margin-top: 80px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    padding: 50px 40px;
+    border-radius: var(--radius-lg);
+    text-align: left;
+    transition: var(--transition);
+}
+
+.map-section:hover {
+    border-color: var(--border-hover);
+    box-shadow: 0 15px 35px var(--accent-glow);
+}
+
+.map-section h2 {
+    font-size: 1.8rem; /* Matched to feedback card title size */
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+}
+
+.map-subtitle {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    font-weight: 300;
+    margin-bottom: 30px;
+}
+
+.map-container-premium {
+    position: relative;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    height: 520px; /* Highly-optimized for card padding proportions */
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.map-container-premium::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.6);
+    pointer-events: none;
+    z-index: 5;
+}
+
+.map-container-premium:hover {
+    border-color: var(--border-hover);
+    box-shadow: 0 25px 60px rgba(255, 221, 0, 0.25);
+    transform: translateY(-5px);
+}
+
+.map-iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    filter: grayscale(0.8) invert(0.9) contrast(1.1) brightness(0.85);
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s ease;
+}
+
+.map-container-premium:hover .map-iframe {
+    filter: grayscale(0.2) invert(0.9) contrast(1.1) brightness(0.95);
+    transform: scale(1.03); /* Beautiful interactive zoom effect on hover */
+}
+
+/* Glassmorphism Location Badge */
+.map-overlay-badge {
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    background: rgba(10, 10, 12, 0.7);
+    backdrop-filter: blur(16px) saturate(120%);
+    -webkit-backdrop-filter: blur(16px) saturate(120%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+    padding: 16px 26px;
+    font-family: var(--font-heading);
+    font-size: 0.95rem;
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.map-container-premium:hover .map-overlay-badge {
+    border-color: var(--border-hover);
+    background: rgba(10, 10, 12, 0.85);
+}
+
+/* Coordinates Badge */
+.map-coordinates-badge {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    background: rgba(10, 10, 12, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-secondary);
+    padding: 12px 20px;
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: 0.05em;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.map-container-premium:hover .map-coordinates-badge {
+    border-color: var(--border-hover);
+    color: var(--text-primary);
+    background: rgba(10, 10, 12, 0.85);
+}
+
+.pulse-dot {
+    width: 12px;
+    height: 12px;
+    background-color: var(--accent);
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+}
+
+.pulse-dot::after {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    right: -6px;
+    bottom: -6px;
+    border-radius: 50%;
+    border: 2.5px solid var(--accent);
+    animation: mapPulse 1.8s infinite ease-out;
+    opacity: 0;
+}
+
+@keyframes mapPulse {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    50% {
+        opacity: 0.6;
+    }
+    100% {
+        transform: scale(1.6);
+        opacity: 0;
+    }
+}
