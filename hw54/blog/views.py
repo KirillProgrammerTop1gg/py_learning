@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from .models import Article
 
 
 # Головна сторінка блогу
@@ -25,13 +26,7 @@ def check_experience(request):
 
 # Відображення списку популярних постів
 def popular_posts(request):
-    posts_data = [
-        {"title": "Вивчаємо Python", "views": 1520},
-        {"title": "Django для початківців", "views": 980},
-        {"title": "JavaScript ES6", "views": 1340},
-        {"title": "React Hooks", "views": 760},
-        {"title": "Machine Learning", "views": 2100},
-    ]
+    posts_data = Article.objects.order_by('-views')[:5]
     
     context = {
         "blog_title": "Популярні статті TechBlog",

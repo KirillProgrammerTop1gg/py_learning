@@ -32,28 +32,28 @@
                 <div class="result-box">
                     {% if years == 0 %}
                         <div class="custom-alert custom-alert-info">
-                            <div class="result-heading">
+                            <div class="result-heading" style="color: var(--alert-info);">
                                 <span>🎉</span> Новачок (Beginner)
                             </div>
                             <p class="result-text">Твій досвід: <strong>{{ years }} років/років</strong>. Вітаємо з початком дивовижної програмістської подорожі! Попереду багато цікавого!</p>
                         </div>
                     {% elif years <= 2 %}
                         <div class="custom-alert custom-alert-success">
-                            <div class="result-heading" style="color: var(--accent);">
+                            <div class="result-heading" style="color: var(--alert-success);">
                                 <span>💪</span> Junior Developer
                             </div>
                             <p class="result-text">Твій досвід: <strong>{{ years }} {% if years == 1 %}рік{% else %}роки{% endif %}</strong>. Ти вже заклав міцний фундамент! Продовжуй практикуватися і заглиблюватися в деталі.</p>
                         </div>
                     {% elif years <= 5 %}
                         <div class="custom-alert custom-alert-warning">
-                            <div class="result-heading" style="color: #ffaa00;">
+                            <div class="result-heading" style="color: var(--alert-warning);">
                                 <span>🚀</span> Middle Developer
                             </div>
                             <p class="result-text">Твій досвід: <strong>{{ years }} {% if years < 5 %}роки{% else %}років{% endif %}</strong>. Чудовий результат! У тебе солідний досвід вирішення реальних завдань. Час масштабувати знання!</p>
                         </div>
                     {% else %}
                         <div class="custom-alert custom-alert-danger">
-                            <div class="result-heading" style="color: #ff5500;">
+                            <div class="result-heading" style="color: var(--alert-danger);">
                                 <span>👑</span> Senior Developer
                             </div>
                             <p class="result-text">Твій досвід: <strong>{{ years }} років</strong>. Ти справжній професіонал своєї справи! Твої поради цінуються на вагу золота. Надихай та ментори інших!</p>

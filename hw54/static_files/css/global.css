@@ -18,6 +18,12 @@
     --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     --font-heading: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
     --font-body: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    
+    /* Alert Colors */
+    --alert-info: #3b82f6;
+    --alert-success: var(--accent);
+    --alert-warning: #ffaa00;
+    --alert-danger: #ff5500;
 }
 
 /* Base Styles */

@@ -17,8 +17,8 @@
             <span class="article-views">👀 {{ post.views }} переглядів</span>
             <h3 class="article-title">{{ post.title }}</h3>
             <div class="article-info">
-                <p style="font-weight: 300; margin-bottom: 5px;"><strong>Категорія:</strong> Веб-розробка</p>
-                <p style="font-weight: 300; color: var(--text-muted);">Короткий огляд сучасних трендів та інструментарію розробника для створення ефективного коду.</p>
+                <p style="font-weight: 300; margin-bottom: 5px;"><strong>Категорія:</strong> {{ post.tags_list }}</p>
+                <p style="font-weight: 300; color: var(--text-muted);">{{ post.content }}</p>
             </div>
         </div>
         

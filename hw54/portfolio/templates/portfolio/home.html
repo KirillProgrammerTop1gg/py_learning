@@ -8,12 +8,67 @@
         /* Локальні стилі для портфоліо */
         .portfolio-hero {
             display: grid;
-            grid-template-columns: 2fr 1fr;
+            grid-template-columns: 1fr 1.8fr 1fr;
             gap: 40px;
             align-items: center;
             padding: 60px 0;
             border-bottom: 1px solid var(--border-color);
             margin-bottom: 60px;
+        }
+
+        .hero-photo-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        .hero-photo {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            border-radius: var(--radius-lg);
+            border: 2px solid var(--border-color);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            transition: var(--transition);
+        }
+
+        .hero-photo-container::after {
+            content: '';
+            position: absolute;
+            inset: -8px;
+            border: 1px dashed var(--accent);
+            border-radius: calc(var(--radius-lg) + 8px);
+            opacity: 0.3;
+            z-index: -1;
+            transition: var(--transition);
+        }
+
+        .hero-photo-container::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            z-index: -1;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .hero-photo-container:hover .hero-photo {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px var(--accent-glow);
+        }
+
+        .hero-photo-container:hover::after {
+            opacity: 0.8;
+            transform: rotate(3deg) scale(1.02);
+            border-color: var(--accent);
+        }
+
+        .hero-photo-container:hover::before {
+            opacity: 1;
         }
 
         .hero-info h1 {
@@ -303,6 +358,11 @@
 {% block content %}
         <!-- Блок Героя / Біографія -->
         <section id="about" class="portfolio-hero">
+            <!-- Фотографія розробника -->
+            <div class="hero-photo-container">
+                <img src="{% static 'portfolio/images/photo.png' %}" alt="{{ bio.name }}" class="hero-photo">
+            </div>
+
             <div class="hero-info">
                 <span class="hero-tag">{% filter upper %}Портфоліо Розробника{% endfilter %}</span>
                 <h1>Привіт, я {{ bio.name|upper }}</h1>
