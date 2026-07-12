@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}Реєстрація | PyCourse{% endblock %}
+
+{% block content %}
+<div class="card-container">
+  <div class="glass-card">
+    <h2 class="card-title">Створити акаунт</h2>
+    <p class="card-subtitle">Доєднуйтесь до нашої освітньої платформи за лічені секунди</p>
+
+    {% if form.non_field_errors %}
+      <div class="non-field-errors">
+        {% for error in form.non_field_errors %}
+          <p>{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      {% for field in form %}
+        <div class="form-group">
+          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}
+            <small class="help-text">{{ field.help_text|safe }}</small>
+          {% endif %}
+          {% if field.errors %}
+            <ul class="error-list">
+              {% for error in field.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <!-- Course Selection Formset Section -->
+      <div style="margin-top: 32px; margin-bottom: 24px; border-top: 1px solid var(--border-color); padding-top: 24px;">
+        <h3 style="font-family: var(--font-header); font-size: 20px; font-weight: 600; margin-bottom: 8px;">Вибір пріоритетних курсів</h3>
+        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 20px;">Оберіть до 3 курсів та вкажіть унікальний пріоритет для кожного з них (необов'язково).</p>
+      </div>
+
+      {{ course_formset.management_form }}
+      
+      {% if course_formset.non_form_errors %}
+        <div class="non-field-errors" style="margin-bottom: 20px;">
+          {% for error in course_formset.non_form_errors %}
+            <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% for c_form in course_formset %}
+        <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-bottom: 16px;">
+          <div style="font-size: 14px; font-weight: 600; color: var(--accent-primary); margin-bottom: 12px;">Курс №{{ forloop.counter }}</div>
+          
+          {% if c_form.non_field_errors %}
+            <div class="non-field-errors" style="padding: 10px; margin-bottom: 12px;">
+              {% for error in c_form.non_field_errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <!-- Course Field -->
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label" for="{{ c_form.course.id_for_label }}">{{ c_form.course.label }}</label>
+              {{ c_form.course }}
+              {% if c_form.course.errors %}
+                <ul class="error-list">
+                  {% for error in c_form.course.errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </div>
+            
+            <!-- Priority Field -->
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label" for="{{ c_form.priority.id_for_label }}">{{ c_form.priority.label }}</label>
+              {{ c_form.priority }}
+              {% if c_form.priority.errors %}
+                <ul class="error-list">
+                  {% for error in c_form.priority.errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+
+      <button type="submit" class="btn-primary" style="margin-top: 24px;">Зареєструватися</button>
+    </form>
+
+
+    <div style="margin-top: 24px; text-align: center; font-size: 14px; color: var(--text-secondary);">
+      Вже маєте акаунт? <a href="{% url 'login' %}" style="color: var(--accent-primary); text-decoration: none; font-weight: 500;">Увійти</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

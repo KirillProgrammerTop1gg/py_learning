@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Вхід | PyCourse{% endblock %}
+
+{% block content %}
+<div class="card-container">
+  <div class="glass-card">
+    <h2 class="card-title">Вхід в кабінет</h2>
+    <p class="card-subtitle">Введіть свої дані для авторизації</p>
+
+    {% if form.non_field_errors %}
+      <div class="non-field-errors">
+        {% for error in form.non_field_errors %}
+          <p>{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      {% for field in form %}
+        <div class="form-group">
+          <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.errors %}
+            <ul class="error-list">
+              {% for error in field.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <button type="submit" class="btn-primary">Увійти</button>
+    </form>
+
+    <div style="margin-top: 24px; text-align: center; font-size: 14px; color: var(--text-secondary);">
+      Не маєте акаунта? <a href="{% url 'register' %}" style="color: var(--accent-primary); text-decoration: none; font-weight: 500;">Зареєструватися</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

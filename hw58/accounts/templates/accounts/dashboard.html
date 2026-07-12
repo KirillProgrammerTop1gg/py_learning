@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Панель навчання | {{ user.username }}{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 60px 24px; flex: 1; display: flex; flex-direction: column; gap: 40px;">
+  
+  <!-- Dashboard Header -->
+  <div style="text-align: left; border-left: 4px solid var(--accent-secondary); padding-left: 16px;">
+    <h1 style="font-family: var(--font-header); font-size: 36px; font-weight: 800; letter-spacing: -0.5px;">Панель навчання учня</h1>
+    <p style="color: var(--text-secondary); font-size: 16px; margin-top: 4px;">Ваші обрані курси, відсортовані за пріоритетом навчання</p>
+  </div>
+
+  <!-- Dashboard Main Info Card -->
+  <div class="glass-card" style="padding: 40px; max-width: 100%;">
+    <h2 style="font-family: var(--font-header); font-size: 24px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px;">Ваші навчальні програми</h2>
+    <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 32px;">Тут відображаються курси, на які ви успішно записалися при реєстрації</p>
+
+    {% if selected_courses %}
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        {% for user_course in selected_courses %}
+          <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; display: flex; justify-content: space-between; align-items: center; gap: 20px; transition: var(--transition-smooth);">
+            <div>
+              <h3 style="font-family: var(--font-header); font-size: 20px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px;">{{ user_course.course.name }}</h3>
+              <div style="display: flex; align-items: center; gap: 20px; font-size: 14px; color: var(--text-secondary);">
+                <span>⏱️ Тривалість: {{ user_course.course.duration }} міс.</span>
+                <span>⭐ Оцінка програми: {{ user_course.course.rating }} / 5</span>
+                <span>📅 Заявка від: {{ user_course.created_at|date:"d.m.Y" }}</span>
+              </div>
+            </div>
+            
+            <!-- Priority Badge -->
+            <div>
+              {% if user_course.priority == 3 %}
+                <span style="background: rgba(239, 68, 68, 0.1); color: var(--danger); padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; border: 1px solid rgba(239, 68, 68, 0.2);">
+                  Високий пріоритет
+                </span>
+              {% elif user_course.priority == 2 %}
+                <span style="background: rgba(245, 158, 11, 0.1); color: var(--warning); padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; border: 1px solid rgba(245, 158, 11, 0.2);">
+                  Середній пріоритет
+                </span>
+              {% else %}
+                <span style="background: rgba(16, 185, 129, 0.1); color: var(--success); padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; border: 1px solid rgba(16, 185, 129, 0.2);">
+                  Низький пріоритет
+                </span>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div style="border: 1px dashed var(--border-color); border-radius: 12px; padding: 48px; text-align: center; color: var(--text-muted);">
+        <div style="font-size: 40px; margin-bottom: 16px;">📚</div>
+        <p style="font-size: 15px; margin-bottom: 24px;">Ви ще не обрали жодної навчальної програми.</p>
+        <a href="/" class="btn-nav-register" style="padding: 10px 24px; font-size: 14px; display: inline-block;">Обрати програму</a>
+      </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}

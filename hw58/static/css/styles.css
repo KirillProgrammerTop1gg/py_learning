@@ -1,0 +1,390 @@
+/* Ultra-Minimalist, Abstract, and High-Concept Stylesheet */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+:root {
+  --font-primary: 'Inter', sans-serif;
+  --font-header: 'Space Grotesk', sans-serif;
+
+  /* Monochromatic Base with a Luminous Electric Accent */
+  --bg-primary: #050508;
+  --bg-secondary: #0a0a0f;
+  --bg-tertiary: #111118;
+  
+  --accent-primary: #00f5d4;     /* Neon Mint Teal */
+  --accent-secondary: #7b2cbf;   /* Cosmic Violet */
+  --accent-glowing: rgba(0, 245, 212, 0.45);
+  
+  --text-primary: #ffffff;
+  --text-secondary: #8a8a9d;
+  --text-muted: #4e4e5a;
+  
+  --success: #00f5d4;
+  --danger: #ff0055;
+  --warning: #ffb703;
+  
+  --border-color: rgba(255, 255, 255, 0.05);
+  --glass-bg: rgba(10, 10, 15, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.03);
+  
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.8);
+  --shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.9);
+  --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); /* Ultra slick easing */
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-primary);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.6;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Abstract Background Glowing Orbs */
+body::before {
+  content: '';
+  position: absolute;
+  top: -10%;
+  right: -5%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(123, 44, 191, 0.08) 0%, transparent 70%);
+  z-index: -2;
+  pointer-events: none;
+}
+
+body::after {
+  content: '';
+  position: absolute;
+  bottom: 10%;
+  left: -5%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(0, 245, 212, 0.05) 0%, transparent 70%);
+  z-index: -2;
+  pointer-events: none;
+}
+
+/* Base Container */
+.container {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+/* Navbar Style */
+header {
+  background: rgba(5, 5, 8, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 90px;
+}
+
+.nav-brand {
+  font-family: var(--font-header);
+  font-size: 22px;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--text-primary);
+  letter-spacing: -1px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: var(--transition-smooth);
+}
+
+.nav-brand::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: var(--accent-primary);
+  box-shadow: 0 0 10px var(--accent-primary);
+  border-radius: 50%;
+}
+
+.nav-brand:hover {
+  letter-spacing: 0px;
+}
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  list-style: none;
+}
+
+.nav-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  transition: var(--transition-smooth);
+}
+
+.nav-link:hover, .nav-link.active {
+  color: var(--accent-primary);
+  text-shadow: 0 0 8px var(--accent-glowing);
+}
+
+.btn-nav-register {
+  border: 1px solid var(--accent-primary);
+  color: var(--accent-primary);
+  padding: 8px 20px;
+  border-radius: 0px; /* Sharp modernist edges */
+  font-family: var(--font-header);
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  text-decoration: none;
+  transition: var(--transition-smooth);
+}
+
+.btn-nav-register:hover {
+  background: var(--accent-primary);
+  color: var(--bg-primary);
+  box-shadow: 0 0 15px var(--accent-glowing);
+  transform: translateY(-1px);
+}
+
+/* Hero Section */
+.hero {
+  padding: 100px 0 80px 0;
+  text-align: center;
+  position: relative;
+}
+
+.hero h1 {
+  font-family: var(--font-header);
+  font-size: 56px;
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 24px;
+  letter-spacing: -2px;
+  color: var(--text-primary);
+}
+
+.hero p {
+  color: var(--text-secondary);
+  font-size: 16px;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+  max-width: 580px;
+  margin: 0 auto;
+}
+
+/* Card & Form Container */
+.card-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 0 100px 0;
+  flex: 1;
+}
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid var(--glass-border);
+  border-radius: 0px; /* Sharp and minimalist */
+  padding: 56px;
+  width: 100%;
+  max-width: 520px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+}
+
+/* Minimalist glowing dot indicator instead of heavy bars */
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  box-shadow: 0 0 8px var(--accent-primary);
+}
+
+.card-title {
+  font-family: var(--font-header);
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -1px;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+  text-transform: uppercase;
+}
+
+.card-subtitle {
+  color: var(--text-secondary);
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  margin-bottom: 40px;
+}
+
+/* Form Styles */
+.form-group {
+  margin-bottom: 28px;
+}
+
+.form-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+/* Abstract Minimal Inputs (Bottom border only for a modern gallery look) */
+.form-control,
+.form-group input[type="text"],
+.form-group input[type="password"],
+.form-group input[type="email"],
+.form-group input[type="number"],
+.form-group input[type="tel"],
+.form-group select {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border-color);
+  border-radius: 0px;
+  padding: 12px 4px;
+  font-family: var(--font-primary);
+  color: var(--text-primary);
+  font-size: 15px;
+  transition: var(--transition-smooth);
+}
+
+.form-control:focus,
+.form-group input[type="text"]:focus,
+.form-group input[type="password"]:focus,
+.form-group input[type="email"]:focus,
+.form-group input[type="number"]:focus,
+.form-group input[type="tel"]:focus,
+.form-group select:focus {
+  outline: none;
+  background: transparent;
+  border-bottom-color: var(--accent-primary);
+}
+
+.form-control::placeholder {
+  color: var(--text-muted);
+}
+
+.help-text {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 8px;
+  letter-spacing: 0.2px;
+}
+
+/* Django Error Styles */
+.error-list {
+  list-style: none;
+  color: var(--danger);
+  font-size: 12px;
+  margin-top: 8px;
+  padding-left: 0;
+}
+
+.error-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.error-list li::before {
+  content: '·';
+  font-size: 24px;
+  line-height: 0;
+  color: var(--danger);
+}
+
+.non-field-errors {
+  background: transparent;
+  border: 1px solid var(--danger);
+  border-radius: 0px;
+  padding: 16px;
+  margin-bottom: 32px;
+  color: var(--danger);
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+/* Buttons (Solid Contrast Blocks) */
+.btn-primary {
+  width: 100%;
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  border: none;
+  border-radius: 0px;
+  padding: 16px;
+  font-family: var(--font-header);
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  margin-top: 16px;
+}
+
+.btn-primary:hover {
+  background: var(--accent-primary);
+  color: var(--bg-primary);
+  box-shadow: 0 0 20px var(--accent-glowing);
+}
+
+/* Footer */
+footer {
+  margin-top: auto;
+  padding: 40px 0;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--bg-secondary);
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .footer-content {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
