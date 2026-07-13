@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% load static %}
+{% load portfolio_filters %}
+
+{% block title %}Портфоліо Django-розробника | Вечірній термінал{% endblock %}
+
+{% block content %}
+    <!-- Секція 1: HERO (Термінал під лампою) -->
+    <section class="hero-section">
+        <div class="terminal-window-glow-wrap">
+            <div class="terminal-window">
+                <div class="terminal-header">
+                    <div class="window-controls">
+                        <span class="control-btn close"></span>
+                        <span class="control-btn minimize"></span>
+                        <span class="control-btn expand"></span>
+                    </div>
+                    <div class="terminal-title font-mono">bash — python manage.py runserver</div>
+                </div>
+                <div class="terminal-body" id="terminal-content" data-name="{{ dev_profile.name|default:'Кірілл' }}" data-role="{{ dev_profile.role|default:'Python Backend & Web3 Automation Developer' }}"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Секція 2: Про мене з фото -->
+    <section class="section-wrapper">
+        <div class="about-section">
+            <div class="about-photo-wrap">
+                <img src="{% static dev_profile.photo_path|default:'portfolio/images/avatar.png' %}" alt="{{ dev_profile.name|default:'Кірілл' }} — Django Розробник" class="about-photo">
+            </div>
+            <div class="about-text-content font-sans">
+                <h2 class="section-title" style="margin-bottom: 20px;">Про мене</h2>
+                {% if dev_profile.greeting %}
+                    <h3 style="color: var(--accent); margin-bottom: 12px; font-weight: 500;">{{ dev_profile.greeting }}</h3>
+                {% endif %}
+                {% for paragraph in dev_profile.bio_paragraphs %}
+                    <p style="margin-bottom: 15px;">{{ paragraph }}</p>
+                {% empty %}
+                    <p>Привіт! Мене звати Кирило. Я захоплений розробник на Python та Django, що створює швидкі, надійні та красиві веб-додатки.</p>
+                    <p>Мій підхід поєднує строгість та елегантність коду з увагою до кожної деталі інтерфейсу. Вірю, що відмінний бекенд є основою неперевершеного користувацького досвіду.</p>
+                {% endfor %}
+                <p class="font-mono muted-text" style="margin-top: 20px; font-size: 0.9rem;"># Настільна лампа горить, код пишеться, сервери працюють стабільно.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Секція 3: views.py — Посилання на проекти -->
+    <section class="section-wrapper" id="views">
+        <div class="section-path-header">~/portfolio/views.py</div>
+        <h2 class="section-title">def list_projects(request):</h2>
+        {% include "components/editor_window_start.html" with title="views.py" %}
+<div class="code-line"><span class="comment"># Переглянути інтерактивну галерею проектів з фільтрацією за технологіями</span></div>
+<div class="code-line"><span class="keyword">return</span> redirect(<span class="string">'<a href="{% url "portfolio:projects_list" %}" class="accent-text" style="text-decoration: underline; font-weight: 600; color: var(--accent);">/projects/</a>'</span>)</div>
+        {% include "components/editor_window_end.html" %}
+    </section>
+
+    <!-- Секція 3.5: orders.py — Сервіс замовлень -->
+    <section class="section-wrapper" id="orders-brief">
+        <div class="section-path-header">~/portfolio/orders.py</div>
+        <h2 class="section-title">def make_order_brief(request):</h2>
+        {% include "components/editor_window_start.html" with title="orders.py" %}
+<div class="code-line"><span class="comment"># Хочете замовити розробку бекенду, автоматизації Web3 чи Telegram-бота?</span></div>
+<div class="code-line"><span class="comment"># Ви можете надіслати структурований технічний бриф і відстежувати хід робіт в реальному часі!</span></div>
+{% if user.is_authenticated %}
+<div class="code-line" style="margin-top: 10px;">current_user = <span class="string">"{{ user.username }}"</span></div>
+<div class="code-line">session_status = <span class="keyword">"LOGGED_IN"</span></div>
+<div class="code-line" style="margin-top: 15px;"><span class="keyword">return</span> redirect([</div>
+<div class="code-line indent-1"><a href="{% url 'orders:create' %}" class="code-link" style="color: var(--accent); font-weight: 600; text-decoration: underline;">[ Надіслати бриф проекту ]</a>,</div>
+<div class="code-line indent-1"><a href="{% url 'orders:list' %}" class="code-link" style="color: var(--accent); font-weight: 600; text-decoration: underline;">[ Мої заявки ]</a></div>
+<div class="code-line">])</div>
+{% else %}
+<div class="code-line" style="margin-top: 10px;">session_status = <span class="string">"ANONYMOUS_USER"</span></div>
+<div class="code-line" style="color: #ea6b6b;"><span class="keyword">[ALERT]</span> Для відправки брифу та відстеження статусу увійдіть в акаунт!</div>
+<div class="code-line" style="margin-top: 15px;"><span class="keyword">return</span> redirect([</div>
+<div class="code-line indent-1"><a href="{% url 'orders:register' %}" class="code-link" style="color: var(--accent); font-weight: 600; text-decoration: underline;">[ Створити акаунт ]</a>,</div>
+<div class="code-line indent-1"><a href="{% url 'orders:login' %}" class="code-link" style="color: var(--accent); font-weight: 600; text-decoration: underline;">[ Увійти ]</a></div>
+<div class="code-line">])</div>
+{% endif %}
+        {% include "components/editor_window_end.html" %}
+    </section>
+
+    <!-- Секція 4: models.py — Опит / Стек -->
+    <section class="section-wrapper" id="models">
+        <div class="section-path-header">~/portfolio/models.py</div>
+        <h2 class="section-title">class Developer(models.Model):</h2>
+        <div class="models-container">
+            <!-- Навички -->
+            <h3 class="class-title font-mono">class Skills(models.Model):</h3>
+            <div class="model-fields-list">
+                {% for skill in skills %}
+                    <div class="model-field-line">
+                        <span class="field-name">{{ skill.name|lower|replace_space:"_" }}</span>
+                        <span class="field-equals">=</span>
+                        <span class="field-type">models.SkillField</span>(
+                        <span class="muted-text">level=</span><span class="string">"{{ skill.level }}%"</span>, 
+                        <span class="muted-text">category=</span><span class="string">"{{ skill.category }}"</span>
+                        )
+                        <!-- Прогрес-бар на основі рівня володіння у вигляді ASCII-графіки -->
+                        <div style="margin-top: 4px; font-weight: bold; letter-spacing: 1px; color: var(--accent-secondary); font-size: 1rem;">
+                            <span class="comment"># [</span>{{ skill.ascii_bar }}<span class="comment">]</span>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="model-field-line">
+                        <span class="comment"># Стек порожній. Додайте навички в адмінці!</span>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Досвід роботи -->
+            <h3 class="class-title font-mono" style="margin-top: 40px;">class Experience(models.Model):</h3>
+            <div class="experience-list">
+                {% for exp in experiences %}
+                    <div class="experience-item">
+                        <h4 class="experience-item-title">{{ exp.position }} <span class="accent-text">@ {{ exp.company }}</span></h4>
+                        <p class="font-mono muted-text" style="font-size: 0.85rem; margin-bottom: 12px;">
+                            period = <span class="string">"{{ exp.period }}"</span>
+                        </p>
+                        <p class="experience-desc" style="color: var(--text-main);">{{ exp.description|linebreaksbr }}</p>
+                    </div>
+                {% empty %}
+                    <p class="comment font-mono"># Досвід роботи ще не додано.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Секція 5: urls.py — Контакти -->
+    <section class="section-wrapper" id="urls">
+        <div class="section-path-header">~/portfolio/urls.py</div>
+        <h2 class="section-title">urlpatterns = [...]</h2>
+        {% include "components/editor_window_start.html" with title="urls.py" %}
+<div class="code-line"><span class="keyword">from</span> django.urls <span class="keyword">import</span> path</div>
+<div class="code-line" style="margin-bottom: 10px;"><span class="comment"># Зв'яжіться зі мною за будь-яким з цих маршрутів:</span></div>
+<div class="code-line">urlpatterns = <span class="url-bracket">[</span></div>
+<div class="code-line indent-1">path(<span class="string">'email/'</span>, views.ContactView.as_view(), name=<span class="string">'<a href="mailto:{{ dev_profile.contacts.email|default:'kirillwork31@gmail.com' }}" class="url-route" style="color: #8da872; text-decoration: underline;">{{ dev_profile.contacts.email|default:'kirillwork31@gmail.com' }}</a>'</span>),</div>
+<div class="code-line indent-1">path(<span class="string">'github/'</span>, views.ExternalRedirect.as_view(), name=<span class="string">'<a href="{{ dev_profile.contacts.github|default:'https://github.com/KirillProgrammerTop1gg' }}" target="_blank" class="url-route" style="color: #8da872; text-decoration: underline;">github.com/{{ dev_profile.contacts.github|default:'https://github.com/KirillProgrammerTop1gg'|cut:'https://github.com/' }}</a>'</span>),</div>
+<div class="code-line indent-1">path(<span class="string">'telegram/'</span>, views.ExternalRedirect.as_view(), name=<span class="string">'<a href="{{ dev_profile.contacts.telegram|default:'https://t.me/KirillProgrammer' }}" target="_blank" class="url-route" style="color: #8da872; text-decoration: underline;">t.me/{{ dev_profile.contacts.telegram|default:'https://t.me/KirillProgrammer'|cut:'https://t.me/' }}</a>'</span>),</div>
+<div class="code-line">]</div>
+        {% include "components/editor_window_end.html" %}
+    </section>
+
+    <!-- Секція 6: reviews.py — Відгуки -->
+    <section class="section-wrapper" id="reviews" style="margin-top: 50px; margin-bottom: 50px;">
+        <div class="section-path-header">~/portfolio/reviews.py</div>
+        <h2 class="section-title">class ClientReviews(Testimonials):</h2>
+        <p class="font-sans muted-text" style="margin-top: -10px; margin-bottom: 35px; font-size: 1.05rem;">
+            Що говорять мої клієнти про виконану роботу. Тільки реальні відгуки від користувачів із замовленнями у статусі "Виконано".
+        </p>
+
+        {% include "components/editor_window_start.html" with title="reviews.py" %}
+<div class="code-line">reviews_list = <span class="url-bracket">[</span></div>
+
+{% for review in reviews %}
+<div class="code-line indent-1"><span class="url-bracket">{</span></div>
+<div class="code-line indent-2"><span class="string">"client"</span>: <span class="string">"@{{ review.user.username }}"</span>,</div>
+<div class="code-line indent-2"><span class="string">"project"</span>: <span class="string">"{{ review.order.project_name }}"</span>,</div>
+<div class="code-line indent-2"><span class="string">"rating"</span>: <span class="string">"{{ review.rating }} / 5"</span>,</div>
+<div class="code-line indent-2"><span class="string">"feedback"</span>: <span class="string">"{{ review.text }}"</span>,</div>
+<div class="code-line indent-2"><span class="string">"date"</span>: <span class="string">"{{ review.created_at|date:'Y-m-d' }}"</span></div>
+<div class="code-line indent-1"><span class="url-bracket">}</span>{% if not forloop.last %},{% endif %}</div>
+{% empty %}
+<div class="code-line indent-1"><span class="comment"># Наразі відгуків немає. Будьте першим, хто залишить відгук після виконання проекту!</span></div>
+{% endfor %}
+
+<div class="code-line">]</div>
+        {% include "components/editor_window_end.html" %}
+    </section>
+{% endblock %}

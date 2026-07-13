@@ -1,0 +1,40 @@
+{% load portfolio_filters %}
+<div class="project-card font-sans">
+    <!-- Шапка вікна редактора -->
+    <div class="editor-header">
+        <div class="window-controls">
+            <span class="control-btn close"></span>
+            <span class="control-btn minimize"></span>
+            <span class="control-btn expand"></span>
+        </div>
+        <div class="editor-title font-mono">{{ project.name|slugify|default:"project" }}.py</div>
+    </div>
+
+    <!-- Тіло редактора -->
+    <div class="editor-body">
+        <!-- Код проекта справа -->
+        <div class="code-area font-mono">
+            <div class="code-line"><span class="keyword">def</span> <span class="function-name">{{ project.name|lower|replace_space:"_"|default:"project_detail" }}</span>(request):</div>
+            <div class="code-line indent-1"><span class="comment">"""</span></div>
+            <div class="code-line indent-1"><span class="comment"> * {{ project.description|linebreaksbr }}</span></div>
+            <div class="code-line indent-1"><span class="comment"> """</span></div>
+            
+            <div class="code-line indent-1">date = <span class="string">"{{ project.date|date:'Y-m-d' }}"</span></div>
+            
+            <div class="code-line indent-1">technologies = [{% for tech in project.technologies.all %}<span class="string">"{{ tech.name }}"</span>{% if not forloop.last %}, {% endif %}{% endfor %}]</div>
+
+            {% if project.github_link %}
+            <div class="code-line indent-1">github_url = <span class="string">"<a href="{{ project.github_link }}" target="_blank" class="code-link">{{ project.github_link }}</a>"</span></div>
+            {% endif %}
+
+            {% if project.image %}
+            <div class="code-line indent-1"><span class="comment"># preview_image:</span></div>
+            <div class="code-line indent-1 project-image-container">
+                <img src="{{ project.image.url }}" alt="{{ project.name }}" class="editor-project-image">
+            </div>
+            {% endif %}
+            
+            <div class="code-line indent-1"><span class="keyword">return</span> <span class="function-name">render</span>(request, <span class="string">'portfolio/project.html'</span>, {<span class="string">'success'</span>: <span class="boolean">True</span>})</div>
+        </div>
+    </div>
+</div>

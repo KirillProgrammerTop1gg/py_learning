@@ -1,0 +1,217 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Django Developer Portfolio | Вечірній термінал{% endblock %}</title>
+    <!-- Шрифти Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Глобальні загальні стилі -->
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    <!-- Стилі апки -->
+    <link rel="stylesheet" href="{% static 'portfolio/css/style.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <div class="terminal-container-ambient">
+        <header class="main-header">
+            <div class="header-logo font-mono">
+                <a href="{% url 'portfolio:home' %}"><span class="accent-text">./</span>portfolio.sh</a>
+            </div>
+            <nav class="main-nav font-mono">
+                <a href="{% url 'portfolio:home' %}#models" class="nav-link"><span class="secondary-text">01.</span>models.py</a>
+                <a href="{% url 'portfolio:home' %}#urls" class="nav-link"><span class="secondary-text">02.</span>urls.py</a>
+                <a href="{% url 'portfolio:home' %}#reviews" class="nav-link"><span class="secondary-text">03.</span>reviews.py</a>
+                <a href="{% url 'portfolio:projects_list' %}" class="nav-link"><span class="secondary-text">04.</span>projects.py</a>
+                <a href="{% url 'blog:list' %}" class="nav-link"><span class="secondary-text">05.</span>blog.py</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'orders:profile' %}" class="nav-link" style="color: var(--accent);"><span class="secondary-text">06.</span>@{{ user.username }}</a>
+                    <a href="{% url 'orders:logout' %}" class="nav-link" style="color: #ea6b6b;"><span class="secondary-text">07.</span>logout()</a>
+                {% else %}
+                    <a href="{% url 'orders:login' %}" class="nav-link" style="color: var(--accent);"><span class="secondary-text">06.</span>login()</a>
+                {% endif %}
+            </nav>
+            <button id="mobile-burger" class="burger-btn font-mono" aria-label="Меню">
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+                <span class="burger-line"></span>
+            </button>
+        </header>
+
+        <main>
+            {% if messages %}
+                <div class="terminal-messages font-mono" style="margin-bottom: 25px; max-width: 1200px; margin-left: auto; margin-right: auto; padding: 0 20px;">
+                    {% for message in messages %}
+                        <div class="code-line alert-{{ message.tags }}" style="padding: 12px 20px; border-left: 3px solid {% if message.tags == 'error' %}#ea6b6b{% else %}#4caf50{% endif %}; background: var(--bg-panel); margin-bottom: 12px; border-radius: 4px; display: flex; align-items: center; justify-content: space-between;">
+                            <div>
+                                <span class="keyword">[{% if message.tags == 'error' %}ERROR{% elif message.tags == 'warning' %}WARNING{% else %}SUCCESS{% endif %}]</span> {{ message }}
+                            </div>
+                            <span style="cursor: pointer; opacity: 0.5; font-size: 0.8rem; margin-left: 10px; font-weight: bold;" onclick="this.parentElement.style.display='none'">[x]</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% block content %}
+            {% endblock %}
+        </main>
+
+        <footer class="main-footer font-mono">
+            <p class="muted-text"># Django Developer Portfolio. 2026. "Вечірній термінал".</p>
+        </footer>
+    </div>
+
+    <!-- Основний JS скрипт -->
+    <script src="{% static 'portfolio/js/hero-typewriter.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+
+    <!-- Кнопка Вгору -->
+    <button id="scroll-to-top" class="font-mono" title="Вгору">
+        <span class="btn-arrow">▲</span>
+    </button>
+
+    <style>
+        #scroll-to-top {
+            position: fixed;
+            bottom: 35px;
+            right: 35px;
+            z-index: 999;
+            background-color: var(--bg-panel);
+            border: 1px solid var(--border);
+            color: var(--accent);
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(15px);
+        }
+        #scroll-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        #scroll-to-top:hover {
+            border-color: var(--accent);
+            background-color: var(--accent-glow);
+            transform: translateY(-4px);
+            box-shadow: 0 6px 20px rgba(232, 163, 61, 0.25);
+        }
+        #scroll-to-top:active {
+            transform: translateY(-1px);
+        }
+        #scroll-to-top .btn-arrow {
+            display: inline-block;
+            transition: transform 0.2s ease;
+        }
+        #scroll-to-top:hover .btn-arrow {
+            transform: translateY(-2px);
+        }
+    </style>
+
+    <!-- Модальне меню на мобілках -->
+    <div id="mobile-menu-modal" class="mobile-menu-modal">
+        <div class="mobile-menu-content">
+            <div class="editor-header">
+                <div class="window-controls">
+                    <span id="close-mobile-menu" class="control-btn close"></span>
+                    <span class="control-btn minimize"></span>
+                    <span class="control-btn expand"></span>
+                </div>
+                <div class="editor-title font-mono" style="font-size: 0.8rem;">navigation_menu.sh</div>
+            </div>
+            <div class="editor-body" style="padding: 0;">
+                <div class="code-area font-mono" style="padding: 30px 24px 30px 60px; line-height: 2; font-size: 1.1rem;">
+                    <div class="code-line"><span class="comment"># Navigation links:</span></div>
+                    <div class="code-line"><span class="secondary-text">01.</span> <a href="{% url 'portfolio:home' %}#models" class="mobile-nav-link">models.py</a></div>
+                    <div class="code-line"><span class="secondary-text">02.</span> <a href="{% url 'portfolio:home' %}#urls" class="mobile-nav-link">urls.py</a></div>
+                    <div class="code-line"><span class="secondary-text">03.</span> <a href="{% url 'portfolio:home' %}#reviews" class="mobile-nav-link">reviews.py</a></div>
+                    <div class="code-line"><span class="secondary-text">04.</span> <a href="{% url 'portfolio:projects_list' %}" class="mobile-nav-link">projects.py</a></div>
+                    <div class="code-line"><span class="secondary-text">05.</span> <a href="{% url 'blog:list' %}" class="mobile-nav-link">blog.py</a></div>
+                    {% if user.is_authenticated %}
+                        <div class="code-line"><span class="secondary-text">06.</span> <a href="{% url 'orders:profile' %}" class="mobile-nav-link" style="color: var(--accent);">@{{ user.username }}</a></div>
+                        <div class="code-line"><span class="secondary-text">07.</span> <a href="{% url 'orders:logout' %}" class="mobile-nav-link" style="color: #ea6b6b;">logout()</a></div>
+                    {% else %}
+                        <div class="code-line"><span class="secondary-text">06.</span> <a href="{% url 'orders:login' %}" class="mobile-nav-link" style="color: var(--accent);">login()</a></div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Кнопка Вгору
+            const btn = document.getElementById('scroll-to-top');
+            if (btn) {
+                window.addEventListener('scroll', function() {
+                    if (window.scrollY > 300) {
+                        btn.classList.add('visible');
+                    } else {
+                        btn.classList.remove('visible');
+                    }
+                });
+                
+                btn.addEventListener('click', function() {
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                });
+            }
+
+            // Мобільне модальне меню
+            const burger = document.getElementById('mobile-burger');
+            const modal = document.getElementById('mobile-menu-modal');
+            const closeBtn = document.getElementById('close-mobile-menu');
+            const mobileLinks = document.querySelectorAll('.mobile-nav-link');
+
+            function toggleMenu() {
+                burger.classList.toggle('active');
+                modal.classList.toggle('active');
+                if (modal.classList.contains('active')) {
+                    document.body.style.overflow = 'hidden'; // Запобігаємо прокрутці фону
+                } else {
+                    document.body.style.overflow = '';
+                }
+            }
+
+            if (burger && modal) {
+                burger.addEventListener('click', toggleMenu);
+            }
+
+            if (closeBtn) {
+                closeBtn.addEventListener('click', toggleMenu);
+            }
+
+            // Закриття меню при кліку на фон
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        toggleMenu();
+                    }
+                });
+            }
+
+            // Закриття меню при переході по посиланнях
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (modal.classList.contains('active')) {
+                        toggleMenu();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

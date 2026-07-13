@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Заповнити бриф | Вечірній термінал{% endblock %}
+
+{% block content %}
+    <section class="section-wrapper" style="padding-top: 30px; margin-bottom: 40px;">
+        <div class="section-path-header">~/orders/new_brief.py</div>
+        <h2 class="section-title" style="margin-bottom: 15px;">class ProjectBrief(FormView):</h2>
+        <p class="font-sans muted-text" style="margin-top: -10px; margin-bottom: 25px; font-size: 1.05rem;">
+            Заповніть форму-конфіг нижче. Опишіть вашу ідею, вимоги, бюджет і терміни, щоб я міг детально ознайомитися з проектом та запропонувати найкраще архітектурне рішення.
+        </p>
+
+        <!-- Вікно редактора брифу -->
+        <form method="POST" action="{% url 'orders:create' %}">
+            {% csrf_token %}
+            {% include "components/editor_window_start.html" with title="brief_config.json" %}
+<div class="code-line"><span class="url-bracket">{</span></div>
+
+<div class="code-line indent-1"><span class="string">"project_name"</span>: <span class="comment">// назва застосунку чи сервісу</span></div>
+<div class="indent-1" style="margin-bottom: 12px; margin-top: 4px;">
+    <input type="text" name="project_name" id="{{ form.project_name.id_for_label }}" required class="terminal-input" placeholder='наприклад, "DeFi Trading Bot"' value="{{ form.project_name.value|default:'' }}">
+    {% if form.project_name.errors %}
+        <div class="error-msg" style="color: #ea6b6b; font-size: 0.85rem; margin-top: 4px;">
+            {% for error in form.project_name.errors %}[!] {{ error }}{% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+<div class="code-line indent-1"><span class="string">"project_type"</span>: <span class="comment">// сфера та технологічний напрямок</span></div>
+<div class="indent-1" style="margin-bottom: 12px; margin-top: 4px;">
+    <select name="project_type" id="{{ form.project_type.id_for_label }}" class="terminal-input" style="cursor: pointer;">
+        {% for val, name in form.fields.project_type.choices %}
+            <option value="{{ val }}" {% if form.project_type.value == val %}selected{% endif %}>{{ name }}</option>
+        {% endfor %}
+    </select>
+    {% if form.project_type.errors %}
+        <div class="error-msg" style="color: #ea6b6b; font-size: 0.85rem; margin-top: 4px;">
+            {% for error in form.project_type.errors %}[!] {{ error }}{% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+<div class="code-line indent-1"><span class="string">"approximate_budget_usd"</span>: <span class="comment">// планований бюджет у USD ($)</span></div>
+<div class="indent-1" style="margin-bottom: 12px; margin-top: 4px;">
+    <input type="number" name="budget" id="{{ form.budget.id_for_label }}" required class="terminal-input" step="0.01" placeholder="наприклад, 1000.50" value="{{ form.budget.value|default:'' }}">
+    {% if form.budget.errors %}
+        <div class="error-msg" style="color: #ea6b6b; font-size: 0.85rem; margin-top: 4px;">
+            {% for error in form.budget.errors %}[!] {{ error }}{% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+<div class="code-line indent-1"><span class="string">"expected_timeline"</span>: <span class="comment">// бажані терміни розробки</span></div>
+<div class="indent-1" style="margin-bottom: 12px; margin-top: 4px;">
+    <input type="text" name="timeline" id="{{ form.timeline.id_for_label }}" required class="terminal-input" placeholder='наприклад, "3 тижні", "до кінця місяця"' value="{{ form.timeline.value|default:'' }}">
+    {% if form.timeline.errors %}
+        <div class="error-msg" style="color: #ea6b6b; font-size: 0.85rem; margin-top: 4px;">
+            {% for error in form.timeline.errors %}[!] {{ error }}{% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+<div class="code-line indent-1"><span class="string">"contacts_for_communication"</span>: <span class="comment">// ваші контакти для швидкого фідбеку</span></div>
+<div class="indent-1" style="margin-bottom: 12px; margin-top: 4px;">
+    <input type="text" name="contacts" id="{{ form.contacts.id_for_label }}" required class="terminal-input" placeholder='наприклад, "Telegram: @username, або email"' value="{{ form.contacts.value|default:'' }}">
+    {% if form.contacts.errors %}
+        <div class="error-msg" style="color: #ea6b6b; font-size: 0.85rem; margin-top: 4px;">
+            {% for error in form.contacts.errors %}[!] {{ error }}{% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+<div class="code-line indent-1"><span class="string">"technical_specification"</span>: <span class="comment">// опис вимог та архітектури (мінімум 20 символів)</span></div>
+<div class="indent-1" style="margin-bottom: 12px; margin-top: 4px;">
+    <textarea name="description" id="{{ form.description.id_for_label }}" required class="terminal-input" style="resize: vertical; min-height: 100px;" placeholder="Детально опишіть, що повинен робити сервіс, які потрібні API, алгоритми тощо...">{{ form.description.value|default:'' }}</textarea>
+    {% if form.description.errors %}
+        <div class="error-msg" style="color: #ea6b6b; font-size: 0.85rem; margin-top: 4px;">
+            {% for error in form.description.errors %}[!] {{ error }}{% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+<div class="code-line"><span class="url-bracket">}</span></div>
+
+<div class="indent-1" style="margin-top: 20px; margin-bottom: 2px;">
+    <button type="submit" class="submit-btn font-mono">
+        $ python manage.py send_brief --target=kirill
+    </button>
+</div>
+            {% include "components/editor_window_end.html" %}
+        </form>
+    </section>
+
+    <!-- Стилі для брифу -->
+    <style>
+        .terminal-input {
+            background: var(--bg-element);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 10px 12px;
+            font-family: var(--font-mono);
+            font-size: 0.95rem;
+            border-radius: 4px;
+            outline: none;
+            transition: all 0.25s ease;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 4px;
+        }
+        .terminal-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 12px rgba(232, 163, 61, 0.15);
+            background: rgba(232, 163, 61, 0.02);
+        }
+        select.terminal-input option {
+            background: var(--bg-panel);
+            color: var(--text);
+        }
+        .submit-btn {
+            background: var(--accent-glow);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: inline-flex;
+            align-items: center;
+        }
+        .submit-btn:hover {
+            background: var(--accent);
+            color: var(--bg);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(232, 163, 61, 0.2);
+        }
+    </style>
+{% endblock %}

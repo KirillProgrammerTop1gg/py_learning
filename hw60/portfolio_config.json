@@ -1,0 +1,16 @@
+{
+  "name": "Кірілл",
+  "role": "Fullstack & Web3 Automation Developer",
+  "greeting": "Привіт! Мене звати Кірілл.",
+  "bio_paragraphs": [
+    "Я — Fullstack-розробник та спеціаліст із Web3-автоматизації. Умію створювати як сучасні інтерактивні інтерфейси на Frontend (HTML/CSS, JavaScript, React/TypeScript), так і швидку й надійну логіку на Backend (Python: Flask, FastAPI, Django).",
+    "Окремим великим напрямком моєї роботи є автоматизація процесів у сфері криптовалют (Crypto Automation). Створюю високонавантажені асинхронні скрипти для роботи з мультиакаунтами, взаємодії зі смарт-контрактами через Web3.py, проведення одночасних DEX-свапів, а також асинхронних Телеграм-ботів та парсерів.",
+    "Мій підхід поєднує архітектурну строгість та елегантність коду з особливою увагою до деталей інтерфейсу та стабільності сервісів під навантаженням."
+  ],
+  "photo_path": "portfolio/images/avatar.png",
+  "contacts": {
+    "email": "kirillwork31@gmail.com",
+    "github": "https://github.com/KirillProgrammerTop1gg",
+    "telegram": "https://t.me/KirillProgrammer"
+  }
+}

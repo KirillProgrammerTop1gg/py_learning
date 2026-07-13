@@ -1,0 +1,220 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Особистий кабінет | Вечірній термінал{% endblock %}
+
+{% block content %}
+    <section class="section-wrapper" style="padding-top: 40px; margin-bottom: 50px;">
+        {% if user.is_staff or user.is_superuser %}
+            <div class="section-path-header">~/dashboard/admin_profile.py</div>
+            <h2 class="section-title">class AdminDashboard(AdminSession):</h2>
+            <p class="font-sans muted-text" style="margin-top: -10px; margin-bottom: 35px; font-size: 1.05rem;">
+                Вітаємо в панелі управління, Адміністраторе <span class="accent-text" style="font-weight: 600;">@{{ user.username }}</span>. Тут ви можете бачити загальну аналітику бази даних та переходити до адміністрування замовлень.
+            </p>
+        {% else %}
+            <div class="section-path-header">~/dashboard/profile.py</div>
+            <h2 class="section-title">class ClientDashboard(UserSession):</h2>
+            <p class="font-sans muted-text" style="margin-top: -10px; margin-bottom: 35px; font-size: 1.05rem;">
+                Вітаємо у вашому особистому кабінеті, <span class="accent-text" style="font-weight: 600;">@{{ user.username }}</span>. Тут ви можете заповнити бриф на розробку та в реальному часі відстежувати хід виконання замовлень.
+            </p>
+        {% endif %}
+
+        <!-- Консольні блоки статистики -->
+        <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 40px;">
+            {% if user.is_staff or user.is_superuser %}
+                <!-- Всього заявок у системі -->
+                <div class="stat-card font-mono" style="background: var(--bg-panel); border: 1px solid var(--border); padding: 20px; border-radius: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
+                    <div class="comment" style="font-size: 0.85rem; margin-bottom: 10px;"># global_briefs_submitted</div>
+                    <div style="font-size: 2.5rem; font-weight: bold; color: var(--text);">{{ total_orders }}</div>
+                </div>
+
+                <!-- Очікують розгляду в системі -->
+                <div class="stat-card font-mono" style="background: var(--bg-panel); border: 1px solid var(--border); padding: 20px; border-radius: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border-left: 3px solid var(--accent);">
+                    <div class="comment" style="font-size: 0.85rem; margin-bottom: 10px;"># global_pending_approval</div>
+                    <div style="font-size: 2.5rem; font-weight: bold; color: var(--accent);">{{ pending_orders }}</div>
+                </div>
+
+                <!-- В роботі в системі -->
+                <div class="stat-card font-mono" style="background: var(--bg-panel); border: 1px solid var(--border); padding: 20px; border-radius: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border-left: 3px solid #4caf50;">
+                    <div class="comment" style="font-size: 0.85rem; margin-bottom: 10px;"># global_currently_active</div>
+                    <div style="font-size: 2.5rem; font-weight: bold; color: #4caf50;">{{ active_orders }}</div>
+                </div>
+
+                <!-- Виконані в системі -->
+                <div class="stat-card font-mono" style="background: var(--bg-panel); border: 1px solid var(--border); padding: 20px; border-radius: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border-left: 3px solid #2196f3;">
+                    <div class="comment" style="font-size: 0.85rem; margin-bottom: 10px;"># global_fully_completed</div>
+                    <div style="font-size: 2.5rem; font-weight: bold; color: #2196f3;">{{ completed_orders }}</div>
+                </div>
+            {% else %}
+                <!-- Всього заявок користувача -->
+                <div class="stat-card font-mono" style="background: var(--bg-panel); border: 1px solid var(--border); padding: 20px; border-radius: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
+                    <div class="comment" style="font-size: 0.85rem; margin-bottom: 10px;"># total_briefs_submitted</div>
+                    <div style="font-size: 2.5rem; font-weight: bold; color: var(--text);">{{ total_orders }}</div>
+                </div>
+
+                <!-- Очікують розгляду -->
+                <div class="stat-card font-mono" style="background: var(--bg-panel); border: 1px solid var(--border); padding: 20px; border-radius: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border-left: 3px solid var(--accent);">
+                    <div class="comment" style="font-size: 0.85rem; margin-bottom: 10px;"># pending_approval</div>
+                    <div style="font-size: 2.5rem; font-weight: bold; color: var(--accent);">{{ pending_orders }}</div>
+                </div>
+
+                <!-- В роботі -->
+                <div class="stat-card font-mono" style="background: var(--bg-panel); border: 1px solid var(--border); padding: 20px; border-radius: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border-left: 3px solid #4caf50;">
+                    <div class="comment" style="font-size: 0.85rem; margin-bottom: 10px;"># currently_active</div>
+                    <div style="font-size: 2.5rem; font-weight: bold; color: #4caf50;">{{ active_orders }}</div>
+                </div>
+
+                <!-- Виконані -->
+                <div class="stat-card font-mono" style="background: var(--bg-panel); border: 1px solid var(--border); padding: 20px; border-radius: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border-left: 3px solid #2196f3;">
+                    <div class="comment" style="font-size: 0.85rem; margin-bottom: 10px;"># fully_completed</div>
+                    <div style="font-size: 2.5rem; font-weight: bold; color: #2196f3;">{{ completed_orders }}</div>
+                </div>
+            {% endif %}
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: start;" class="profile-layout-cols">
+            <!-- Панель дій -->
+            {% if user.is_staff or user.is_superuser %}
+                {% include "components/editor_window_start.html" with title="bash --run=admin_actions" %}
+<div class="code-line"><span class="keyword">def</span> <span class="function-name">execute_admin_actions</span>():</div>
+<div class="code-line indent-1"><span class="comment"># Переглянути та керувати всіма замовленнями клієнтів</span></div>
+<div class="code-line indent-1"><a href="/admin/orders/order/" class="dashboard-btn" style="color: var(--accent); border-color: var(--accent);">[ Адміністрування замовлень ]</a></div>
+<div class="code-line indent-1" style="margin-top: 15px;"><span class="comment"># Повний доступ до адмін-панелі сайту</span></div>
+<div class="code-line indent-1"><a href="/admin/" class="dashboard-btn">[ Відкрити Django Admin (/admin/) ]</a></div>
+                {% include "components/editor_window_end.html" %}
+            {% else %}
+                {% include "components/editor_window_start.html" with title="bash --run=actions" %}
+<div class="code-line"><span class="keyword">def</span> <span class="function-name">execute_actions</span>():</div>
+<div class="code-line indent-1"><span class="comment"># Заповнити новий технічний бриф</span></div>
+<div class="code-line indent-1"><a href="{% url 'orders:create' %}" class="dashboard-btn">[ Надіслати бриф проекту ]</a></div>
+<div class="code-line indent-1" style="margin-top: 15px;"><span class="comment"># Переглянути статус моїх замовлень</span></div>
+<div class="code-line indent-1"><a href="{% url 'orders:list' %}" class="dashboard-btn">[ Мої замовлення (відстеження) ]</a></div>
+<div class="code-line indent-1" style="margin-top: 15px;"><span class="comment"># Зв'язатися з Кіріллом безпосередньо</span></div>
+<div class="code-line indent-1"><a href="{{ dev_profile.contacts.telegram }}" target="_blank" class="dashboard-btn" style="color: var(--accent); border-color: var(--accent);">[ Написати в Telegram ]</a></div>
+                {% include "components/editor_window_end.html" %}
+            {% endif %}
+
+            <!-- Системна інформація -->
+            {% include "components/editor_window_start.html" with title="system_info.log" %}
+<div class="code-line"><span class="comment"># Log file generated on {% now "Y-m-d H:i:s" %}</span></div>
+<div class="code-line">USER_NAME      = <span class="string">"{{ user.username }}"</span></div>
+<div class="code-line">EMAIL          = <span class="string">"{{ user.email|default:'N/A' }}"</span></div>
+<div class="code-line">DATE_JOINED    = <span class="string">"{{ user.date_joined|date:'Y-m-d H:i' }}"</span></div>
+<div class="code-line">SESSION_STATUS = <span class="keyword">"AUTHENTICATED_OK"</span></div>
+{% if user.is_staff or user.is_superuser %}
+<div class="code-line">ROLE           = <span class="keyword">"ADMINISTRATOR"</span></div>
+{% else %}
+<div class="code-line">ROLE           = <span class="keyword">"CLIENT"</span></div>
+{% endif %}
+<div class="code-line" style="margin-top: 25px;"><span class="comment"># Бажаєте завершити поточну сесію?</span></div>
+<div class="code-line"><a href="{% url 'orders:logout' %}" style="color: #ea6b6b; text-decoration: underline;">$ logout()</a></div>
+            {% include "components/editor_window_end.html" %}
+        </div>
+
+        {% if user.is_staff or user.is_superuser %}
+            <!-- Розширена аналітика (тільки для адміна) -->
+            <div style="margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px;" class="profile-layout-cols">
+                
+                <!-- Блок 1: Перегляди сторінок та Популярні проекти -->
+                {% include "components/editor_window_start.html" with title="bash --run=analytics_views.py" %}
+<div class="code-line"><span class="keyword">def</span> <span class="function-name">get_page_and_project_metrics</span>():</div>
+<div class="code-line indent-1"><span class="comment"># 1. Кількість переглядів сторінок (Page Views)</span></div>
+<div class="code-line indent-1">page_views = <span class="url-bracket">{</span></div>
+{% for view in page_views %}
+<div class="code-line indent-2"><span class="string">"{{ view.path }}"</span>: <span class="keyword">{{ view.views_count }}</span>,</div>
+{% empty %}
+<div class="code-line indent-2"><span class="comment"># Немає даних про перегляди</span></div>
+{% endfor %}
+<div class="code-line indent-1"><span class="url-bracket">}</span></div>
+
+<div class="code-line indent-1" style="margin-top: 20px;"><span class="comment"># 2. Статистика найпопулярніших проектів (Popular Projects)</span></div>
+<div class="code-line indent-1">popular_projects = <span class="url-bracket">[</span></div>
+{% for proj in popular_projects %}
+<div class="code-line indent-2"><span class="string">"{{ proj.name }}"</span>: <span class="keyword">{{ proj.views_count }}</span> views,</div>
+{% empty %}
+<div class="code-line indent-2"><span class="comment"># Проекти ще не додано</span></div>
+{% endfor %}
+<div class="code-line indent-1"><span class="url-bracket">]</span></div>
+                {% include "components/editor_window_end.html" %}
+
+                <!-- Блок 2: Графіки активності замовлень по місяцях -->
+                {% include "components/editor_window_start.html" with title="bash --run=orders_activity_chart.sh" %}
+<div class="code-line"><span class="comment"># 3. Графік активності замовлень по місяцях (Orders per month)</span></div>
+<div class="code-line"><span class="keyword">class</span> <span class="function-name">OrdersMonthlyChart</span>:</div>
+{% for item in monthly_activity_graph %}
+<div class="code-line indent-1"><span class="string">"{{ item.month }}"</span>: <span class="url-bracket">[</span><span class="accent-text" style="font-weight: bold; letter-spacing: 1px;">{{ item.bar }}</span><span class="url-bracket">]</span> <span class="keyword">{{ item.count }}</span> замовл.</div>
+{% empty %}
+<div class="code-line indent-1"><span class="comment"># Немає даних замовлень для побудови графіка</span></div>
+{% endfor %}
+                {% include "components/editor_window_end.html" %}
+
+            </div>
+        {% endif %}
+
+        {% if completed_no_review_orders %}
+            <div style="margin-top: 40px;">
+                {% include "components/editor_window_start.html" with title="bash --run=leave_review" %}
+                <div class="code-line"><span class="keyword">def</span> <span class="function-name">leave_project_feedback</span>():</div>
+                <div class="code-line indent-1"><span class="comment"># У вас є виконані проекти! Будь ласка, залиште відгук:</span></div>
+                
+                {% for order in completed_no_review_orders %}
+                    <div style="margin: 20px 0; padding: 20px; background: var(--bg-element); border: 1px solid var(--border); border-radius: 6px;">
+                        <h4 class="font-mono" style="margin: 0 0 15px 0; color: var(--accent); font-size: 1.1rem;">project: "{{ order.project_name }}"</h4>
+                        <form method="post" action="{% url 'orders:profile' %}" style="display: flex; flex-direction: column; gap: 15px;">
+                            {% csrf_token %}
+                            <input type="hidden" name="order_id" value="{{ order.id }}">
+                            
+                            <div style="display: flex; flex-direction: column; gap: 5px;">
+                                <label class="font-mono" style="font-size: 0.9rem; color: #887d73;">rating = </label>
+                                <select name="rating" class="terminal-input" style="max-width: 180px; background: var(--bg-panel); border: 1px solid var(--border); color: var(--text); padding: 8px; border-radius: 4px; font-family: monospace; outline: none;">
+                                    <option value="5">5 / 5 (Відмінно)</option>
+                                    <option value="4">4 / 5 (Добре)</option>
+                                    <option value="3">3 / 5 (Задовільно)</option>
+                                    <option value="2">2 / 5 (Погано)</option>
+                                    <option value="1">1 / 5 (Жахливо)</option>
+                                </select>
+                            </div>
+                            
+                            <div style="display: flex; flex-direction: column; gap: 5px;">
+                                <label class="font-mono" style="font-size: 0.9rem; color: #887d73;">review_comment = </label>
+                                <textarea name="text" class="terminal-input" rows="3" required placeholder="Напишіть ваші враження від співпраці..." style="width: 100%; max-width: 100%; background: var(--bg-panel); border: 1px solid var(--border); color: var(--text); padding: 10px; border-radius: 4px; font-family: monospace; font-size: 0.95rem; line-height: 1.5; resize: vertical; box-sizing: border-box; outline: none;"></textarea>
+                            </div>
+                            
+                            <div>
+                                <button type="submit" name="submit_review" class="dashboard-btn" style="color: #4caf50; border-color: #4caf50; margin-top: 0; cursor: pointer; background: transparent; font-family: monospace;">
+                                    $ submit_review()
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                {% endfor %}
+                {% include "components/editor_window_end.html" %}
+            </div>
+        {% endif %}
+    </section>
+
+    <style>
+        .dashboard-btn {
+            display: inline-block;
+            background: var(--bg-element);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 10px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+            margin-top: 8px;
+        }
+        .dashboard-btn:hover {
+            border-color: var(--accent);
+            background: var(--accent-glow);
+            color: var(--accent);
+            transform: translateX(4px);
+        }
+        @media (max-width: 768px) {
+            .profile-layout-cols {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+{% endblock %}

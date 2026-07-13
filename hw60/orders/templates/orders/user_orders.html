@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Мої замовлення | Вечірній термінал{% endblock %}
+
+{% block content %}
+    <section class="section-wrapper" style="padding-top: 40px; margin-bottom: 50px;">
+        <div class="section-path-header">~/orders/brief_history.py</div>
+        <h2 class="section-title">class MyOrders(ClientBriefHistory):</h2>
+        <p class="font-sans muted-text" style="margin-top: -10px; margin-bottom: 35px; font-size: 1.05rem;">
+            Перелік ваших відправлених технічних брифів та їхні актуальні статуси у розробника.
+        </p>
+
+        <!-- Список замовлень -->
+        <div style="display: flex; flex-direction: column; gap: 30px;">
+            {% for order in orders %}
+                <div style="display: block;">
+                    <!-- Шапка замовлення зі статусом і тайтлом -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <span style="font-family: var(--font-mono); font-size: 0.9rem; color: var(--accent);">brief_#{{ order.id }}.json</span>
+                        
+                        <!-- Статуси різними кольорами -->
+                        <div>
+                            {% if order.status == 'pending' %}
+                                <span style="background: rgba(232, 163, 61, 0.1); border: 1px solid var(--accent); color: var(--accent); padding: 3px 10px; border-radius: 4px; font-size: 0.8rem; font-family: var(--font-mono); font-weight: 500;">[ STATUS: PENDING ]</span>
+                            {% elif order.status == 'in_progress' %}
+                                <span style="background: rgba(76, 175, 80, 0.1); border: 1px solid #4caf50; color: #4caf50; padding: 3px 10px; border-radius: 4px; font-size: 0.8rem; font-family: var(--font-mono); font-weight: 500;">[ STATUS: IN_PROGRESS ]</span>
+                            {% elif order.status == 'completed' %}
+                                <span style="background: rgba(33, 150, 243, 0.1); border: 1px solid #2196f3; color: #2196f3; padding: 3px 10px; border-radius: 4px; font-size: 0.8rem; font-family: var(--font-mono); font-weight: 500;">[ STATUS: COMPLETED ]</span>
+                            {% else %}
+                                <span style="background: rgba(158, 158, 158, 0.1); border: 1px solid #9e9e9e; color: #9e9e9e; padding: 3px 10px; border-radius: 4px; font-size: 0.8rem; font-family: var(--font-mono); font-weight: 500;">[ STATUS: CANCELLED ]</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% include "components/editor_window_start.html" with title="brief_config.json" %}
+<div class="code-line"><span class="url-bracket">{</span></div>
+<div class="code-line indent-1">"project_name": <span class="string">"{{ order.project_name }}"</span>,</div>
+<div class="code-line indent-1">"project_type": <span class="keyword">"{{ order.get_project_type_display }}"</span>,</div>
+<div class="code-line indent-1">"budget_usd": <span class="function-name">{{ order.budget }}</span>,</div>
+<div class="code-line indent-1">"expected_timeline": <span class="string">"{{ order.timeline }}"</span>,</div>
+<div class="code-line indent-1">"submitted_at": <span class="comment">"{{ order.created_at|date:'Y-m-d H:i' }}"</span>,</div>
+<div class="code-line indent-1">"contacts": <span class="string">"{{ order.contacts }}"</span>,</div>
+<div class="code-line indent-1">"technical_specification": <span class="string">"</span></div>
+<div class="code-line indent-2" style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.5; margin-top: 4px; margin-bottom: 4px;">{{ order.description|linebreaksbr }}</div>
+<div class="code-line indent-1"><span class="string">"</span></div>
+<div class="code-line"><span class="url-bracket">}</span></div>
+                    {% include "components/editor_window_end.html" %}
+                </div>
+            {% empty %}
+                <!-- Якщо замовлень немає -->
+                {% include "components/editor_window_start.html" with title="empty_history.py" %}
+<div class="code-line"><span class="comment"># Історія ваших брифів порожня.</span></div>
+<div class="code-line" style="margin-top: 10px;"><span class="terminal-prompt" style="color: var(--accent);">$</span> <a href="{% url 'orders:create' %}" style="color: var(--accent); text-decoration: underline;">python make_brief.py --start</a></div>
+                {% include "components/editor_window_end.html" %}
+            {% endfor %}
+        </div>
+
+        <div style="margin-top: 35px; text-align: center;">
+            <a href="{% url 'orders:profile' %}" class="back-link font-mono">&lt;-- повернутися до дашборду</a>
+        </div>
+    </section>
+
+    <style>
+        .back-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.25s ease;
+        }
+        .back-link:hover {
+            color: var(--accent);
+        }
+    </style>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Блог розробника | Вечірній термінал{% endblock %}
+
+{% block content %}
+    <section class="section-wrapper" style="padding-top: 40px; margin-bottom: 50px;">
+        <div class="section-path-header">~/blog/main.py</div>
+        <h2 class="section-title">class DeveloperBlog(Articles):</h2>
+        <p class="font-sans muted-text" style="margin-top: -10px; margin-bottom: 35px; font-size: 1.05rem;">
+            Мій блог про розробку, архітектуру коду та нові технології. Використовуйте пошук за назвою, категорією або тегами.
+        </p>
+
+        <!-- Пошук по блогу -->
+        <div style="margin-bottom: 40px;">
+            {% include "components/editor_window_start.html" with title="bash --run=grep_search.sh" %}
+            <div class="code-line"><span class="comment"># Пошук статей за назвою, категорією або технологією (grep search)</span></div>
+            <form method="get" action="{% url 'blog:list' %}" style="display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 250px;">
+                    <span class="font-mono" style="color: var(--accent); font-size: 1.1rem; white-space: nowrap;">$ grep -rnw</span>
+                    <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Введіть пошуковий запит..." class="terminal-input" style="width: 100%; background: var(--bg-panel); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 4px; font-family: monospace; outline: none; font-size: 0.95rem;">
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" class="dashboard-btn" style="color: var(--accent); border-color: var(--accent); cursor: pointer; background: transparent; font-family: monospace; padding: 8px 16px;">
+                        $ execute_search()
+                    </button>
+                    {% if query %}
+                        <a href="{% url 'blog:list' %}" class="dashboard-btn" style="color: #ea6b6b; border-color: #ea6b6b; font-family: monospace; padding: 8px 16px; display: inline-flex; align-items: center;">
+                            $ clear()
+                        </a>
+                    {% endif %}
+                </div>
+            </form>
+            {% include "components/editor_window_end.html" %}
+        </div>
+
+        <!-- Список статей -->
+        <div style="display: grid; grid-template-columns: 1fr; gap: 30px;">
+            {% for post in posts %}
+                {% include "components/editor_window_start.html" with title=post.slug|add:".py" %}
+                <div class="code-line"><span class="keyword">class</span> <span class="function-name">Article</span>:</div>
+                <div class="code-line indent-1">title       = <span class="string">"{{ post.title }}"</span></div>
+                <div class="code-line indent-1">views_count = <span class="keyword">{{ post.views_count }}</span></div>
+                <div class="code-line indent-1">created_at  = <span class="string">"{{ post.created_at|date:'Y-m-d H:i' }}"</span></div>
+                {% if post.category %}<div class="code-line indent-1">category    = <span class="string">"{{ post.category.name }}"</span></div>{% endif %}
+                {% if post.technologies.all %}<div class="code-line indent-1">tech_stack  = <span class="url-bracket">[</span>{% for tech in post.technologies.all %}<span class="string">"{{ tech.name }}"</span>{% if not forloop.last %}, {% endif %}{% endfor %}<span class="url-bracket">]</span></div>{% endif %}
+                <div class="code-line indent-1" style="margin-top: 15px;"><span class="comment"># {{ post.content|truncatewords:25 }}</span></div>
+                <div class="code-line indent-1" style="margin-top: 20px;"><a href="{% url 'blog:detail' slug=post.slug %}" class="dashboard-btn" style="color: var(--accent); border-color: var(--accent); font-family: monospace;">$ read_article()</a></div>
+                {% include "components/editor_window_end.html" %}
+            {% empty %}
+                {% include "components/editor_window_start.html" with title="empty_blog.py" %}
+                <div class="code-line"><span class="comment"># За запитом "{{ query }}" статей не знайдено.</span></div>
+                <div class="code-line"><a href="{% url 'blog:list' %}" style="color: var(--accent); text-decoration: underline;">$ cd .. <span class="muted-text"># скинути пошук</span></a></div>
+                {% include "components/editor_window_end.html" %}
+            {% endfor %}
+        </div>
+    </section>
+
+    <style>
+        .terminal-input:focus {
+            border-color: var(--accent) !important;
+            box-shadow: 0 0 8px rgba(232, 163, 61, 0.1);
+        }
+        .dashboard-btn {
+            display: inline-block;
+            background: var(--bg-element);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 8px 14px;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .dashboard-btn:hover {
+            background: var(--accent-glow);
+            transform: translateX(4px);
+        }
+    </style>
+{% endblock %}

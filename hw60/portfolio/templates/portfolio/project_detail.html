@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load static %}
+{% load portfolio_filters %}
+
+{% block title %}{{ project.name }} | Вечірній термінал{% endblock %}
+
+{% block content %}
+    <section class="section-wrapper" style="padding-top: 40px; margin-bottom: 40px;">
+        <!-- Хлібні крихти / Навігація в стилі імпорту Python -->
+        <div class="font-mono" style="margin-bottom: 30px; font-size: 0.95rem; padding-bottom: 10px; border-bottom: 1px solid var(--border);">
+            <span class="keyword" style="color: #ff79c6;">from</span> portfolio.projects <span class="keyword" style="color: #ff79c6;">import</span> <a href="{% url 'portfolio:projects_list' %}" class="accent-text" style="text-decoration: underline; color: var(--accent); font-weight: 500;">list_projects</a>
+        </div>
+
+        <div class="project-detail-container" style="max-width: 900px; margin: 0 auto;">
+            <!-- Шапка з назвою проекта -->
+            <div style="margin-bottom: 25px;">
+                <h2 class="section-title" style="margin-bottom: 10px; font-size: 2.2rem;">class {{ project.name|title|replace_space:"" }}(Project):</h2>
+                <div class="font-mono" style="font-size: 0.9rem; color: var(--text-muted);">
+                    # Створено: {{ project.date|date:'d E Y'|lower }} | Категорія: {{ project.technologies.first.category.name|default:"Backend" }}
+                </div>
+            </div>
+
+            <!-- Головна картка-редактор з повним описом та медіа -->
+            <div class="project-card font-sans" style="box-shadow: 0 10px 40px rgba(0,0,0,0.35);">
+                <!-- Шапка вікна редактора -->
+                <div class="editor-header" style="padding: 12px 20px;">
+                    <div class="window-controls">
+                        <span class="control-btn close"></span>
+                        <span class="control-btn minimize"></span>
+                        <span class="control-btn expand"></span>
+                    </div>
+                    <div class="editor-title font-mono" style="font-size: 0.8rem;">{{ project.name|slugify|default:"project"|lower }}_full.py</div>
+                </div>
+
+                <!-- Тіло редактора -->
+                <div class="editor-body">
+                    <!-- Код детальної сторінки -->
+                    <div class="code-area font-mono" style="padding: 24px 24px 24px 60px; line-height: 1.6; font-size: 0.95rem;">
+                        <div class="code-line"><span class="keyword">def</span> <span class="function-name">get_project_manifest</span>():</div>
+                        
+                        <div class="code-line indent-1" style="margin-top: 5px;"><span class="comment">"""</span></div>
+                        <div class="code-line indent-1"><span class="comment"> * {{ project.description|linebreaksbr }}</span></div>
+                        <div class="code-line indent-1"><span class="comment"> """</span></div>
+                        
+                        <div class="code-line indent-1" style="margin-top: 15px;">specifications = {</div>
+                        <div class="code-line indent-2">"project_id": <span class="string">{{ project.id }}</span>,</div>
+                        <div class="code-line indent-2">"name": <span class="string">"{{ project.name }}"</span>,</div>
+                        <div class="code-line indent-2">"launch_date": <span class="string">"{{ project.date|date:'Y-m-d' }}"</span>,</div>
+                        <div class="code-line indent-2">"technologies": [{% for tech in project.technologies.all %}<span class="string">"{{ tech.name }}"</span>{% if not forloop.last %}, {% endif %}{% endfor %}],</div>
+                        
+                        {% if project.github_link %}
+                        <div class="code-line indent-2">"source_code_url": <span class="string">"<a href="{{ project.github_link }}" target="_blank" class="code-link" style="color: #8da872; text-decoration: underline;">{{ project.github_link }}</a>"</span>,</div>
+                        {% endif %}
+                        <div class="code-line indent-1">}</div>
+                        
+                        {% if project.image %}
+                        <div class="code-line indent-1" style="margin-top: 20px;"><span class="comment"># Скріншот / Демонстрація інтерфейсу:</span></div>
+                        <div class="code-line indent-1 project-image-container" style="margin: 15px 0;">
+                            <img src="{{ project.image.url }}" alt="{{ project.name }}" class="editor-project-image" style="max-height: 500px; object-fit: contain; width: 100%; border: 1px solid var(--border); border-radius: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+                        </div>
+                        {% endif %}
+                        
+                        <div class="code-line indent-1" style="margin-top: 20px;"><span class="keyword">return</span> specifications</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Кнопка повернення до галереї -->
+            <div style="text-align: center; margin-top: 35px;">
+                <a href="{% url 'portfolio:projects_list' %}" class="font-mono back-to-gallery-btn" style="text-decoration: none; padding: 10px 24px; border: 1px solid var(--accent); color: var(--accent); border-radius: 4px; display: inline-block; font-size: 0.95rem; transition: all 0.25s ease;">$ cd /projects && ls -la</a>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .back-to-gallery-btn:hover {
+            background: var(--accent-glow);
+            box-shadow: 0 0 15px rgba(232, 163, 61, 0.15);
+            transform: translateY(-2px);
+        }
+    </style>
+{% endblock %}

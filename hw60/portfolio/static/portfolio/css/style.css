@@ -1,0 +1,428 @@
+
+/* -------------------------------------------------------------
+ * СЕКЦІЯ 1: HERO (Термінал під лампою)
+ * ------------------------------------------------------------- */
+.hero-section {
+    padding: 80px 0 60px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+/* Янтарне свічення від лампи позаду терміналу */
+.terminal-window-glow-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+}
+
+.terminal-window-glow-wrap::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    left: -40px;
+    right: -40px;
+    bottom: -40px;
+    background: radial-gradient(circle, var(--accent-glow) 0%, rgba(28, 22, 17, 0) 70%);
+    z-index: 0;
+    pointer-events: none;
+    border-radius: 50%;
+}
+
+.terminal-window {
+    background-color: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+.terminal-header {
+    background-color: var(--bg-element);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+}
+
+.window-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.control-btn {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.control-btn.close { background-color: #ff5f56; }
+.control-btn.minimize { background-color: #ffbd2e; }
+.control-btn.expand { background-color: #27c93f; }
+
+.terminal-title {
+    margin-left: 20px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.terminal-body {
+    padding: 24px;
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    color: var(--text-main);
+    min-height: 280px;
+    white-space: pre-wrap;
+    word-break: break-all;
+    line-height: 1.6;
+}
+
+.terminal-prompt {
+    color: var(--secondary);
+}
+
+.terminal-command {
+    color: var(--accent);
+}
+
+.terminal-success {
+    color: #8da872;
+}
+
+.terminal-info {
+    color: #7997b8;
+}
+
+/* Курсор, що мигає */
+.cursor {
+    display: inline-block;
+    width: 8px;
+    height: 17px;
+    background-color: var(--accent);
+    vertical-align: middle;
+    margin-left: 4px;
+    animation: blink 0.8s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 1; }
+}
+
+/* -------------------------------------------------------------
+ * СЕКЦІЯ 2: views.py — ПРОЕКТИ (Окна редактора кода)
+ * ------------------------------------------------------------- */
+.section-wrapper {
+    padding: 70px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.section-path-header {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 15px;
+}
+
+.section-title {
+    font-family: var(--font-heading);
+    font-size: 2.2rem;
+    font-weight: 500;
+    color: var(--accent);
+    margin-bottom: 40px;
+}
+
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+    gap: 30px;
+}
+
+@media (max-width: 768px) {
+    .projects-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Оформлення картки-редактора */
+.project-card {
+    background-color: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.project-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow: 0 8px 25px rgba(232, 163, 61, 0.05);
+}
+
+.editor-header {
+    background-color: var(--bg-element);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.editor-title {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.editor-body {
+    display: flex;
+    flex: 1;
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+/* Номери рядків (автоматичний підрахунок через CSS-лічильники) */
+.code-area {
+    counter-reset: code-line;
+    padding: 16px 16px 16px 55px; /* Додатковий лівий відступ для номерів */
+    flex: 1;
+    overflow-x: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    position: relative;
+    border-left: 1px solid rgba(166, 147, 120, 0.05); /* Легкий розділювач номерів */
+}
+
+.code-line {
+    white-space: pre-wrap;
+    word-break: break-all;
+    position: relative;
+}
+
+.code-line::before {
+    counter-increment: code-line;
+    content: counter(code-line);
+    position: absolute;
+    left: -40px;
+    width: 25px;
+    text-align: right;
+    color: rgba(166, 147, 120, 0.25);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    user-select: none;
+    pointer-events: none;
+}
+
+.indent-1 { padding-left: 20px; }
+.indent-2 { padding-left: 40px; }
+
+/* Кольори підсвічування синтаксису */
+.keyword { color: #cc7a3a; }
+.function-name { color: #e8a33d; }
+.comment { color: var(--text-muted); font-style: italic; }
+.string { color: #8da872; }
+.boolean { color: #b27373; }
+
+.code-link {
+    color: #8da872;
+    text-decoration: underline;
+}
+
+.code-link:hover {
+    color: var(--accent);
+}
+
+/* Контейнер для зображення у коді */
+.project-image-container {
+    margin: 8px 0;
+    max-width: 100%;
+}
+
+.editor-project-image {
+    max-width: 100%;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    opacity: 0.85;
+    transition: opacity 0.3s ease;
+}
+
+.project-card:hover .editor-project-image {
+    opacity: 1;
+}
+
+/* -------------------------------------------------------------
+ * СЕКЦІЯ 3: models.py — ОПИТ / СТЕК (Класи Django моделей)
+ * ------------------------------------------------------------- */
+.models-container {
+    background-color: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+}
+
+.class-title {
+    font-size: 1.3rem;
+    color: var(--accent);
+    margin-bottom: 20px;
+}
+
+.model-fields-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 40px;
+}
+
+.model-field-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+}
+
+.field-name { color: var(--text-main); }
+.field-equals { color: var(--text-muted); }
+.field-type { color: #cc7a3a; }
+
+/* Прогрес-бари для навичок */
+.skill-bar-wrap {
+    flex: 1;
+    min-width: 250px;
+    background-color: var(--bg-element);
+    height: 10px;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid var(--border);
+}
+
+.skill-bar-fill {
+    background-color: var(--accent);
+    height: 100%;
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(232, 163, 61, 0.4);
+    transition: width 1s cubic-bezier(0.1, 0.8, 0.3, 1);
+}
+
+/* Експериенс картки */
+.experience-item {
+    padding-left: 20px;
+    border-left: 2px solid var(--secondary);
+    margin-bottom: 25px;
+}
+
+.experience-item:last-child {
+    margin-bottom: 0;
+}
+
+.experience-item-title {
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--text-main);
+    margin-bottom: 6px;
+}
+
+/* -------------------------------------------------------------
+ * СЕКЦІЯ 4: urls.py — КОНТАКТИ (Маршрути urls.py)
+ * ------------------------------------------------------------- */
+.urls-container {
+    background-color: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 30px;
+}
+
+.urls-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+}
+
+.url-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.url-pattern {
+    color: var(--secondary);
+}
+
+.url-bracket {
+    color: var(--text-muted);
+}
+
+.url-route {
+    color: #8da872;
+    text-decoration: none;
+    border-bottom: 1px dashed transparent;
+    transition: border-color 0.3s ease, color 0.3s ease;
+}
+
+.url-route:hover {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+}
+
+/* -------------------------------------------------------------
+ * СЕКЦІЯ ПРО МЕНЕ (Додатково, інтегрована у дизайн)
+ * ------------------------------------------------------------- */
+.about-section {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    .about-section {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+.about-photo-wrap {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--border);
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    flex-shrink: 0;
+    transition: border-color 0.3s ease;
+}
+
+.about-photo-wrap:hover {
+    border-color: var(--accent);
+}
+
+.about-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.about-text-content {
+    flex: 1;
+}
+
+.about-text-content p {
+    margin-bottom: 15px;
+    font-size: 1.05rem;
+}
+
+

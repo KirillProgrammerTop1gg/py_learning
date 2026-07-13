@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Реєстрація | Вечірній термінал{% endblock %}
+
+{% block content %}
+    <section class="section-wrapper" style="padding-top: 50px; max-width: 550px; margin: 0 auto; margin-bottom: 50px;">
+        <div class="section-path-header">~/auth/register.py</div>
+        <h2 class="section-title">class UserRegistration(TerminalSession):</h2>
+        <p class="font-sans muted-text" style="margin-top: -10px; margin-bottom: 30px; font-size: 1rem; text-align: center;">
+            Створіть свій обліковий запис у консолі для взаємодії з системою замовлень.
+        </p>
+
+        <!-- Контейнер вікна реєстрації -->
+        <div class="project-card font-mono" style="display: flex; flex-direction: column; background: var(--bg-panel); border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.25); border-radius: 8px;">
+            <!-- Шапка вікна терміналу -->
+            <div class="editor-header">
+                <div class="window-controls">
+                    <span class="control-btn close"></span>
+                    <span class="control-btn minimize"></span>
+                    <span class="control-btn expand"></span>
+                </div>
+                <div class="editor-title">bash --session=register</div>
+            </div>
+
+            <!-- Тіло терміналу з формою -->
+            <div class="editor-body" style="padding: 30px;">
+                <form method="POST" action="{% url 'orders:register' %}{% if next %}?next={{ next }}{% endif %}" style="display: flex; flex-direction: column; gap: 20px;">
+                    {% csrf_token %}
+
+                    <!-- Консольний вивід загальних помилок форми -->
+                    {% if form.non_field_errors %}
+                        <div class="code-area" style="padding: 12px; background: rgba(234, 107, 107, 0.08); border-left: 3px solid #ea6b6b; border-radius: 4px; margin-bottom: 10px;">
+                            {% for error in form.non_field_errors %}
+                                <div class="code-line" style="color: #ea6b6b;"><span class="keyword">[ERROR]</span> {{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <!-- Поле логіну -->
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <label for="{{ form.username.id_for_label }}" style="color: var(--text-muted); font-size: 0.9rem;">
+                            $ set_login_username:
+                        </label>
+                        <input type="text" name="username" id="{{ form.username.id_for_label }}" required class="terminal-input" placeholder="Оберіть логін" value="{{ form.username.value|default:'' }}">
+                        {% if form.username.errors %}
+                            <div class="error-msg" style="color: #ea6b6b; font-size: 0.8rem; margin-top: 2px;">
+                                {% for error in form.username.errors %}[!] {{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Поле email -->
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <label for="{{ form.email.id_for_label }}" style="color: var(--text-muted); font-size: 0.9rem;">
+                            $ set_user_email:
+                        </label>
+                        <input type="email" name="email" id="{{ form.email.id_for_label }}" required class="terminal-input" placeholder="example@domain.com" value="{{ form.email.value|default:'' }}">
+                        {% if form.email.errors %}
+                            <div class="error-msg" style="color: #ea6b6b; font-size: 0.8rem; margin-top: 2px;">
+                                {% for error in form.email.errors %}[!] {{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Поле паролю -->
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <label for="{{ form.password.id_for_label }}" style="color: var(--text-muted); font-size: 0.9rem;">
+                            $ choose_password:
+                        </label>
+                        <input type="password" name="password" id="{{ form.password.id_for_label }}" required class="terminal-input" placeholder="••••••••">
+                        {% if form.password.errors %}
+                            <div class="error-msg" style="color: #ea6b6b; font-size: 0.8rem; margin-top: 2px;">
+                                {% for error in form.password.errors %}[!] {{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Підтвердження паролю -->
+                    <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <label for="{{ form.confirm_password.id_for_label }}" style="color: var(--text-muted); font-size: 0.9rem;">
+                            $ confirm_password:
+                        </label>
+                        <input type="password" name="confirm_password" id="{{ form.confirm_password.id_for_label }}" required class="terminal-input" placeholder="••••••••">
+                        {% if form.confirm_password.errors %}
+                            <div class="error-msg" style="color: #ea6b6b; font-size: 0.8rem; margin-top: 2px;">
+                                {% for error in form.confirm_password.errors %}[!] {{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Кнопка сабміту -->
+                    <div style="margin-top: 10px;">
+                        <button type="submit" class="submit-btn font-mono" style="width: 100%; text-align: center; justify-content: center;">
+                            $ run register.py --create-profile
+                        </button>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 15px; font-size: 0.85rem;" class="muted-text">
+                        <span class="comment"># Вже є обліковий запис?</span> 
+                        <a href="{% url 'orders:login' %}{% if next %}?next={{ next }}{% endif %}" style="color: var(--accent); text-decoration: underline;">[ Увійти ]</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Тимчасові стилі для термінальних інпутів та кнопок -->
+    <style>
+        .terminal-input {
+            background: var(--bg-element);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 10px 14px;
+            font-family: var(--font-mono);
+            font-size: 0.95rem;
+            border-radius: 4px;
+            outline: none;
+            transition: all 0.25s ease;
+        }
+        .terminal-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 12px rgba(232, 163, 61, 0.15);
+            background: rgba(232, 163, 61, 0.02);
+        }
+        .submit-btn {
+            background: var(--accent-glow);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 12px 20px;
+            font-size: 0.95rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+            display: inline-flex;
+            align-items: center;
+        }
+        .submit-btn:hover {
+            background: var(--accent);
+            color: var(--bg);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(232, 163, 61, 0.2);
+        }
+    </style>
+{% endblock %}

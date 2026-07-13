@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Новий бриф замовлення</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #1c1611; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #dcd1c4;">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #1c1611; padding: 40px 10px;">
+        <tr>
+            <td align="center">
+                <table border="0" cellpadding="0" cellspacing="0" width="600" style="background-color: #241c15; border: 1px solid #33271f; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.4);">
+                    <!-- Header -->
+                    <tr>
+                        <td style="background-color: #1e1713; padding: 30px; text-align: center; border-bottom: 2px solid #e8a33d;">
+                            <span style="font-family: monospace; font-size: 1.5rem; font-weight: bold; color: #e8a33d; letter-spacing: 1px;">./portfolio.sh --admin</span>
+                        </td>
+                    </tr>
+                    <!-- Body -->
+                    <tr>
+                        <td style="padding: 40px 30px;">
+                            <h2 style="margin-top: 0; font-size: 1.4rem; color: #e8a33d; font-family: monospace;">[!] Нова заявка на розробку</h2>
+                            <p style="font-size: 1.05rem; line-height: 1.6; color: #dcd1c4;">
+                                Привіт, Кірілле! На твоєму сайті <strong>"Вечірній термінал"</strong> щойно залишили новий технічний бриф.
+                            </p>
+
+                            <!-- Project Details Table -->
+                            <table border="0" cellpadding="10" cellspacing="0" width="100%" style="margin: 25px 0; background-color: #1a1411; border-radius: 6px; font-family: monospace; border-left: 4px solid #e8a33d;">
+                                <tr>
+                                    <td width="35%" style="color: #887d73; font-weight: bold;">"project_name":</td>
+                                    <td style="color: #e8a33d;">"{{ project_name }}"</td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #887d73; font-weight: bold;">"project_type":</td>
+                                    <td style="color: #639472;">"{{ project_type_display }}"</td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #887d73; font-weight: bold;">"budget_usd":</td>
+                                    <td style="color: #e5c07b;">{{ budget }}</td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #887d73; font-weight: bold;">"timeline":</td>
+                                    <td style="color: #98c379;">"{{ timeline }}"</td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #887d73; font-weight: bold;">"client":</td>
+                                    <td style="color: #61afef;">"@{{ username }} ({{ user_email }})"</td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #887d73; font-weight: bold;">"contacts":</td>
+                                    <td style="color: #e5c07b;">"{{ contacts }}"</td>
+                                </tr>
+                            </table>
+
+                            <h3 style="font-size: 1.1rem; color: #e8a33d; font-family: monospace; margin-top: 30px; margin-bottom: 10px;">// Технічне завдання:</h3>
+                            <div style="background-color: #1a1411; padding: 20px; border-radius: 6px; border: 1px solid #2d231e; font-family: monospace; font-size: 0.95rem; line-height: 1.6; color: #a4968a; white-space: pre-wrap;">{{ description }}</div>
+
+                            <!-- Button -->
+                            <div style="margin-top: 40px; text-align: center;">
+                                <a href="{{ admin_url }}" style="background-color: #e8a33d; color: #1c1611; text-decoration: none; padding: 12px 25px; font-weight: bold; border-radius: 4px; font-family: monospace; font-size: 0.95rem; display: inline-block;">$ open_admin_panel --now</a>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: #1e1713; padding: 20px; text-align: center; font-size: 0.8rem; color: #6e6155; font-family: monospace; border-top: 1px solid #33271f;">
+                            © 2026 DevPortfolio. System notification.
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
