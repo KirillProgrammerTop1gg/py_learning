@@ -92,19 +92,18 @@ class TagAdmin(admin.ModelAdmin):
     search_fields = ["name"]
     ordering = ["name"]
 
-    def color_preview(self, obj):
-        return (
-            f'<div style="width:25px; height:25px; '
-            f'background:{obj.color}; border:1px solid #999; '
-            f'border-radius:4px;"></div>'
-        )
-
-    color_preview.short_description = "Колір"
-
+    @admin.display(description="Колір")
     def color_preview(self, obj):
         return mark_safe(
-            f'<div style="width:25px;height:25px;'
-            f'background:{obj.color};border:1px solid #999;"></div>'
+            f"""
+            <div style="
+                width:25px;
+                height:25px;
+                background:{obj.color};
+                border:1px solid #999;
+                border-radius:4px;
+            "></div>
+            """
         )
     
 admin.site.register(Article, ArticleAdmin)
