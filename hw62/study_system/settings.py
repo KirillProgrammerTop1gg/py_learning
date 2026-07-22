@@ -147,7 +147,7 @@ REST_FRAMEWORK = {
 }
 
 
-PECTACULAR_SETTINGS = {
+SPECTACULAR_SETTINGS = {
     "TITLE": "Study System API",
     "DESCRIPTION": "Навчальне API.",
     "VERSION": "1.0.0",
