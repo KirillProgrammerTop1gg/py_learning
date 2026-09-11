@@ -1,2 +1,0 @@
-PGUSER = "myuser"
-PGPASSWORD = "qwerty"
