@@ -1,26 +1,26 @@
 # Task 1
-a = input('Input length of rectangle side a: ')
-b = input('Input length of rectangle side b: ')
+a = input('Введіть сторону a: ')
+b = input('Введість сторону b: ')
 
 try:
     a, b = float(a), float(b)
     if a <= 0 or b <= 0:
-        print('Values can not be less or equal than zero')
+        print('Дані повинні бути більше 0')
         exit()
-    print(f'The area of a rectangle with sides {a} and {b} is {a*b}')
+    print(f'Площа прямокутника зі сторонами {a} та {b} дорівнює {a*b}.')
 except ValueError:
-    print('Values are not numbers')
+    print('Дані не є числом')
     
 # Task 3
-year = int(input('Input the year: '))
+year = int(input('Введіть рік: '))
 
 if year % 400 == 0 or (year % 4 == 0 and year % 100 != 0):
-    print('This is a leap year')
+    print(f'{year} є високосним.')
 else:
-    print("This isn't a leap year")
+    print(f"{year} не є високосним.")
 
 # Task 4
-number = int(input('Input a number for the multiplication table: '))
+number = int(input('Введіть число для таблиці множення: '))
 for i in range(1,11):
     print(f'{i} * {number} = {i*number}')
     
