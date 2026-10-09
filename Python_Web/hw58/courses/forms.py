@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 
 from django.forms import modelformset_factory
 
+
 class CourseForm(forms.ModelForm):
     course = forms.ModelChoiceField(
         queryset=Course.objects.all(),
@@ -45,7 +46,9 @@ class BaseUserCourseFormSet(forms.BaseModelFormSet):
 
         for form in self.forms:
             # Skip empty forms or forms marked for deletion
-            if not form.cleaned_data or (self.can_delete and self._should_delete_form(form)):
+            if not form.cleaned_data or (
+                self.can_delete and self._should_delete_form(form)
+            ):
                 continue
 
             course = form.cleaned_data.get("course")
@@ -53,19 +56,27 @@ class BaseUserCourseFormSet(forms.BaseModelFormSet):
 
             if course and priority:
                 if course in courses:
-                    form.add_error("course", _("Ви не можете обрати один і той самий курс кілька разів."))
+                    form.add_error(
+                        "course",
+                        _("Ви не можете обрати один і той самий курс кілька разів."),
+                    )
                     has_errors = True
                 else:
                     courses.append(course)
 
                 if priority in priorities:
-                    form.add_error("priority", _("Пріоритети вибраних курсів не повинні збігатися."))
+                    form.add_error(
+                        "priority",
+                        _("Пріоритети вибраних курсів не повинні збігатися."),
+                    )
                     has_errors = True
                 else:
                     priorities.append(priority)
 
         if has_errors:
-            raise forms.ValidationError(_("Будь ласка, виправте помилки у виборі курсів."))
+            raise forms.ValidationError(
+                _("Будь ласка, виправте помилки у виборі курсів.")
+            )
 
 
 UserCourseFormSet = modelformset_factory(

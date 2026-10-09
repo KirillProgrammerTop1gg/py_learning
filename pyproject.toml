@@ -26,6 +26,7 @@ dependencies = [
     "hiredis>=3.4.0",
     "httpx>=0.28.1",
     "numpy>=2.4.6",
+    "pandas>=3.0.6",
     "parse>=1.21.0",
     "parsel>=1.11.0",
     "passlib>=1.7.4",

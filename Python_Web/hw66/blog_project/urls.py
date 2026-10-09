@@ -22,12 +22,16 @@ from django.views.static import serve
 import debug_toolbar
 
 urlpatterns = [
-    path('__debug__/', include(debug_toolbar.urls)),
+    path("__debug__/", include(debug_toolbar.urls)),
     path("admin/", admin.site.urls),
     path("", include("blog.urls")),
 ]
 
 if not settings.DEBUG:
     urlpatterns += [
-        re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATICFILES_DIRS[0]}),
+        re_path(
+            r"^static/(?P<path>.*)$",
+            serve,
+            {"document_root": settings.STATICFILES_DIRS[0]},
+        ),
     ]

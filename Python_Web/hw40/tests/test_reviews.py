@@ -253,7 +253,13 @@ async def test_get_user_rating_average(
     client, exchange_completed, user_a, user_b, db_session
 ):
     """Перевіряємо що середнє рахується правильно."""
-    from Python_Web.hw40.src.database.models import Review, Exchange, ExchangeStatus, Skill, SkillLevel
+    from Python_Web.hw40.src.database.models import (
+        Review,
+        Exchange,
+        ExchangeStatus,
+        Skill,
+        SkillLevel,
+    )
     from Python_Web.hw40.tests.conftest import category  # type: ignore
 
     # Додаємо другий відгук з рейтингом 3

@@ -20,9 +20,11 @@ class StudentViewSet(viewsets.ModelViewSet):
 
 
 class CourseViewSet(viewsets.ModelViewSet):
-    queryset = Course.objects.annotate(
-        students_count=Count("students")
-    ).prefetch_related("students").order_by("id")
+    queryset = (
+        Course.objects.annotate(students_count=Count("students"))
+        .prefetch_related("students")
+        .order_by("id")
+    )
     serializer_class = CourseSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = CourseFilter
@@ -30,5 +32,5 @@ class CourseViewSet(viewsets.ModelViewSet):
 
 
 class EnrollmentViewSet(viewsets.ModelViewSet):
-    queryset = Enrollment.objects.select_related('student', 'course').order_by("id")
+    queryset = Enrollment.objects.select_related("student", "course").order_by("id")
     serializer_class = EnrollmentSerializer

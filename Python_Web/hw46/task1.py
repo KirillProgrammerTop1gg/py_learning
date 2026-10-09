@@ -41,7 +41,7 @@ def user_dashboard(user_id: int = Path(...)):
             user, posts, albums = list(executor.map(get_json, urls))
     except requests.exceptions.HTTPError:
         raise HTTPException(status_code=404, detail="User not found")
-    
+
     if user is None:
         raise HTTPException(status_code=503, detail="Failed to fetch user data")
 

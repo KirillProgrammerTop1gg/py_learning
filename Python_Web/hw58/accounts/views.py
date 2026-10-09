@@ -18,9 +18,7 @@ def register_view(request):
     if request.method == "POST":
         form = ExtendedUserCreationForm(request.POST)
         course_formset = UserCourseFormSet(
-            request.POST,
-            queryset=UserCourse.objects.none(),
-            prefix="courses"
+            request.POST, queryset=UserCourse.objects.none(), prefix="courses"
         )
 
         if form.is_valid() and course_formset.is_valid():
@@ -37,14 +35,13 @@ def register_view(request):
     else:
         form = ExtendedUserCreationForm()
         course_formset = UserCourseFormSet(
-            queryset=UserCourse.objects.none(),
-            prefix="courses"
+            queryset=UserCourse.objects.none(), prefix="courses"
         )
 
     return render(
         request,
         "accounts/register.html",
-        {"form": form, "course_formset": course_formset}
+        {"form": form, "course_formset": course_formset},
     )
 
 
@@ -57,7 +54,5 @@ def profile_view(request):
 def dashboard(request):
     selected_courses = request.user.selected_courses.all()
     return render(
-        request,
-        "accounts/dashboard.html",
-        {"selected_courses": selected_courses}
+        request, "accounts/dashboard.html", {"selected_courses": selected_courses}
     )

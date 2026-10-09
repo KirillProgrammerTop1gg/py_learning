@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
+
 class Category(models.Model):
     name = models.CharField(max_length=100, verbose_name="Назва")
 
@@ -16,12 +17,12 @@ class Category(models.Model):
 class Technology(models.Model):
     name = models.CharField(max_length=100, verbose_name="Назва")
     category = models.ForeignKey(
-        Category, 
-        on_delete=models.SET_NULL, 
-        related_name="technologies", 
-        verbose_name="Категорія", 
-        blank=True, 
-        null=True
+        Category,
+        on_delete=models.SET_NULL,
+        related_name="technologies",
+        verbose_name="Категорія",
+        blank=True,
+        null=True,
     )
 
     def __str__(self):
@@ -38,11 +39,22 @@ class Technology(models.Model):
 class Project(models.Model):
     name = models.CharField(max_length=200, verbose_name="Назва")
     description = models.TextField(verbose_name="Опис")
-    technologies = models.ManyToManyField(Technology, related_name="projects", verbose_name="Технології")
+    technologies = models.ManyToManyField(
+        Technology, related_name="projects", verbose_name="Технології"
+    )
     date = models.DateField(verbose_name="Дата")
-    image = models.ImageField(upload_to="portfolio/projects/", verbose_name="Зображення", blank=True, null=True)
-    github_link = models.URLField(verbose_name="GitHub посилання", blank=True, null=True)
-    views_count = models.PositiveIntegerField(default=0, verbose_name="Кількість переглядів")
+    image = models.ImageField(
+        upload_to="portfolio/projects/",
+        verbose_name="Зображення",
+        blank=True,
+        null=True,
+    )
+    github_link = models.URLField(
+        verbose_name="GitHub посилання", blank=True, null=True
+    )
+    views_count = models.PositiveIntegerField(
+        default=0, verbose_name="Кількість переглядів"
+    )
 
     def __str__(self):
         return self.name
@@ -58,15 +70,15 @@ class Skill(models.Model):
     level = models.PositiveIntegerField(
         verbose_name="Рівень володіння (%)",
         validators=[MinValueValidator(0), MaxValueValidator(100)],
-        default=80
+        default=80,
     )
     category = models.ForeignKey(
-        Category, 
-        on_delete=models.SET_NULL, 
-        related_name="skills", 
-        verbose_name="Категорія", 
-        blank=True, 
-        null=True
+        Category,
+        on_delete=models.SET_NULL,
+        related_name="skills",
+        verbose_name="Категорія",
+        blank=True,
+        null=True,
     )
 
     def __str__(self):
@@ -90,7 +102,9 @@ class Experience(models.Model):
     company = models.CharField(max_length=100, verbose_name="Компанія")
     period = models.CharField(max_length=100, verbose_name="Період")
     description = models.TextField(verbose_name="Опис")
-    start_date = models.DateField(verbose_name="Дата початку (для сортування)", blank=True, null=True)
+    start_date = models.DateField(
+        verbose_name="Дата початку (для сортування)", blank=True, null=True
+    )
 
     def __str__(self):
         return f"{self.position} у {self.company}"
@@ -103,7 +117,9 @@ class Experience(models.Model):
 
 class PageView(models.Model):
     path = models.CharField(max_length=255, unique=True, verbose_name="Шлях сторінки")
-    views_count = models.PositiveIntegerField(default=0, verbose_name="Кількість переглядів")
+    views_count = models.PositiveIntegerField(
+        default=0, verbose_name="Кількість переглядів"
+    )
     last_viewed = models.DateTimeField(auto_now=True, verbose_name="Останній перегляд")
 
     class Meta:

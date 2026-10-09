@@ -3,7 +3,11 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from Python_Web.hw40.src.database.models import Review, Exchange, ExchangeStatus as DBExchangeStatus
+from Python_Web.hw40.src.database.models import (
+    Review,
+    Exchange,
+    ExchangeStatus as DBExchangeStatus,
+)
 from Python_Web.hw40.src.schemas import ReviewCreate
 
 

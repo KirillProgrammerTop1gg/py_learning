@@ -2,6 +2,7 @@ import re
 from PIL import Image
 from django.core.exceptions import ValidationError
 
+
 def validate_image_security_and_dimensions(file):
     try:
         file.seek(0)
@@ -21,17 +22,25 @@ def validate_image_security_and_dimensions(file):
         )
 
     try:
-        exif = img.getexif() if hasattr(img, 'getexif') else None
+        exif = img.getexif() if hasattr(img, "getexif") else None
         if exif:
             suspicious_patterns = [
-                r'<script', r'<\?php', r'eval\(', r'exec\(', r'system\(',
-                r'javascript:', r'base64', r'<\?='
+                r"<script",
+                r"<\?php",
+                r"eval\(",
+                r"exec\(",
+                r"system\(",
+                r"javascript:",
+                r"base64",
+                r"<\?=",
             ]
             for tag, value in exif.items():
                 val_str = str(value)
                 for pattern in suspicious_patterns:
                     if re.search(pattern, val_str, re.IGNORECASE):
-                        raise ValidationError("Файл відхилено: виявлено підозрілий контент у метаданих (EXIF).")
+                        raise ValidationError(
+                            "Файл відхилено: виявлено підозрілий контент у метаданих (EXIF)."
+                        )
     except ValidationError:
         raise
     except Exception:

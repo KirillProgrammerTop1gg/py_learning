@@ -9,78 +9,167 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Category',
+            name="Category",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100, verbose_name='Назва')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100, verbose_name="Назва")),
             ],
             options={
-                'verbose_name': 'Категорія',
-                'verbose_name_plural': 'Категорії',
-                'ordering': ['name'],
+                "verbose_name": "Категорія",
+                "verbose_name_plural": "Категорії",
+                "ordering": ["name"],
             },
         ),
         migrations.CreateModel(
-            name='Experience',
+            name="Experience",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('position', models.CharField(max_length=100, verbose_name='Посада')),
-                ('company', models.CharField(max_length=100, verbose_name='Компанія')),
-                ('period', models.CharField(max_length=100, verbose_name='Період')),
-                ('description', models.TextField(verbose_name='Опис')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("position", models.CharField(max_length=100, verbose_name="Посада")),
+                ("company", models.CharField(max_length=100, verbose_name="Компанія")),
+                ("period", models.CharField(max_length=100, verbose_name="Період")),
+                ("description", models.TextField(verbose_name="Опис")),
             ],
             options={
-                'verbose_name': 'Досвід роботи',
-                'verbose_name_plural': 'Досвід роботи',
+                "verbose_name": "Досвід роботи",
+                "verbose_name_plural": "Досвід роботи",
             },
         ),
         migrations.CreateModel(
-            name='Skill',
+            name="Skill",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100, verbose_name='Назва')),
-                ('level', models.PositiveIntegerField(default=80, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(100)], verbose_name='Рівень володіння (%)')),
-                ('category', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='skills', to='portfolio.category', verbose_name='Категорія')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100, verbose_name="Назва")),
+                (
+                    "level",
+                    models.PositiveIntegerField(
+                        default=80,
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(100),
+                        ],
+                        verbose_name="Рівень володіння (%)",
+                    ),
+                ),
+                (
+                    "category",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="skills",
+                        to="portfolio.category",
+                        verbose_name="Категорія",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Навичка',
-                'verbose_name_plural': 'Навички',
-                'ordering': ['category__name', 'name'],
+                "verbose_name": "Навичка",
+                "verbose_name_plural": "Навички",
+                "ordering": ["category__name", "name"],
             },
         ),
         migrations.CreateModel(
-            name='Technology',
+            name="Technology",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100, verbose_name='Назва')),
-                ('category', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='technologies', to='portfolio.category', verbose_name='Категорія')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100, verbose_name="Назва")),
+                (
+                    "category",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="technologies",
+                        to="portfolio.category",
+                        verbose_name="Категорія",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Технологія',
-                'verbose_name_plural': 'Технології',
-                'ordering': ['category__name', 'name'],
+                "verbose_name": "Технологія",
+                "verbose_name_plural": "Технології",
+                "ordering": ["category__name", "name"],
             },
         ),
         migrations.CreateModel(
-            name='Project',
+            name="Project",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=200, verbose_name='Назва')),
-                ('description', models.TextField(verbose_name='Опис')),
-                ('date', models.DateField(verbose_name='Дата')),
-                ('image', models.ImageField(blank=True, null=True, upload_to='portfolio/projects/', verbose_name='Зображення')),
-                ('github_link', models.URLField(blank=True, null=True, verbose_name='GitHub посилання')),
-                ('technologies', models.ManyToManyField(related_name='projects', to='portfolio.technology', verbose_name='Технології')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=200, verbose_name="Назва")),
+                ("description", models.TextField(verbose_name="Опис")),
+                ("date", models.DateField(verbose_name="Дата")),
+                (
+                    "image",
+                    models.ImageField(
+                        blank=True,
+                        null=True,
+                        upload_to="portfolio/projects/",
+                        verbose_name="Зображення",
+                    ),
+                ),
+                (
+                    "github_link",
+                    models.URLField(
+                        blank=True, null=True, verbose_name="GitHub посилання"
+                    ),
+                ),
+                (
+                    "technologies",
+                    models.ManyToManyField(
+                        related_name="projects",
+                        to="portfolio.technology",
+                        verbose_name="Технології",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Проект',
-                'verbose_name_plural': 'Проекти',
-                'ordering': ['-date'],
+                "verbose_name": "Проект",
+                "verbose_name_plural": "Проекти",
+                "ordering": ["-date"],
             },
         ),
     ]

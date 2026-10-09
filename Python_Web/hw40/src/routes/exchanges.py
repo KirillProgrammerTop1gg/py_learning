@@ -4,7 +4,12 @@ from fastapi import APIRouter, HTTPException, Depends, Query, Path, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from Python_Web.hw40.src.database.db import get_db
-from Python_Web.hw40.src.schemas import ExchangeCreate, ExchangeUpdate, ExchangeResponse, ExchangeStatus
+from Python_Web.hw40.src.schemas import (
+    ExchangeCreate,
+    ExchangeUpdate,
+    ExchangeResponse,
+    ExchangeStatus,
+)
 from Python_Web.hw40.src.repository import exchanges as repository_exchanges
 from Python_Web.hw40.src.auth import get_current_user
 
@@ -13,13 +18,25 @@ router = APIRouter(prefix="/exchanges", tags=["exchanges"])
 
 @router.get("/", response_model=List[ExchangeResponse])
 async def read_exchanges(
-    skip: int = Query(0, ge=0, description="Кількість записів, які потрібно пропустити (пагінація)"),
-    limit: int = Query(100, ge=1, le=500, description="Максимальна кількість записів у відповіді"),
-    status_filter: Optional[ExchangeStatus] = Query(None, description="Фільтр за статусом обміну"),
-    user_id: Optional[int] = Query(None, ge=1, description="Повертає лише обміни вказаного користувача"),
-    from_date: Optional[datetime] = Query(None, description="Фільтр від дати (ISO 8601)"),
+    skip: int = Query(
+        0, ge=0, description="Кількість записів, які потрібно пропустити (пагінація)"
+    ),
+    limit: int = Query(
+        100, ge=1, le=500, description="Максимальна кількість записів у відповіді"
+    ),
+    status_filter: Optional[ExchangeStatus] = Query(
+        None, description="Фільтр за статусом обміну"
+    ),
+    user_id: Optional[int] = Query(
+        None, ge=1, description="Повертає лише обміни вказаного користувача"
+    ),
+    from_date: Optional[datetime] = Query(
+        None, description="Фільтр від дати (ISO 8601)"
+    ),
     to_date: Optional[datetime] = Query(None, description="Фільтр до дати (ISO 8601)"),
-    sort_order: str = Query("desc", pattern="^(asc|desc)$", description="Сортування: asc або desc"),
+    sort_order: str = Query(
+        "desc", pattern="^(asc|desc)$", description="Сортування: asc або desc"
+    ),
     db: AsyncSession = Depends(get_db),
     current_user: tuple = Depends(get_current_user),
 ):
@@ -97,7 +114,9 @@ async def update_exchange_status(
     exchange_id: int = Path(..., ge=1, description="Унікальний ідентифікатор обміну"),
     exchange_update: ExchangeUpdate = ...,
     db: AsyncSession = Depends(get_db),
-    current_user: tuple = Depends(get_current_user),  # current_user_id береться з токена
+    current_user: tuple = Depends(
+        get_current_user
+    ),  # current_user_id береться з токена
 ):
     """Оновити статус обміну (прийняти, відхилити, скасувати)."""
     current_user_id, _ = current_user

@@ -6,7 +6,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator, RegexVa
 class User(AbstractUser):
     MIN_AGE = 12
     MAX_AGE = 18
-    
+
     email = models.EmailField(unique=True, verbose_name="Електронна пошта")
     age = models.PositiveIntegerField(
         validators=[MinValueValidator(MIN_AGE), MaxValueValidator(MAX_AGE)],

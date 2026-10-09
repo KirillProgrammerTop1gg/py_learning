@@ -3,7 +3,12 @@ from fastapi import APIRouter, HTTPException, Depends, Query, Path, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from Python_Web.hw40.src.database.db import get_db
-from Python_Web.hw40.src.schemas import UserCreate, UserUpdate, UserResponse, SkillResponse
+from Python_Web.hw40.src.schemas import (
+    UserCreate,
+    UserUpdate,
+    UserResponse,
+    SkillResponse,
+)
 from Python_Web.hw40.src.repository import users as repository_users
 from Python_Web.hw40.src.auth import get_current_user
 
@@ -12,8 +17,12 @@ router = APIRouter(prefix="/users", tags=["users"])
 
 @router.get("/", response_model=List[UserResponse])
 async def read_users(
-    skip: int = Query(0, ge=0, description="Кількість записів, які потрібно пропустити (пагінація)"),
-    limit: int = Query(100, ge=1, le=500, description="Максимальна кількість записів у відповіді"),
+    skip: int = Query(
+        0, ge=0, description="Кількість записів, які потрібно пропустити (пагінація)"
+    ),
+    limit: int = Query(
+        100, ge=1, le=500, description="Максимальна кількість записів у відповіді"
+    ),
     db: AsyncSession = Depends(get_db),
 ):
     """Отримати список користувачів."""
@@ -84,7 +93,11 @@ async def update_me(
 
 @router.put("/{user_id}", response_model=UserResponse)
 async def update_user(
-    user_id: int = Path(..., ge=1, description="Унікальний ідентифікатор користувача, якого потрібно оновити"),
+    user_id: int = Path(
+        ...,
+        ge=1,
+        description="Унікальний ідентифікатор користувача, якого потрібно оновити",
+    ),
     user_update: UserUpdate = ...,
     db: AsyncSession = Depends(get_db),
     current_user: tuple = Depends(get_current_user),
@@ -107,7 +120,11 @@ async def update_user(
 
 @router.get("/{user_id}/skills", response_model=List[SkillResponse])
 async def read_user_skills(
-    user_id: int = Path(..., ge=1, description="Унікальний ідентифікатор користувача, чиї навички потрібно отримати"),
+    user_id: int = Path(
+        ...,
+        ge=1,
+        description="Унікальний ідентифікатор користувача, чиї навички потрібно отримати",
+    ),
     db: AsyncSession = Depends(get_db),
 ):
     """Отримати всі навички користувача."""

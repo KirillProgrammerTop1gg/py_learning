@@ -4,14 +4,55 @@ from Python_Web.hw60.portfolio.models import Category, Technology
 
 User = get_user_model()
 
+
 def transliterate_slug(string):
     # Ukrainian translit dictionary for Cyrillic slugify
     ukr_map = {
-        'а': 'a', 'б': 'b', 'в': 'v', 'г': 'h', 'ґ': 'g', 'д': 'd', 'е': 'e', 'є': 'ye', 'ж': 'zh', 'з': 'z',
-        'и': 'y', 'і': 'i', 'ї': 'yi', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p',
-        'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch',
-        'ь': '', 'ю': 'yu', 'я': 'ya', ' ': '-', '-': '-', '.': '', ',': '', '_': '-', ':': '', ';': '',
-        '\\': '', '/': '', '"': '', '\'': '', '`': ''
+        "а": "a",
+        "б": "b",
+        "в": "v",
+        "г": "h",
+        "ґ": "g",
+        "д": "d",
+        "е": "e",
+        "є": "ye",
+        "ж": "zh",
+        "з": "z",
+        "и": "y",
+        "і": "i",
+        "ї": "yi",
+        "й": "y",
+        "к": "k",
+        "л": "l",
+        "м": "m",
+        "н": "n",
+        "о": "o",
+        "п": "p",
+        "р": "r",
+        "с": "s",
+        "т": "t",
+        "у": "u",
+        "ф": "f",
+        "х": "kh",
+        "ц": "ts",
+        "ч": "ch",
+        "ш": "sh",
+        "щ": "shch",
+        "ь": "",
+        "ю": "yu",
+        "я": "ya",
+        " ": "-",
+        "-": "-",
+        ".": "",
+        ",": "",
+        "_": "-",
+        ":": "",
+        ";": "",
+        "\\": "",
+        "/": "",
+        '"': "",
+        "'": "",
+        "`": "",
     }
     res = []
     for char in string.lower():
@@ -20,14 +61,16 @@ def transliterate_slug(string):
         elif char.isalnum():
             res.append(char)
     slug = "".join(res)
-    while '--' in slug:
-        slug = slug.replace('--', '-')
-    return slug.strip('-')[:150]
+    while "--" in slug:
+        slug = slug.replace("--", "-")
+    return slug.strip("-")[:150]
 
 
 class BlogPost(models.Model):
     title = models.CharField(max_length=200, verbose_name="Заголовок")
-    slug = models.SlugField(max_length=250, unique=True, verbose_name="Слаг (URL)", blank=True)
+    slug = models.SlugField(
+        max_length=250, unique=True, verbose_name="Слаг (URL)", blank=True
+    )
     content = models.TextField(verbose_name="Вміст статті")
     category = models.ForeignKey(
         Category,
@@ -35,15 +78,14 @@ class BlogPost(models.Model):
         null=True,
         blank=True,
         related_name="blog_posts",
-        verbose_name="Категорія"
+        verbose_name="Категорія",
     )
     technologies = models.ManyToManyField(
-        Technology,
-        blank=True,
-        related_name="blog_posts",
-        verbose_name="Технології"
+        Technology, blank=True, related_name="blog_posts", verbose_name="Технології"
     )
-    views_count = models.PositiveIntegerField(default=0, verbose_name="Кількість переглядів")
+    views_count = models.PositiveIntegerField(
+        default=0, verbose_name="Кількість переглядів"
+    )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Створено")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Оновлено")
 
@@ -62,8 +104,15 @@ class BlogPost(models.Model):
 
 
 class Comment(models.Model):
-    post = models.ForeignKey(BlogPost, on_delete=models.CASCADE, related_name="comments", verbose_name="Стаття")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments", verbose_name="Автор")
+    post = models.ForeignKey(
+        BlogPost,
+        on_delete=models.CASCADE,
+        related_name="comments",
+        verbose_name="Стаття",
+    )
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="comments", verbose_name="Автор"
+    )
     text = models.TextField(verbose_name="Текст коментаря")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Створено")
 

@@ -2,11 +2,13 @@ from django.contrib import admin
 
 from .models import Author, Book, Reader, Loan
 
+
 class AuthorAdmin(admin.ModelAdmin):
     list_display = ("name", "country", "birth_year")
     list_filter = ("country", "birth_year")
     search_fields = ("name", "country")
     ordering = ("name",)
+
 
 class BookAdmin(admin.ModelAdmin):
     list_display = (
@@ -28,6 +30,7 @@ class BookAdmin(admin.ModelAdmin):
     )
     ordering = ("-publication_year",)
 
+
 class ReaderAdmin(admin.ModelAdmin):
     list_display = (
         "name",
@@ -38,6 +41,7 @@ class ReaderAdmin(admin.ModelAdmin):
         "email",
     )
     ordering = ("name",)
+
 
 class LoanAdmin(admin.ModelAdmin):
     list_display = (
@@ -58,6 +62,7 @@ class LoanAdmin(admin.ModelAdmin):
         "book__author__name",
     )
     ordering = ("-loan_date",)
+
 
 admin.site.register(Author, AuthorAdmin)
 admin.site.register(Book, BookAdmin)

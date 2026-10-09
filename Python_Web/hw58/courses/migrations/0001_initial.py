@@ -16,33 +16,88 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Course',
+            name="Course",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100, verbose_name='Назва курсу')),
-                ('duration', models.PositiveIntegerField(verbose_name='Тривалість (місяців)')),
-                ('rating', models.FloatField(help_text='Оцінка від 0 до 5', validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(5)], verbose_name='Оцінка')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100, verbose_name="Назва курсу")),
+                (
+                    "duration",
+                    models.PositiveIntegerField(verbose_name="Тривалість (місяців)"),
+                ),
+                (
+                    "rating",
+                    models.FloatField(
+                        help_text="Оцінка від 0 до 5",
+                        validators=[
+                            django.core.validators.MinValueValidator(0),
+                            django.core.validators.MaxValueValidator(5),
+                        ],
+                        verbose_name="Оцінка",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Курс',
-                'verbose_name_plural': 'Курси',
-                'ordering': ['name'],
+                "verbose_name": "Курс",
+                "verbose_name_plural": "Курси",
+                "ordering": ["name"],
             },
         ),
         migrations.CreateModel(
-            name='UserCourse',
+            name="UserCourse",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('priority', models.PositiveIntegerField(choices=[(1, 'Низький'), (2, 'Середній'), (3, 'Високий')], default=2, verbose_name='Пріоритет')),
-                ('created_at', models.DateTimeField(auto_now_add=True, verbose_name='Дата вибору')),
-                ('course', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='selected_by_users', to='courses.course', verbose_name='Курс')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='selected_courses', to=settings.AUTH_USER_MODEL, verbose_name='Користувач')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "priority",
+                    models.PositiveIntegerField(
+                        choices=[(1, "Низький"), (2, "Середній"), (3, "Високий")],
+                        default=2,
+                        verbose_name="Пріоритет",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Дата вибору"),
+                ),
+                (
+                    "course",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="selected_by_users",
+                        to="courses.course",
+                        verbose_name="Курс",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="selected_courses",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Користувач",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Обраний курс',
-                'verbose_name_plural': 'Обрані курси',
-                'ordering': ['-priority', 'course__name'],
-                'unique_together': {('user', 'course')},
+                "verbose_name": "Обраний курс",
+                "verbose_name_plural": "Обрані курси",
+                "ordering": ["-priority", "course__name"],
+                "unique_together": {("user", "course")},
             },
         ),
     ]

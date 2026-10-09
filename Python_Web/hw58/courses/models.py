@@ -48,9 +48,7 @@ class UserCourse(models.Model):
     priority = models.PositiveIntegerField(
         choices=PRIORITY_CHOICES, default=2, verbose_name="Пріоритет"
     )
-    created_at = models.DateTimeField(
-        auto_now_add=True, verbose_name="Дата вибору"
-    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата вибору")
 
     class Meta:
         verbose_name = "Обраний курс"

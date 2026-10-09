@@ -10,5 +10,3 @@ urlpatterns = [
     path("profile/", profile_view, name="profile"),
     path("dashboard/", dashboard, name="dashboard"),
 ]
-
-

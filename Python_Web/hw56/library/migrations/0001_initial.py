@@ -8,72 +8,146 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Author',
+            name="Author",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100, verbose_name="Ім'я автора")),
-                ('country', models.CharField(max_length=50, verbose_name='Країна')),
-                ('birth_year', models.IntegerField(verbose_name='Рік народження')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100, verbose_name="Ім'я автора")),
+                ("country", models.CharField(max_length=50, verbose_name="Країна")),
+                ("birth_year", models.IntegerField(verbose_name="Рік народження")),
             ],
             options={
-                'verbose_name': 'Автор',
-                'verbose_name_plural': 'Автори',
-                'ordering': ['name'],
+                "verbose_name": "Автор",
+                "verbose_name_plural": "Автори",
+                "ordering": ["name"],
             },
         ),
         migrations.CreateModel(
-            name='Book',
+            name="Book",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=200, verbose_name='Назва книги')),
-                ('isbn', models.CharField(max_length=13, unique=True, verbose_name='ISBN')),
-                ('pages', models.PositiveIntegerField(verbose_name='Кількість сторінок')),
-                ('publication_year', models.IntegerField(verbose_name='Рік публікації')),
-                ('is_available', models.BooleanField(default=True, verbose_name='Доступна')),
-                ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='library.author', verbose_name='Автор')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=200, verbose_name="Назва книги")),
+                (
+                    "isbn",
+                    models.CharField(max_length=13, unique=True, verbose_name="ISBN"),
+                ),
+                (
+                    "pages",
+                    models.PositiveIntegerField(verbose_name="Кількість сторінок"),
+                ),
+                (
+                    "publication_year",
+                    models.IntegerField(verbose_name="Рік публікації"),
+                ),
+                (
+                    "is_available",
+                    models.BooleanField(default=True, verbose_name="Доступна"),
+                ),
+                (
+                    "author",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="library.author",
+                        verbose_name="Автор",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Книга',
-                'verbose_name_plural': 'Книги',
-                'ordering': ['-publication_year'],
+                "verbose_name": "Книга",
+                "verbose_name_plural": "Книги",
+                "ordering": ["-publication_year"],
             },
         ),
         migrations.CreateModel(
-            name='Loan',
+            name="Loan",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('loan_date', models.DateField(auto_now_add=True, verbose_name='Дата позики')),
-                ('return_date', models.DateField(blank=True, null=True, verbose_name='Дата повернення')),
-                ('book', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='library.book', verbose_name='Книга')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "loan_date",
+                    models.DateField(auto_now_add=True, verbose_name="Дата позики"),
+                ),
+                (
+                    "return_date",
+                    models.DateField(
+                        blank=True, null=True, verbose_name="Дата повернення"
+                    ),
+                ),
+                (
+                    "book",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="library.book",
+                        verbose_name="Книга",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Позика',
-                'verbose_name_plural': 'Позики',
-                'ordering': ['-loan_date'],
+                "verbose_name": "Позика",
+                "verbose_name_plural": "Позики",
+                "ordering": ["-loan_date"],
             },
         ),
         migrations.CreateModel(
-            name='Reader',
+            name="Reader",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100, verbose_name="Ім'я читача")),
-                ('email', models.EmailField(max_length=254, verbose_name='Email')),
-                ('books', models.ManyToManyField(through='library.Loan', to='library.book', verbose_name='Книги')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100, verbose_name="Ім'я читача")),
+                ("email", models.EmailField(max_length=254, verbose_name="Email")),
+                (
+                    "books",
+                    models.ManyToManyField(
+                        through="library.Loan", to="library.book", verbose_name="Книги"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Читач',
-                'verbose_name_plural': 'Читачі',
-                'ordering': ['name'],
+                "verbose_name": "Читач",
+                "verbose_name_plural": "Читачі",
+                "ordering": ["name"],
             },
         ),
         migrations.AddField(
-            model_name='loan',
-            name='reader',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='library.reader', verbose_name='Читач'),
+            model_name="loan",
+            name="reader",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="library.reader",
+                verbose_name="Читач",
+            ),
         ),
     ]

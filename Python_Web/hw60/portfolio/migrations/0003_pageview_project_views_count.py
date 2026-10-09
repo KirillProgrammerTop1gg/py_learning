@@ -6,27 +6,52 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('portfolio', '0002_alter_experience_options_experience_start_date'),
+        ("portfolio", "0002_alter_experience_options_experience_start_date"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='PageView',
+            name="PageView",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('path', models.CharField(max_length=255, unique=True, verbose_name='Шлях сторінки')),
-                ('views_count', models.PositiveIntegerField(default=0, verbose_name='Кількість переглядів')),
-                ('last_viewed', models.DateTimeField(auto_now=True, verbose_name='Останній перегляд')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "path",
+                    models.CharField(
+                        max_length=255, unique=True, verbose_name="Шлях сторінки"
+                    ),
+                ),
+                (
+                    "views_count",
+                    models.PositiveIntegerField(
+                        default=0, verbose_name="Кількість переглядів"
+                    ),
+                ),
+                (
+                    "last_viewed",
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Останній перегляд"
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Перегляд сторінки',
-                'verbose_name_plural': 'Перегляди сторінок',
-                'ordering': ['-views_count'],
+                "verbose_name": "Перегляд сторінки",
+                "verbose_name_plural": "Перегляди сторінок",
+                "ordering": ["-views_count"],
             },
         ),
         migrations.AddField(
-            model_name='project',
-            name='views_count',
-            field=models.PositiveIntegerField(default=0, verbose_name='Кількість переглядів'),
+            model_name="project",
+            name="views_count",
+            field=models.PositiveIntegerField(
+                default=0, verbose_name="Кількість переглядів"
+            ),
         ),
     ]

@@ -8,8 +8,12 @@ class StudentSerializer(serializers.ModelSerializer):
         fields = ["id", "first_name", "age", "last_name", "email", "created_at"]
 
     def validate(self, attrs):
-        first_name = attrs.get("first_name", self.instance.first_name if self.instance else "")
-        last_name = attrs.get("last_name", self.instance.last_name if self.instance else "")
+        first_name = attrs.get(
+            "first_name", self.instance.first_name if self.instance else ""
+        )
+        last_name = attrs.get(
+            "last_name", self.instance.last_name if self.instance else ""
+        )
         age = attrs.get("age", self.instance.age if self.instance else None)
         email = attrs.get("email", self.instance.email if self.instance else "")
 
@@ -41,7 +45,9 @@ class CourseSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         title = attrs.get("title", self.instance.title if self.instance else "").lower()
-        description = attrs.get("description", self.instance.description if self.instance else "").lower()
+        description = attrs.get(
+            "description", self.instance.description if self.instance else ""
+        ).lower()
 
         if title and description and description.count(title) > 2:
             raise serializers.ValidationError(
@@ -54,6 +60,7 @@ class CourseSerializer(serializers.ModelSerializer):
 class EnrollmentSerializer(serializers.ModelSerializer):
     student = StudentSerializer(read_only=True)
     course = CourseSerializer(read_only=True)
+
     class Meta:
         model = Enrollment
         fields = ["id", "student", "course", "enrollment_date"]

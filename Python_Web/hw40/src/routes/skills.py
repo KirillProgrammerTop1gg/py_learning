@@ -3,7 +3,12 @@ from fastapi import APIRouter, HTTPException, Depends, Query, Path, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from Python_Web.hw40.src.database.db import get_db
-from Python_Web.hw40.src.schemas import SkillCreate, SkillUpdate, SkillResponse, SkillShortResponse
+from Python_Web.hw40.src.schemas import (
+    SkillCreate,
+    SkillUpdate,
+    SkillResponse,
+    SkillShortResponse,
+)
 from Python_Web.hw40.src.repository import skills as repository_skills
 from Python_Web.hw40.src.auth import get_current_user
 
@@ -12,12 +17,28 @@ router = APIRouter(prefix="/skills", tags=["skills"])
 
 @router.get("/", response_model=List[SkillResponse])
 async def read_skills(
-    skip: int = Query(0, ge=0, description="Кількість записів, які потрібно пропустити (пагінація)"),
-    limit: int = Query(100, ge=1, le=500, description="Максимальна кількість записів у відповіді"),
-    category_id: Optional[int] = Query(None, ge=1, description="Фільтр за ID категорії навички"),
-    can_teach: Optional[bool] = Query(None, description="Якщо true — повертає лише навички, які користувачі готові викладати"),
-    want_learn: Optional[bool] = Query(None, description="Якщо true — повертає лише навички, які користувачі хочуть вивчити"),
-    search: Optional[str] = Query(None, min_length=1, description="Пошук за назвою або описом навички (часткове співпадіння)"),
+    skip: int = Query(
+        0, ge=0, description="Кількість записів, які потрібно пропустити (пагінація)"
+    ),
+    limit: int = Query(
+        100, ge=1, le=500, description="Максимальна кількість записів у відповіді"
+    ),
+    category_id: Optional[int] = Query(
+        None, ge=1, description="Фільтр за ID категорії навички"
+    ),
+    can_teach: Optional[bool] = Query(
+        None,
+        description="Якщо true — повертає лише навички, які користувачі готові викладати",
+    ),
+    want_learn: Optional[bool] = Query(
+        None,
+        description="Якщо true — повертає лише навички, які користувачі хочуть вивчити",
+    ),
+    search: Optional[str] = Query(
+        None,
+        min_length=1,
+        description="Пошук за назвою або описом навички (часткове співпадіння)",
+    ),
     db: AsyncSession = Depends(get_db),
 ):
     """Отримати список навичок з можливістю фільтрації."""
@@ -60,7 +81,9 @@ async def create_skill(
 
 @router.put("/{skill_id}", response_model=SkillResponse)
 async def update_skill(
-    skill_id: int = Path(..., ge=1, description="Унікальний ідентифікатор навички, яку потрібно оновити"),
+    skill_id: int = Path(
+        ..., ge=1, description="Унікальний ідентифікатор навички, яку потрібно оновити"
+    ),
     skill_update: SkillUpdate = ...,
     db: AsyncSession = Depends(get_db),
     current_user: tuple = Depends(get_current_user),
@@ -83,7 +106,9 @@ async def update_skill(
 
 @router.delete("/{skill_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_skill(
-    skill_id: int = Path(..., ge=1, description="Унікальний ідентифікатор навички, яку потрібно видалити"),
+    skill_id: int = Path(
+        ..., ge=1, description="Унікальний ідентифікатор навички, яку потрібно видалити"
+    ),
     db: AsyncSession = Depends(get_db),
     current_user: tuple = Depends(get_current_user),
 ):
@@ -99,7 +124,11 @@ async def delete_skill(
 
 @router.get("/{skill_id}/matches")
 async def find_matches(
-    skill_id: int = Path(..., ge=1, description="Унікальний ідентифікатор навички, для якої шукаються потенційні збіги для обміну"),
+    skill_id: int = Path(
+        ...,
+        ge=1,
+        description="Унікальний ідентифікатор навички, для якої шукаються потенційні збіги для обміну",
+    ),
     db: AsyncSession = Depends(get_db),
 ):
     """Знайти потенційні збіги для обміну навичками."""

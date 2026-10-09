@@ -65,9 +65,12 @@ async def health_check(db: AsyncSession = Depends(get_db)):
         db_status = f"error: {str(e)}"
 
     return {"status": "healthy", "database": db_status, "version": "2.2.0"}
+
+
 class TokenRequest(BaseModel):
     user_id: int
     role: str = "user"
+
 
 @app.post("/token")
 async def login(
@@ -77,9 +80,10 @@ async def login(
     user = await repository_users.get_user_by_username(form_data.username, db)
     if not user:
         raise HTTPException(status_code=400, detail="Невірний username або пароль")
-    
+
     token = create_token(user.id, role="user")
     return {"access_token": token, "token_type": "bearer"}
+
 
 @app.on_event("startup")
 async def startup_event():

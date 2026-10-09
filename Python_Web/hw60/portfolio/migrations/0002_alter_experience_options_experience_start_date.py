@@ -6,17 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('portfolio', '0001_initial'),
+        ("portfolio", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='experience',
-            options={'ordering': ['-start_date'], 'verbose_name': 'Досвід роботи', 'verbose_name_plural': 'Досвід роботи'},
+            name="experience",
+            options={
+                "ordering": ["-start_date"],
+                "verbose_name": "Досвід роботи",
+                "verbose_name_plural": "Досвід роботи",
+            },
         ),
         migrations.AddField(
-            model_name='experience',
-            name='start_date',
-            field=models.DateField(blank=True, null=True, verbose_name='Дата початку (для сортування)'),
+            model_name="experience",
+            name="start_date",
+            field=models.DateField(
+                blank=True, null=True, verbose_name="Дата початку (для сортування)"
+            ),
         ),
     ]

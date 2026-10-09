@@ -6,28 +6,24 @@ from .models import Article
 def home_view(request):
     context = {
         "blog_name": "TechBlog",
-        "description": "Найкращі статті про технології та програмування"
+        "description": "Найкращі статті про технології та програмування",
     }
     return render(request, "blog/home.html", context)
-
-
 
 
 # Перевірка досвіду користувача (через POST форму)
 def check_experience(request):
     experience_years = None
-    if request.method == 'POST':
+    if request.method == "POST":
         # Отримуємо число років досвіду з форми, якщо не передано - беремо 0
-        experience_years = int(request.POST.get('years', 0))
+        experience_years = int(request.POST.get("years", 0))
     return render(request, "blog/experience.html", {"years": experience_years})
-
-
 
 
 # Відображення списку популярних постів
 def popular_posts(request):
-    posts_data = Article.objects.order_by('-views')[:5]
-    
+    posts_data = Article.objects.order_by("-views")[:5]
+
     context = {
         "blog_title": "Популярні статті TechBlog",
         "posts": posts_data,
@@ -38,28 +34,28 @@ def popular_posts(request):
 def about_us(request):
     our_team_data = [
         {
-            "name": "Олексій Коваленко", 
-            "role": "Засновник & Головний редактор", 
+            "name": "Олексій Коваленко",
+            "role": "Засновник & Головний редактор",
             "email": "alex@techblog.io",
             "bio": "Екс-Senior Python Engineer, фанат чистого коду, системної архітектури та мікросервісів.",
         },
         {
-            "name": "Марія Шевченко", 
-            "role": "Провідний ШІ Дослідник", 
+            "name": "Марія Шевченко",
+            "role": "Провідний ШІ Дослідник",
             "email": "maria.ai@techblog.io",
             "bio": "Досліджує генеративні моделі, LLM та NLP. Вірить, що ШІ та людина - це ідеальний тандем.",
         },
         {
-            "name": "Дмитро Петренко", 
-            "role": "Frontend Architect", 
+            "name": "Дмитро Петренко",
+            "role": "Frontend Architect",
             "email": "dima.web@techblog.io",
             "bio": "Створює надшвидкі, доступні та естетичні інтерфейси. Експерт з CSS-magic, UX та Web Performance.",
-        }
+        },
     ]
     stats_data = [
         {"value": "25,000+", "label": "Читачів щомісяця"},
         {"value": "150+", "label": "Глибоких технічних статей"},
-        {"value": "4.9", "label": "Рейтинг матеріалів"}
+        {"value": "4.9", "label": "Рейтинг матеріалів"},
     ]
     context = {
         "blog_title": "Про нас",
@@ -69,6 +65,7 @@ def about_us(request):
         "stats": stats_data,
     }
     return render(request, "blog/about.html", context)
+
 
 def contacts(request):
     social_links = [
