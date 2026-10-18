@@ -1,0 +1,17 @@
+Region,Month,Product,Rating
+North,January,Laptop,4.5
+North,January,Smartphone,4.0
+South,February,Laptop,3.5
+South,February,Tablet,4.2
+East,March,Smartphone,4.8
+East,March,Tablet,4.3
+West,April,Laptop,3.8
+West,April,Smartphone,4.1
+North,May,Tablet,4.0
+North,May,Smartphone,3.9
+South,June,Laptop,4.4
+South,June,Tablet,4.6
+East,July,Smartphone,4.7
+East,July,Tablet,4.5
+West,August,Laptop,3.9
+West,August,Smartphone,4.2
