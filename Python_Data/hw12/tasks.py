@@ -9,7 +9,6 @@ data = {
     'Stock': [50, 150, 200]
 }
 df = pd.DataFrame(data)
-df['Warranty'] = '1 year'
 new_row = pd.DataFrame({'Product': ['USB Hub'], 'Price': [40], 'Stock': [150], 'Warranty': ['2 years']})
 df = pd.concat([df, new_row], ignore_index=True)
 print(df)
@@ -34,6 +33,6 @@ print(df)
 overall_mean = df['Rating'].mean()
 grouped = df.groupby(['Region', 'Month'])
 average_rating = grouped['Rating'].mean()
-df = average_rating.unstack(level=1)
+df = average_rating.unstack()
 df = df.fillna(overall_mean)
 print(df)
