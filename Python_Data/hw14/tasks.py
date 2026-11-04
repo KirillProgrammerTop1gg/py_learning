@@ -54,7 +54,6 @@ plt.title("Завдання 1")
 plt.ylabel("Значення")
 plt.xlabel("Тижні")
 plt.legend()
-plt.twinx()
 plt.show()
 
 # task 2
