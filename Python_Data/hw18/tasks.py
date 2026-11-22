@@ -13,18 +13,14 @@ df_b = pd.DataFrame(
     {"EmployeeID": [4, 5], "Name": ["David", "Eva"], "Department": ["Finance", "IT"]}
 )
 
-df_sum = pd.concat(
-    [df_a.reset_index(drop=True), df_b.reset_index(drop=True)],
-    axis=0,
-    keys=["Group_A", "Group_B"],
-)
+df_sum = pd.concat([df_a, df_b], ignore_index=True)
+df_groups = pd.concat([df_a, df_b], keys=["Group_A", "Group_B"])
 
 print(f"""Task 1:
-
 DataFrame A:\n{df_a}
 DataFrame B:\n{df_b}
-Result DataFrame:\n{df_sum}
-
+Result DataFrame with resetting index:\n{df_sum}
+Result DataFrame with keys:\n{df_groups}
 """)
 
 # task 2
@@ -45,8 +41,7 @@ accounts_df = pd.merge(
     orders_df, customers_df, how="inner", on="CustomerID", indicator=True
 )
 accounts_df = accounts_df.set_index(["CustomerID", "ProductID"])
-print(f"""
-Task 2:
+print(f"""Task 2:
 Orders DataFrame:\n{orders_df}
 Customers DataFrame:\n{customers_df}
 Result DataFrame:\n{accounts_df}
@@ -90,8 +85,7 @@ start = time.perf_counter()
 normal_df = pd.merge(normal_transactions, normal_products, on="ProductID", how="inner")
 normal_time = time.perf_counter() - start
 
-print(f"""
-Task 3:
+print(f"""Task 3:
 Optimized merge: {optimized_time:.6f} seconds
 Normal merge: {normal_time:.6f} seconds
 
@@ -116,6 +110,8 @@ df_suppliers = pd.DataFrame(
 )
 df_sales = df_sales.set_index(["StoreID", "ProductID"])
 
+# many-to-one є доцільним в цьому випадку, бо ProductID може повторюватися у декілька продажів у df_sales, але у df_suppliers ProductID є унікальним, отже кожному продажу відповідає не більше одного посточальника
+
 df_total = pd.merge(
     df_sales,
     df_suppliers,
@@ -125,8 +121,6 @@ df_total = pd.merge(
     suffixes=("_sale", "_supplier"),
 )
 
-print(f"""
-
-Task 4:
+print(f"""Task 4:
 Total df:\n{df_total}
 """)
