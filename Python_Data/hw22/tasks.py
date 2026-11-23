@@ -60,5 +60,4 @@ Optimized CSV read time: {optimized_time:.4f}s
 Parquet read time: {parquet_time:.4f}s
 
 Optimized CSV memory: {optimized_memory / 1024**2:.2f} MB
-Parquet memory: {parquet_memory / 1024**2:.2f} MB
-""")
+Parquet memory: {parquet_memory / 1024**2:.2f} MB""")
